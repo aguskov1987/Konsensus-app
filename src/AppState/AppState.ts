@@ -9,7 +9,8 @@ export class AppState {
     public user: UserVm = new UserVm();
 
     public favStatementsOpen: boolean = false;
-    public loginOpen: boolean = false;
+    public myHivesOpen: boolean = false;
+    public loginOpen: boolean = true;
 
     public responseView: ViewResponse = ViewResponse.All;
     public hiveLayout: Layout = Layout.Random;

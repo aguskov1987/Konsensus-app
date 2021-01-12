@@ -1,26 +1,19 @@
 import React from "react";
-import { Modal } from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import {connect} from "react-redux";
-import {closeLogin} from "../../AppState/Actions";
 import {AppState} from "../../AppState/AppState";
+import Login from "./Login";
 
 class LoginModal extends React.Component<any, any> {
-    constructor(props: any) {
-        super(props);
-        this.handleClose = this.handleClose.bind(this);
-    }
-
-    handleClose() {
-        this.props.closeLogin();
-    }
-
     render() {
         return (
-            <Modal show={this.props.show} onHide={this.handleClose}>
-                <Modal.Header closeButton>
+            <Modal show={this.props.show}>
+                <Modal.Header>
                     <Modal.Title>Login</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Login</Modal.Body>
+                <Modal.Body>
+                    <Login/>
+                </Modal.Body>
             </Modal>
         )
     }
@@ -32,4 +25,4 @@ const mapStateToProps = (state: AppState) => {
     }
 }
 
-export default connect(mapStateToProps, {closeLogin})(LoginModal)
+export default connect(mapStateToProps, {})(LoginModal)

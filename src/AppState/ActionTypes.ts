@@ -1,16 +1,13 @@
-export const OPEN_LOGIN = "OPEN_LOGIN";
-export const CLOSE_LOGIN = "CLOSE_LOGIN";
 export const OPEN_MY_HIVES = "OPEN_MY_HIVES";
 export const CLOSE_MY_HIVES = "CLOSE_MY_HIVES";
+
 export const OPEN_SAVED_STATEMENTS = "GO_TO_SAVED_STATEMENTS";
 export const CLOSE_SAVED_STATEMENTS = "CLOSE_SAVED_STATEMENTS"
 
-export const LOGIN = "LOGIN";
-export const LOAD_USER = "LOAD_USER";
-export const LOGOUT = "LOGOUT"
-
-export const LOAD_HIVE_INFO = "LOAD_HIVE_INFO";
-export const LOAD_HIVE_DATA = "LOAD_HIVE_DATA";
+export const USER_LOADED = "USER_LOADED";
+export const USER_LOAD_FAILED = "USER_LOAD_FAILED";
+export const HIVE_INFO_LOADED = "HIVE_INFO_LOADED";
+export const HIVE_DATA_LOADED = "HIVE_DATA_LOADED";
 
 export const SELECT_DEFAULT_HIVE = "SELECT_DEFAULT_HIVE"
 

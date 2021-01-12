@@ -1,25 +1,17 @@
 import {
-    CLOSE_LOGIN,
+    CLOSE_MY_HIVES,
     CLOSE_SAVED_STATEMENTS,
-    LOGIN,
-    OPEN_LOGIN,
-    OPEN_SAVED_STATEMENTS
+    HIVE_DATA_LOADED,
+    HIVE_INFO_LOADED,
+    OPEN_MY_HIVES,
+    OPEN_SAVED_STATEMENTS,
+    USER_LOAD_FAILED,
+    USER_LOADED
 } from "./ActionTypes";
+import {HiveInfoVm} from "../ViewModels/HiveInfoVm";
+import {HiveDataVm} from "../ViewModels/HiveDataVm";
+import {UserVm} from "../ViewModels/UserVm";
 
-export const login = (username: string, password: string) => ({
-    type: LOGIN,
-    payload: {
-        username,
-        password
-    }
-});
-
-export const loadUser = (userId: string) => ({
-    type: LOGIN,
-    payload: {
-        userId
-    }
-});
 
 export const openSavedStatements = () => ({
     type: OPEN_SAVED_STATEMENTS,
@@ -31,12 +23,32 @@ export const closeSavedStatements = () => ({
     payload: {}
 });
 
-export const openLogin = () => ({
-    type: OPEN_LOGIN,
+export const openMyHives = () => ({
+    type: OPEN_MY_HIVES,
     payload: {}
 });
 
-export const closeLogin = () => ({
-    type: CLOSE_LOGIN,
+export const closeMyHives = () => ({
+    type: CLOSE_MY_HIVES,
     payload: {}
+});
+
+export const userLoaded = (user: UserVm) => ({
+    type: USER_LOADED,
+    payload: user
+})
+
+export const userLoadFailed = () => ({
+    type: USER_LOAD_FAILED,
+    payload: {}
+})
+
+export const hiveInfoLoaded = (info: HiveInfoVm) => ({
+    type: HIVE_INFO_LOADED,
+    payload: info
+});
+
+export const hiveDataLoaded = (data: HiveDataVm) => ({
+    type: HIVE_DATA_LOADED,
+    payload: data
 });
