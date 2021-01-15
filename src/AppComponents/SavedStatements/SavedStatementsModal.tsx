@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import {connect} from "react-redux";
-import {closeSavedStatements} from "../../AppState/Actions";
+import {closeSavedStatementsAction} from "../../AppState/Actions";
 import {AppState} from "../../AppState/AppState";
 
 class SavedStatementsModal extends React.Component<any, any> {
@@ -32,4 +32,4 @@ const mapStateToProps = (state: AppState) => {
     }
 }
 
-export default connect(mapStateToProps, {closeSavedStatements})(SavedStatementsModal)
+export default connect(mapStateToProps, {closeSavedStatementsAction})(SavedStatementsModal)

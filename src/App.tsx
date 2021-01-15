@@ -6,6 +6,7 @@ import GraphCanvas from './AppComponents/GraphCanvas/GraphCanvas';
 import {AppState} from "./AppState/AppState";
 import SavedStatementsModal from "./AppComponents/SavedStatements/SavedStatementsModal";
 import LoginModal from "./AppComponents/Login/LoginModal";
+import MyHivesModal from "./AppComponents/MyHives/MyHivesModal";
 
 class App extends React.Component<any, AppState> {
     render() {
@@ -26,6 +27,7 @@ class App extends React.Component<any, AppState> {
                 </div>
                 <SavedStatementsModal/>
                 <LoginModal/>
+                <MyHivesModal/>
             </div>
         )
     }

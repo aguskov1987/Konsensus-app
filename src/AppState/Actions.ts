@@ -1,54 +1,60 @@
 import {
     CLOSE_MY_HIVES,
     CLOSE_SAVED_STATEMENTS,
-    HIVE_DATA_LOADED,
-    HIVE_INFO_LOADED,
+    SUBGRAPH_LOADED,
+    HIVE_OVERVIEW_LOADED,
     OPEN_MY_HIVES,
     OPEN_SAVED_STATEMENTS,
-    USER_LOAD_FAILED,
-    USER_LOADED
+    USER_LOGIN_FAILED,
+    USER_LOADED,
+    USER_LOGGED_IN
 } from "./ActionTypes";
-import {HiveInfoVm} from "../ViewModels/HiveInfoVm";
-import {HiveDataVm} from "../ViewModels/HiveDataVm";
-import {UserVm} from "../ViewModels/UserVm";
+import {ApiUser} from "../ApiModels/ApiUser";
+import {ApiHiveOverview} from "../ApiModels/ApiHiveOverview";
+import {ApiSubGraph} from "../ApiModels/ApiSubGraph";
 
 
-export const openSavedStatements = () => ({
+export const openSavedStatementsAction = () => ({
     type: OPEN_SAVED_STATEMENTS,
     payload: {}
 });
 
-export const closeSavedStatements = () => ({
+export const closeSavedStatementsAction = () => ({
     type: CLOSE_SAVED_STATEMENTS,
     payload: {}
 });
 
-export const openMyHives = () => ({
+export const openMyHivesAction = () => ({
     type: OPEN_MY_HIVES,
     payload: {}
 });
 
-export const closeMyHives = () => ({
+export const closeMyHivesAction = () => ({
     type: CLOSE_MY_HIVES,
     payload: {}
 });
 
-export const userLoaded = (user: UserVm) => ({
+export const userLoggedInAction = () => ({
+    type: USER_LOGGED_IN,
+    payload: {}
+})
+
+export const userLoadedAction = (user: ApiUser) => ({
     type: USER_LOADED,
     payload: user
 })
 
-export const userLoadFailed = () => ({
-    type: USER_LOAD_FAILED,
+export const userLoginFailedAction = () => ({
+    type: USER_LOGIN_FAILED,
     payload: {}
 })
 
-export const hiveInfoLoaded = (info: HiveInfoVm) => ({
-    type: HIVE_INFO_LOADED,
+export const hiveInfoLoadedAction = (info: ApiHiveOverview) => ({
+    type: HIVE_OVERVIEW_LOADED,
     payload: info
 });
 
-export const hiveDataLoaded = (data: HiveDataVm) => ({
-    type: HIVE_DATA_LOADED,
+export const hiveDataLoadedAction = (data: ApiSubGraph) => ({
+    type: SUBGRAPH_LOADED,
     payload: data
 });

@@ -8,7 +8,7 @@ export class SynapseData {
     public penetration: number = 0;
 }
 
-export class SynapseVm {
+export class Effect {
     public data: SynapseData = new SynapseData();
     public color: string = 'black';
 }

@@ -2,11 +2,13 @@ import {AppState} from "./AppState";
 import {
     CLOSE_MY_HIVES,
     CLOSE_SAVED_STATEMENTS,
-    HIVE_DATA_LOADED, HIVE_INFO_LOADED,
+    SUBGRAPH_LOADED, HIVE_OVERVIEW_LOADED,
     OPEN_MY_HIVES,
     OPEN_SAVED_STATEMENTS,
     USER_LOADED
 } from "./ActionTypes";
+import {HiveService} from "../Services/HiveService";
+import {UserService} from "../Services/UserService";
 
 const initialAppState = new AppState()
 
@@ -19,7 +21,7 @@ export default function (state = initialAppState, action: Action): AppState {
             return {
                 ...state,
                 loginOpen: false,
-                user: action.payload
+                user: UserService.convertToViewModel(action.payload)
             }
         case OPEN_MY_HIVES:
             return {
@@ -41,15 +43,16 @@ export default function (state = initialAppState, action: Action): AppState {
                 ...state,
                 favStatementsOpen: false
             }
-        case HIVE_INFO_LOADED:
+        case HIVE_OVERVIEW_LOADED:
             return {
                 ...state,
-                hiveInfo: action.payload
+                hiveInfo: HiveService.convertToViewModel(action.payload)
             }
-        case HIVE_DATA_LOADED:
+        case SUBGRAPH_LOADED:
+            let newHiveData = HiveService.mergeSubgraphIntoMainGraph(action.payload, state.mainGraph);
             return {
                 ...state,
-                hiveData: action.payload
+                mainGraph: newHiveData
             }
         default:
             return state;

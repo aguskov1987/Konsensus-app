@@ -2,17 +2,16 @@ import React from "react";
 import {Modal} from "react-bootstrap";
 import {connect} from "react-redux";
 import {AppState} from "../../AppState/AppState";
-import Login from "./Login";
 
-class LoginModal extends React.Component<any, any> {
+class MyHivesModal extends React.Component<any, any> {
     render() {
         return (
-            <Modal show={this.props.show} backdrop="static">
+            <Modal show={this.props.show}>
                 <Modal.Header>
-                    <Modal.Title>Login</Modal.Title>
+                    <Modal.Title>My Hives</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Login/>
+                    My Hives
                 </Modal.Body>
             </Modal>
         )
@@ -21,8 +20,8 @@ class LoginModal extends React.Component<any, any> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        show: state.loginOpen
+        show: state.myHivesOpen
     }
 }
 
-export default connect(mapStateToProps, {})(LoginModal)
+export default connect(mapStateToProps, {})(MyHivesModal)

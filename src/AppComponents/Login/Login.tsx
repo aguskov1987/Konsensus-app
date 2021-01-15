@@ -1,11 +1,11 @@
 import React from "react";
 import {Button, Form} from "react-bootstrap";
-import {loadUser, login} from "../../AppState/Intercom/UserIntercom";
+import {loadUserAndLoadHive, loginAndLoadUserAndLoadHive} from "../../AppState/Intercom/UserIntercom";
 import {connect} from "react-redux";
 import {UserService} from "../../Services/UserService";
 
 
-class Login extends React.Component<any, any>{
+class Login extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
@@ -22,7 +22,7 @@ class Login extends React.Component<any, any>{
 
     componentDidMount() {
         if (UserService.isJwtValid()) {
-            this.props.loadUser();
+            this.props.loadUserAndLoadData();
         }
     }
 
@@ -39,7 +39,7 @@ class Login extends React.Component<any, any>{
     }
 
     onSubmit(event: any) {
-        this.props.login(this.state.username, this.state.password);
+        this.props.loginAndLoadUserAndLoadData(this.state.username, this.state.password);
         event.preventDefault();
     }
 
@@ -48,12 +48,12 @@ class Login extends React.Component<any, any>{
             <Form onSubmit={this.onSubmit}>
                 <Form.Group controlId="formUser">
                     <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" placeholder="Username" onChange={this.updateUserName} />
+                    <Form.Control type="text" placeholder="Username" onChange={this.updateUserName}/>
                 </Form.Group>
 
                 <Form.Group controlId="formPassword">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password"  onChange={this.updateUserPassword} />
+                    <Form.Control type="password" placeholder="Password" onChange={this.updateUserPassword}/>
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     Enter
@@ -64,4 +64,4 @@ class Login extends React.Component<any, any>{
 }
 
 
-export default connect(null, {login, loadUser})(Login);
+export default connect(null, {loginAndLoadUserAndLoadData: loginAndLoadUserAndLoadHive, loadUserAndLoadData: loadUserAndLoadHive})(Login);

@@ -1,4 +1,5 @@
 import {ApiUser} from "../ApiModels/ApiUser";
+import {User} from "../ViewModels/User";
 
 export class UserService {
     public static login(username: string, password: string): Promise<string> {
@@ -27,5 +28,9 @@ export class UserService {
 
     public static getJwt() {
         return "Jwt";
+    }
+
+    public static convertToViewModel(data: ApiUser): User {
+        return new User();
     }
 }
