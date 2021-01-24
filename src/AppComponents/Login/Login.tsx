@@ -4,7 +4,8 @@ import {loadUserAndLoadHive, loginAndLoadUserAndLoadHive} from "../../AppState/I
 import {connect} from "react-redux";
 import {UserService} from "../../Services/UserService";
 
-
+// TODO: implement validation for the field
+// TODO: implement loading screen
 class Login extends React.Component<any, any> {
 
     constructor(props: any) {
@@ -39,6 +40,7 @@ class Login extends React.Component<any, any> {
     }
 
     onSubmit(event: any) {
+        // TODO: handle wrong credentials
         this.props.loginAndLoadUserAndLoadData(this.state.username, this.state.password);
         event.preventDefault();
     }
@@ -64,4 +66,5 @@ class Login extends React.Component<any, any> {
 }
 
 
-export default connect(null, {loginAndLoadUserAndLoadData: loginAndLoadUserAndLoadHive, loadUserAndLoadData: loadUserAndLoadHive})(Login);
+export default connect(null,
+    {loginAndLoadUserAndLoadData: loginAndLoadUserAndLoadHive, loadUserAndLoadData: loadUserAndLoadHive})(Login);

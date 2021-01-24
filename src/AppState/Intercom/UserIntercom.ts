@@ -1,13 +1,14 @@
 import {UserService} from "../../Services/UserService";
 import {ApiUser} from "../../ApiModels/ApiUser";
-import {HiveService} from "../../Services/HiveService";
+import {YardService} from "../../Services/YardService";
 import {
-    hiveInfoLoadedAction,
+    hiveLoadedAction,
     openMyHivesAction,
     userLoadedAction,
     userLoginFailedAction,
     userLoggedInAction
 } from "../Actions";
+import {AxiosResponse} from "axios";
 
 /***
  * This composed function takes in username and password, logs in the user, loads the user
@@ -22,11 +23,11 @@ export function loginAndLoadUserAndLoadHive(username: string, password: string) 
                 if (action.payload.currentHiveId) {
                     fetchHiveInfo(dispatch, action.payload.currentHiveId).then(() => {})
                 } else {
-                    dispatch(openMyHivesAction())
+                    dispatch(openMyHivesAction());
                 }
             })
         }).catch((reason: any) => {
-            dispatch(userLoginFailedAction())
+            dispatch(userLoginFailedAction());
         });
     }
 }
@@ -40,25 +41,24 @@ export function loadUserAndLoadHive() {
             if (action.payload.currentHiveId) {
                 fetchHiveInfo(dispatch, action.payload.currentHiveId).then(() => {})
             } else {
-                dispatch(openMyHivesAction())
+                dispatch(openMyHivesAction());
             }
         })
     }
 }
 
 async function fetchLogin(dispatch: any, username: string, password: string) {
-    let jwt = await UserService.login(username, password);
-    UserService.clearJwt();
-    UserService.saveJwt(jwt);
+    let jwt: AxiosResponse<string> = await UserService.login(username, password);
+    UserService.saveJwt(jwt.data);
     return dispatch(userLoggedInAction());
 }
 
 async function fetchUser(dispatch: any) {
-    let user: ApiUser = await UserService.loadUser()
-    return dispatch(userLoadedAction(user));
+    let user: AxiosResponse<ApiUser> = await UserService.loadUser()
+    return dispatch(userLoadedAction(user.data));
 }
 
 async function fetchHiveInfo(dispatch: any, hiveId: string) {
-    let info = await HiveService.loadHiveOverview(hiveId);
-    return dispatch(hiveInfoLoadedAction(info));
+    let info = await YardService.loadHive(hiveId);
+    return dispatch(hiveLoadedAction(info.data));
 }

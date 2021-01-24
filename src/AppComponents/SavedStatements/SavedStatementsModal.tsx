@@ -11,7 +11,7 @@ class SavedStatementsModal extends React.Component<any, any> {
     }
 
     handleClose() {
-        this.props.closeSavedStatements();
+        this.props.closeSavedStatementsAction();
     }
 
     render() {

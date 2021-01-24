@@ -1,7 +1,8 @@
 export class ApiStatement {
     public id: string = '';
     public label: string = '';
-    public myResponse: number = 0;
-    public commonResponse: number = 0;
+    public userResponse: number = 0;
+    public publicResponse: number = 0;
     public penetration: number = 0;
+    public links: string[] = [];
 }
