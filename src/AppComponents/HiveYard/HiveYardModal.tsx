@@ -17,9 +17,16 @@ class HiveYardModal extends React.Component<any, any> {
 
     render() {
         return (
-            <Modal show={this.props.show} onHide={this.onHide} size="lg">
+            <Modal show={this.props.show} onHide={this.onHide} size="xl">
                 <Modal.Header closeButton>
-                    <Modal.Title>Hive Yard</Modal.Title>
+                    <Modal.Title>
+                        <div>
+                            <span style={{float: 'left'}}>
+                                <img src="Images/yard_button.svg" style={{height: 45, width: 45}} alt=""/>
+                            </span>
+                            <span>The Yard</span>
+                        </div>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <HiveYard/>

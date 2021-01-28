@@ -28,7 +28,7 @@ class SavedStatementsModal extends React.Component<any, any> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        show: state.favStatementsOpen
+        show: state.savedStatementsOpen
     }
 }
 

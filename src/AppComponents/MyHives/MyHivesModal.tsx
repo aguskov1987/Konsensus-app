@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import {AppState} from "../../AppState/AppState";
 import MyHives from "./MyHives";
 import {closeMyHivesAction} from "../../AppState/Actions";
+import FeedbackBar, {FeedbackSource} from "../FeedbackBar/FeedbackBar";
 
 class MyHivesModal extends React.Component<any, any> {
     constructor(props: any) {
@@ -22,7 +23,7 @@ class MyHivesModal extends React.Component<any, any> {
                 <Modal.Header closeButton>
                     <Modal.Title>
                         <div>
-                            <span style={{float: 'left'}}><img src="Images/my_saved_hives.svg" style={{height: 45, width: 45}}/></span>
+                            <span style={{float: 'left'}}><img src="Images/my_saved_hives.svg" style={{height: 45, width: 45}} alt=""/></span>
                             <span>My Hives</span>
                         </div>
                     </Modal.Title>
@@ -32,18 +33,19 @@ class MyHivesModal extends React.Component<any, any> {
                 <Modal.Header>
                     <Modal.Title>
                         <div>
-                            <span style={{float: 'left'}}><img src="Images/my_saved_hives.svg" style={{height: 45, width: 45}}/></span>
+                            <span style={{float: 'left'}}><img src="Images/my_saved_hives.svg" style={{height: 45, width: 45}} alt=""/></span>
                             <span>My Hives</span>
                         </div>
                     </Modal.Title>
                 </Modal.Header>)
         }
         return (
-            <Modal show={this.props.show} onHide={this.onHide} size="lg">
+            <Modal show={this.props.show} onHide={this.onHide} size="xl">
                 {header}
                 <Modal.Body>
                     <MyHives/>
                 </Modal.Body>
+                <FeedbackBar source={FeedbackSource.SavedHives}/>
             </Modal>
         )
     }

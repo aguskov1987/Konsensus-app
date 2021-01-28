@@ -15,6 +15,10 @@ export class YardService {
         return axios.get<ApiHiveManifest[]>("/yard/saved");
     }
 
+    public static loadInitialYard(): Promise<AxiosResponse<ApiHiveManifest[]>> {
+        return axios.post<ApiHiveManifest[]>("/yard/start");
+    }
+
     public static loadSearchResults(phrase: string): Promise<AxiosResponse<ApiHiveManifest[]>> {
         return axios.post<ApiHiveManifest[]>("/yard/search", {phrase});
     }
@@ -23,10 +27,10 @@ export class YardService {
         let hive = new HiveManifest();
 
         // * one-to-one mapping
-        hive.id= data.id;
+        hive.id= data._id;
         hive.description = data.description;
         hive.title = data.title;
-        hive.activity = data.activity;
+        hive.participation = data.activity;
         hive.numberOfParticipants = data.numberOfParticipants;
         hive.numberOfStatements = data.numberOfStatements;
 

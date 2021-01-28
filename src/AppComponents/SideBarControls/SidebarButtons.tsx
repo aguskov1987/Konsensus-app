@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Image} from "react-bootstrap";
 import {connect} from "react-redux";
-import {openMyHivesAction, openSavedStatementsAction} from "../../AppState/Actions";
+import {openHiveYardAction, openMyHivesAction, openSavedStatementsAction} from "../../AppState/Actions";
 
 class SidebarButtons extends React.Component<any, any> {
     constructor(props: any) {
@@ -9,6 +9,7 @@ class SidebarButtons extends React.Component<any, any> {
         this.openSavedStatements = this.openSavedStatements.bind(this);
         this.leaveApp = this.leaveApp.bind(this);
         this.openSavedHives = this.openSavedHives.bind(this);
+        this.openYard = this.openYard.bind(this);
     }
 
     openSavedHives() {
@@ -24,7 +25,7 @@ class SidebarButtons extends React.Component<any, any> {
     }
 
     openYard() {
-        console.log("open yard");
+        this.props.openHiveYardAction();
     }
 
     render() {
@@ -55,4 +56,4 @@ class SidebarButtons extends React.Component<any, any> {
     }
 }
 
-export default connect(null, {openSavedStatementsAction, openMyHivesAction})(SidebarButtons);
+export default connect(null, {openSavedStatementsAction, openMyHivesAction, openHiveYardAction})(SidebarButtons);

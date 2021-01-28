@@ -15,7 +15,8 @@ import {
     INIT_CREATING_NEW_HIVE,
     NEW_HIVE_CREATED,
     SEARCHED_STATEMENTS_FOUND,
-    SEARCHED_HIVES_FOUND
+    SEARCHED_HIVES_FOUND,
+    USER_SAVED_HIVES_LOAD_FAILED
 } from "./ActionTypes";
 import {YardService} from "../Services/YardService";
 import {UserService} from "../Services/UserService";
@@ -29,26 +30,55 @@ type Action = { type: string, payload: any }
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function (state = initialAppState, action: Action): AppState {
     switch (action.type) {
+        case USER_LOADED:
+            return {
+                ...state,
+                loginOpen: false,
+                user: UserService.convertToViewModel(action.payload)
+            }
         case OPEN_MY_HIVES:
             return {
                 ...state,
                 savedHivesOpen: true,
+                savedHivesLoading: true,
+                savedHivesLoaded: false,
+                savedHivesLoadingError: '',
+
                 loginOpen: false,
-                favStatementsOpen: false,
+                savedStatementsOpen: false,
                 hiveYardOpen: false,
                 newHiveOpen: false
             }
         case CLOSE_MY_HIVES:
             return {
                 ...state,
-                savedHivesOpen: false
+                savedHivesOpen: false,
+                savedHivesLoaded: false,
+                savedHivesLoading: true,
+                savedHivesLoadingError: '',
+                savedHives: []
+            }
+        case USER_SAVED_HIVES_LOADED:
+            return {
+                ...state,
+                savedHivesLoading: false,
+                savedHivesLoaded: true,
+                savedHivesLoadingError: '',
+                savedHives: action.payload
+            }
+        case USER_SAVED_HIVES_LOAD_FAILED:
+            return {
+                ...state,
+                savedHivesLoaded: false,
+                savedHivesLoading: false,
+                savedHivesLoadingError: action.payload
             }
         case OPEN_CREATE_NEW_HIVE:
             return {
                 ...state,
                 savedHivesOpen: false,
                 loginOpen: false,
-                favStatementsOpen: false,
+                savedStatementsOpen: false,
                 hiveYardOpen: false,
                 newHiveOpen: true
             }
@@ -72,7 +102,7 @@ export default function (state = initialAppState, action: Action): AppState {
                 ...state,
                 savedHivesOpen: false,
                 loginOpen: false,
-                favStatementsOpen: false,
+                savedStatementsOpen: false,
                 hiveYardOpen: true,
                 newHiveOpen: false
             }
@@ -94,31 +124,21 @@ export default function (state = initialAppState, action: Action): AppState {
                 ...state,
                 savedHivesOpen: false,
                 loginOpen: false,
-                favStatementsOpen: true,
+                savedStatementsOpen: true,
                 hiveYardOpen: false,
                 newHiveOpen: false
             }
         case CLOSE_SAVED_STATEMENTS:
             return {
                 ...state,
-                favStatementsOpen: false
-            }
-        case USER_LOADED:
-            return {
-                ...state,
-                loginOpen: false,
-                user: UserService.convertToViewModel(action.payload)
+                savedStatementsOpen: false
             }
         case HIVE_LOADED:
             return {
                 ...state,
+                savedHivesOpen: false,
+                hiveYardOpen: false,
                 currentActiveHive: YardService.convertToViewModel(action.payload as ApiHiveManifest)
-            }
-        case USER_SAVED_HIVES_LOADED:
-            return {
-                ...state,
-                savedHivesLoading: false,
-                savedHives: action.payload
             }
         case SUBGRAPH_LOADED:
             let newHiveData = HiveService.mergeSubgraphIntoMainGraph(action.payload, state.mainGraph);
@@ -143,7 +163,7 @@ export default function (state = initialAppState, action: Action): AppState {
                 creatingNewHive: false,
                 savedHivesOpen: false,
                 loginOpen: false,
-                favStatementsOpen: false,
+                savedStatementsOpen: false,
                 hiveYardOpen: false,
                 newHiveOpen: false
             }
