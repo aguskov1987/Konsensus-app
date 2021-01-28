@@ -30,7 +30,6 @@ export class YardService {
         hive.id= data._id;
         hive.description = data.description;
         hive.title = data.title;
-        hive.participation = data.activity;
         hive.numberOfParticipants = data.numberOfParticipants;
         hive.numberOfStatements = data.numberOfStatements;
 
