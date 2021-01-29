@@ -12,14 +12,9 @@ export class Statement {
     public position: { x: number, y: number } = {x: 0, y: 0};
 }
 
-class Word {
-    content: string = '';
-    hit: boolean = false;
-}
-
 export class FoundStatement {
     public id: string = '';
-    public label: Word[] = [];
+    public label: string = '';
     public myResponse: number = 0;
     public commonResponse: number = 0;
     public penetration: number = 0;

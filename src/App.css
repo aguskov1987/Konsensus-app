@@ -34,3 +34,8 @@ body, html {
   height: 40px;
   background-color: #414141;
 }
+
+/* HACK! USED TO INCREASE THE WIDTH OF THE STATEMENT SEARCH INPUT*/
+.rbt {
+  width: 90%
+}

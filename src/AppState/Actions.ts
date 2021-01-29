@@ -17,7 +17,7 @@ import {
     NEW_HIVE_CREATED,
     SEARCHED_STATEMENTS_FOUND,
     SEARCHED_HIVES_FOUND,
-    USER_SAVED_HIVES_LOAD_FAILED
+    USER_SAVED_HIVES_LOAD_FAILED, INIT_STATEMENT_SEARCH
 } from "./ActionTypes";
 import {ApiUser} from "../ApiModels/ApiUser";
 import {ApiHiveManifest} from "../ApiModels/ApiHiveManifest";
@@ -123,6 +123,12 @@ export const subgraphLoadedAction = (data: ApiSubGraph) => ({
 // endregion
 
 // region Search
+
+export const initStatementSearchAction = () => ({
+    type: INIT_STATEMENT_SEARCH,
+    payload: {}
+})
+
 export const searchedStatementsFoundAction = (statements: FoundStatement[]) => ({
     type: SEARCHED_STATEMENTS_FOUND,
     payload: statements

@@ -6,4 +6,5 @@ export class HiveManifest {
     public numberOfParticipantsGrowth: number = 0;
     public numberOfStatements: number = 0;
     public numberOfStatementsGrowth: number = 0;
+    public collectionId: string = '';
 }

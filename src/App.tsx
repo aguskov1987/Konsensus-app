@@ -11,6 +11,7 @@ import {configureAxios} from "./Services/CommonService";
 import HiveYardModal from "./AppComponents/HiveYard/HiveYardModal";
 import NewHiveModal from "./AppComponents/NewHive/NewHiveModal";
 import {connect} from "react-redux";
+import StatementFinderCreator from "./AppComponents/StatementFinderCreator/StatementFinderCreator";
 
 class App extends React.Component<any, AppState> {
     constructor(props: any) {
@@ -29,8 +30,8 @@ class App extends React.Component<any, AppState> {
                         <div style={{width: '50%', float: 'left', color: 'white', marginTop: 10, marginLeft: 10}}>
                             {this.props.hiveTitle}
                         </div>
-                        <div style={{width: 'calc(50% - 10px)', float: 'left'}}>
-                            search
+                        <div style={{width: 'calc(50% - 10px)', float: 'left', marginTop: 7}}>
+                            <StatementFinderCreator/>
                         </div>
                     </div>
                     <div className='graph-control-container'>

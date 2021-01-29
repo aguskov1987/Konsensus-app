@@ -16,7 +16,7 @@ import {
     NEW_HIVE_CREATED,
     SEARCHED_STATEMENTS_FOUND,
     SEARCHED_HIVES_FOUND,
-    USER_SAVED_HIVES_LOAD_FAILED
+    USER_SAVED_HIVES_LOAD_FAILED, INIT_STATEMENT_SEARCH
 } from "./ActionTypes";
 import {YardService} from "../Services/YardService";
 import {UserService} from "../Services/UserService";
@@ -175,7 +175,13 @@ export default function (state = initialAppState, action: Action): AppState {
         case SEARCHED_STATEMENTS_FOUND:
             return {
                 ...state,
+                statementSearchLoading: false,
                 foundStatements: action.payload
+            }
+        case INIT_STATEMENT_SEARCH:
+            return {
+                ...state,
+                statementSearchLoading: true
             }
         default:
             return state;

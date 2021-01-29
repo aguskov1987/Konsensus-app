@@ -34,7 +34,8 @@ export class AppState {
 
     // * Found options
     public foundYardHives: HiveManifest[] = [];
-    public foundStatements: FoundStatement[] = []
+    public foundStatements: FoundStatement[] = [];
+    public statementSearchLoading: boolean = false;
 
     public visualization: HiveVisualisationParams = new HiveVisualisationParams();
 }
