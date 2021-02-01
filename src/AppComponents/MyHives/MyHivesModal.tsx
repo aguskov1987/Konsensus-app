@@ -4,7 +4,8 @@ import {connect} from "react-redux";
 import {AppState} from "../../AppState/AppState";
 import MyHives from "./MyHives";
 import {closeMyHivesAction} from "../../AppState/Actions";
-import FeedbackBar, {FeedbackSource} from "../FeedbackBar/FeedbackBar";
+import FeedbackBar from "../FeedbackBar/FeedbackBar";
+import {AppFeature} from "../../AppState/AppFeature";
 
 class MyHivesModal extends React.Component<any, any> {
     constructor(props: any) {
@@ -45,7 +46,7 @@ class MyHivesModal extends React.Component<any, any> {
                 <Modal.Body>
                     <MyHives/>
                 </Modal.Body>
-                <FeedbackBar source={FeedbackSource.SavedHives}/>
+                <FeedbackBar/>
             </Modal>
         )
     }
@@ -53,7 +54,7 @@ class MyHivesModal extends React.Component<any, any> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        show: state.savedHivesOpen,
+        show: state.currentActiveFeature.feature === AppFeature.SavedHives,
         defaultHive: state.user.defaultHiveId
     }
 }

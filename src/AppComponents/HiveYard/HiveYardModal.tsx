@@ -4,6 +4,7 @@ import HiveYard from "./HiveYard";
 import {AppState} from "../../AppState/AppState";
 import {connect} from "react-redux";
 import {closeHiveYardAction} from "../../AppState/Actions";
+import {AppFeature} from "../../AppState/AppFeature";
 
 class HiveYardModal extends React.Component<any, any> {
     constructor(props: any) {
@@ -38,7 +39,7 @@ class HiveYardModal extends React.Component<any, any> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        show: state.hiveYardOpen
+        show: state.currentActiveFeature.feature === AppFeature.Yard
     }
 }
 

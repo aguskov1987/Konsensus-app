@@ -21,7 +21,7 @@ export function loginAndLoadUserAndLoadHive(username: string, password: string) 
         fetchLogin(dispatch, username, password).then(() => {
             fetchUser(dispatch).then((action) => {
                 if (action.payload.currentHiveId) {
-                    fetchHiveInfo(dispatch, action.payload.currentHiveId).then(() => {})
+                    fetchHiveManifest(dispatch, action.payload.currentHiveId).then(() => {})
                 } else {
                     dispatch(openMyHivesAction());
                 }
@@ -39,7 +39,7 @@ export function loadUserAndLoadHive() {
     return async function loadUserThunk(dispatch: any, getState: any) {
         fetchUser(dispatch).then((action) => {
             if (action.payload.currentHiveId) {
-                fetchHiveInfo(dispatch, action.payload.currentHiveId).then(() => {})
+                fetchHiveManifest(dispatch, action.payload.currentHiveId).then(() => {})
             } else {
                 dispatch(openMyHivesAction());
             }
@@ -58,7 +58,7 @@ async function fetchUser(dispatch: any) {
     return dispatch(userLoadedAction(user.data));
 }
 
-async function fetchHiveInfo(dispatch: any, hiveId: string) {
+async function fetchHiveManifest(dispatch: any, hiveId: string) {
     let info = await YardService.loadHive(hiveId);
     return dispatch(hiveLoadedAction(info.data));
 }

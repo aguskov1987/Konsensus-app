@@ -23,7 +23,7 @@ class Login extends React.Component<any, any> {
 
     componentDidMount() {
         if (UserService.isJwtValid()) {
-            this.props.loadUserAndLoadData();
+            this.props.loadUserAndLoadHive();
         }
     }
 
@@ -41,7 +41,7 @@ class Login extends React.Component<any, any> {
 
     onSubmit(event: any) {
         // TODO: handle wrong credentials
-        this.props.loginAndLoadUserAndLoadData(this.state.username, this.state.password);
+        this.props.loginAndLoadUserAndLoadHive(this.state.username, this.state.password);
         event.preventDefault();
     }
 
@@ -65,6 +65,4 @@ class Login extends React.Component<any, any> {
     }
 }
 
-
-export default connect(null,
-    {loginAndLoadUserAndLoadData: loginAndLoadUserAndLoadHive, loadUserAndLoadData: loadUserAndLoadHive})(Login);
+export default connect(null, {loginAndLoadUserAndLoadHive, loadUserAndLoadHive})(Login);

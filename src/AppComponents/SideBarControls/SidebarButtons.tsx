@@ -56,4 +56,5 @@ class SidebarButtons extends React.Component<any, any> {
     }
 }
 
-export default connect(null, {openSavedStatementsAction, openMyHivesAction, openHiveYardAction})(SidebarButtons);
+export default connect(null,
+    {openSavedStatementsAction, openMyHivesAction, openHiveYardAction})(SidebarButtons);

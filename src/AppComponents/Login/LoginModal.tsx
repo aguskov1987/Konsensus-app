@@ -3,6 +3,7 @@ import {Modal} from "react-bootstrap";
 import {connect} from "react-redux";
 import {AppState} from "../../AppState/AppState";
 import Login from "./Login";
+import {AppFeature} from "../../AppState/AppFeature";
 
 class LoginModal extends React.Component<any, any> {
     render() {
@@ -21,7 +22,7 @@ class LoginModal extends React.Component<any, any> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        show: state.loginOpen
+        show: state.currentActiveFeature.feature === AppFeature.Login
     }
 }
 

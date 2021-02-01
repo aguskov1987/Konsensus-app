@@ -2,21 +2,7 @@ import React from "react";
 import {AppState} from "../../AppState/AppState";
 import {connect} from "react-redux";
 import {Keyframes} from "react-spring/renderprops";
-
-export enum FeedbackSource {
-    Login,
-    SavedHives,
-    SavedStatements,
-    HiveYard,
-    CreateNewHive,
-    HiveStatements
-}
-
-export enum FeedbackState {
-    Loading,
-    Loaded,
-    Error
-}
+import {AsyncOperation} from "../../AppState/AsyncOperation";
 
 const Blinker: any = Keyframes.Spring({
     blinkSuccess: [
@@ -42,50 +28,20 @@ const Blinker: any = Keyframes.Spring({
     ]
 });
 
-class FeedbackBar extends React.Component<
-    {source: FeedbackSource},
-    {previousState: FeedbackState, currentState: FeedbackState}> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            previousState: FeedbackState.Loading,
-            currentState: FeedbackState.Loading
-        }
-    }
-
-    static getDerivedStateFromProps(props: any, state: any) {
-        console.log(props);
-        if (props.savedHivesLoading) {
-            return {
-                previousState: FeedbackState.Loading,
-                currentState: FeedbackState.Loading
-            };
-        } else if (props.savedHivesLoaded) {
-            return {
-                previousState: FeedbackState.Loading,
-                currentState: FeedbackState.Loaded
-            };
-        } else if (props.savedHivesLoadingError) {
-            return {
-                previousState: FeedbackState.Loading,
-                currentState: FeedbackState.Error
-            }
-        }
-        return null;
-    }
-
+class FeedbackBar extends React.Component<any, any> {
     render() {
-        let state: string = '';
-        if (this.state.currentState === FeedbackState.Loading) {
-            state = 'blinkLoading'
-        } else if (this.state.currentState === FeedbackState.Loaded) {
-            state = 'blinkSuccess'
-        } else if (this.state.currentState === FeedbackState.Error) {
-            state = 'blinkError'
+        let state: AsyncOperation = this.props.status;
+        let action = '';
+        if (state === AsyncOperation.InProgress) {
+            action = 'blinkLoading'
+        } else if (state === AsyncOperation.Done) {
+            action = 'blinkSuccess'
+        } else if (state === AsyncOperation.Error) {
+            action = 'blinkError'
         }
 
         return (
-            <Blinker state={state} config={{duration: 150}}>
+            <Blinker state={action} config={{duration: 150}}>
                 {(props: any) => (
                     <div style={{
                         width: '100%',
@@ -100,9 +56,7 @@ class FeedbackBar extends React.Component<
 
 const mapStateToProps = (state: AppState) => {
     return {
-        savedHivesLoading: state.savedHivesLoading,
-        savedHivesLoaded: state.savedHivesLoaded,
-        savedHivesLoadingError: state.savedHivesLoadingError
+        status: state.currentActiveFeature.asyncStatus,
     }
 }
 

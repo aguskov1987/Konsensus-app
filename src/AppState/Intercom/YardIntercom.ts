@@ -1,7 +1,10 @@
 import {YardService} from "../../Services/YardService";
 import {
     hiveLoadedAction,
+    hiveLoadFailedAction,
+    hiveSearchFailedAction,
     newHiveCreatedAction,
+    newHiveFailedAction,
     searchedHivesFoundAction,
     userSavedHivesLoaded,
     userSavedHivesLoadFailedAction
@@ -18,7 +21,7 @@ export function loadUserSavedHives() {
             } else {
                 dispatch(userSavedHivesLoadFailedAction(error.message));
             }
-        })
+        });
     }
 }
 
@@ -26,7 +29,13 @@ export function loadHive(id: string) {
     return async function loadHiveThunk(dispatch: any, getState: any) {
         YardService.loadHive(id).then((hive) => {
             dispatch(hiveLoadedAction(hive.data));
-        })
+        }).catch((error: AxiosError) => {
+            if (error.response) {
+                dispatch(hiveLoadFailedAction(error.code + ': ' + error.message))
+            } else {
+                dispatch(hiveLoadFailedAction(error.message));
+            }
+        });
     }
 }
 
@@ -34,6 +43,12 @@ export function postNewHive(title: string, description: string) {
     return async function postNewHiveThunk(dispatch: any, getState: any) {
         YardService.createNewHive(title, description).then((response) => {
             dispatch(newHiveCreatedAction(YardService.convertToViewModel(response.data)))
+        }).catch((error: AxiosError) => {
+            if (error.response) {
+                dispatch(newHiveFailedAction(error.code + ': ' + error.message))
+            } else {
+                dispatch(newHiveFailedAction(error.message));
+            }
         });
     }
 }
@@ -49,6 +64,12 @@ export function searchYard(phrase: string) {
                         )
                 )
             );
+        }).catch((error: AxiosError) => {
+            if (error.response) {
+                dispatch(hiveSearchFailedAction(error.code + ': ' + error.message))
+            } else {
+                dispatch(hiveSearchFailedAction(error.message));
+            }
         })
     }
 }
@@ -64,6 +85,12 @@ export function loadYardStart() {
                         )
                 )
             );
+        }).catch((error: AxiosError) => {
+            if (error.response) {
+                dispatch(hiveSearchFailedAction(error.code + ': ' + error.message))
+            } else {
+                dispatch(hiveSearchFailedAction(error.message));
+            }
         })
     }
 }

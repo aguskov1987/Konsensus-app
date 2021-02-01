@@ -1,12 +1,11 @@
 import React from "react";
-import {Button, Form, Spinner} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import {connect} from "react-redux";
 import {initNCreateNewHiveAction} from "../../AppState/Actions";
-import {AppState} from "../../AppState/AppState";
 import {postNewHive} from "../../AppState/Intercom/YardIntercom";
 
 // TODO: add validation
-class NewHive extends React.Component<any, {title: string, description: string}> {
+class NewHive extends React.Component<any, { title: string, description: string }> {
     constructor(props: any) {
         super(props);
         this.onSubmit = this.onSubmit.bind(this);
@@ -38,14 +37,8 @@ class NewHive extends React.Component<any, {title: string, description: string}>
     }
 
     render() {
-        let inner;
-        if (this.props.loading) {
-            inner = (
-                <Spinner style={{marginLeft: '45%'}} animation="border" role="status">
-                    <span className="sr-only">Loading...</span>
-                </Spinner>)
-        } else {
-            inner = (
+        return (
+            <div>
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="titleInput">
                         <Form.Label>Title</Form.Label>
@@ -58,19 +51,10 @@ class NewHive extends React.Component<any, {title: string, description: string}>
                     <Button variant="secondary" type="submit">
                         Submit
                     </Button>
-                </Form>)
-        }
-
-        return (
-            <div>{inner}</div>
+                </Form>
+            </div>
         )
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        loading: state.creatingNewHive
-    }
-}
-
-export default connect(mapStateToProps, {initNCreateNewHiveAction, postNewHive})(NewHive);
+export default connect(null, {initNCreateNewHiveAction, postNewHive})(NewHive);

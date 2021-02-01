@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import {AppState} from "../../AppState/AppState";
 import {closeCreateNewHiveAction} from "../../AppState/Actions";
 import NewHive from "./NewHive";
+import {AppFeature} from "../../AppState/AppFeature";
 
 class NewHiveModal extends React.Component<any, any> {
     constructor(props: any) {
@@ -36,7 +37,7 @@ class NewHiveModal extends React.Component<any, any> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        show: state.newHiveOpen
+        show: state.currentActiveFeature.feature === AppFeature.NewHive
     }
 }
 
