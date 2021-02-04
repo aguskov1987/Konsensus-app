@@ -4,8 +4,11 @@ import {connect} from "react-redux";
 import {initNCreateNewHiveAction} from "../../AppState/Actions";
 import {postNewHive} from "../../AppState/Intercom/YardIntercom";
 
+let dispatchers = {initNCreateNewHiveAction, postNewHive};
+type PropDispatchers = typeof dispatchers;
+
 // TODO: add validation
-class NewHive extends React.Component<any, { title: string, description: string }> {
+class NewHive extends React.Component<PropDispatchers, { title: string, description: string }> {
     constructor(props: any) {
         super(props);
         this.onSubmit = this.onSubmit.bind(this);
@@ -57,4 +60,4 @@ class NewHive extends React.Component<any, { title: string, description: string 
     }
 }
 
-export default connect(null, {initNCreateNewHiveAction, postNewHive})(NewHive);
+export default connect(null, dispatchers)(NewHive);

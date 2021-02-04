@@ -7,7 +7,18 @@ import {closeMyHivesAction} from "../../AppState/Actions";
 import FeedbackBar from "../FeedbackBar/FeedbackBar";
 import {AppFeature} from "../../AppState/AppFeature";
 
-class MyHivesModal extends React.Component<any, any> {
+let dispatchers = {closeMyHivesAction};
+type PropDispatchers = typeof dispatchers;
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        show: state.currentActiveFeature.feature === AppFeature.SavedHives,
+        defaultHive: state.user.defaultHiveId
+    }
+}
+type PropValues = ReturnType<typeof mapStateToProps>;
+
+class MyHivesModal extends React.Component<PropDispatchers & PropValues, any> {
     constructor(props: any) {
         super(props);
         this.onHide = this.onHide.bind(this);
@@ -52,11 +63,4 @@ class MyHivesModal extends React.Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        show: state.currentActiveFeature.feature === AppFeature.SavedHives,
-        defaultHive: state.user.defaultHiveId
-    }
-}
-
-export default connect(mapStateToProps, {closeMyHivesAction})(MyHivesModal)
+export default connect(mapStateToProps, dispatchers)(MyHivesModal)

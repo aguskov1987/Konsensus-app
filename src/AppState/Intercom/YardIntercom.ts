@@ -11,7 +11,7 @@ import {
 } from "../Actions";
 import {AxiosError} from "axios";
 
-export function loadUserSavedHives() {
+export function loadUserSavedHives(): any {
     return async function loadUserSavedHivesThunk(dispatch: any, getState: any) {
         YardService.loadUserSavedHives().then((response) => {
             dispatch(userSavedHivesLoaded(response.data));
@@ -25,7 +25,7 @@ export function loadUserSavedHives() {
     }
 }
 
-export function loadHive(id: string) {
+export function loadHive(id: string): any {
     return async function loadHiveThunk(dispatch: any, getState: any) {
         YardService.loadHive(id).then((hive) => {
             dispatch(hiveLoadedAction(hive.data));
@@ -39,7 +39,7 @@ export function loadHive(id: string) {
     }
 }
 
-export function postNewHive(title: string, description: string) {
+export function postNewHive(title: string, description: string): any {
     return async function postNewHiveThunk(dispatch: any, getState: any) {
         YardService.createNewHive(title, description).then((response) => {
             dispatch(newHiveCreatedAction(YardService.convertToViewModel(response.data)))
@@ -53,7 +53,7 @@ export function postNewHive(title: string, description: string) {
     }
 }
 
-export function searchYard(phrase: string) {
+export function searchYard(phrase: string): any {
     return async function searchYardThunk(dispatch: any, getState: any) {
         YardService.loadSearchResults(phrase).then((response) => {
             dispatch(
@@ -74,7 +74,7 @@ export function searchYard(phrase: string) {
     }
 }
 
-export function loadYardStart() {
+export function loadYardStart(): any {
     return async function loadYardStart(dispatch: any, getState: any) {
         YardService.loadInitialYard().then((response) => {
             dispatch(

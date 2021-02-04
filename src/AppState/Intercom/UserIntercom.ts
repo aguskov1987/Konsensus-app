@@ -9,6 +9,7 @@ import {
     userLoggedInAction
 } from "../Actions";
 import {AxiosResponse} from "axios";
+import {AppDispatch, AppGetState} from "../Store";
 
 /***
  * This composed function takes in username and password, logs in the user, loads the user
@@ -16,8 +17,8 @@ import {AxiosResponse} from "axios";
  * @param username
  * @param password
  */
-export function loginAndLoadUserAndLoadHive(username: string, password: string) {
-    return async function loginThunk(dispatch: any, getState: any) {
+export function loginAndLoadUserAndLoadHive(username: string, password: string): any {
+    return async function loginThunk(dispatch: AppDispatch, getState: AppGetState) {
         fetchLogin(dispatch, username, password).then(() => {
             fetchUser(dispatch).then((action) => {
                 if (action.payload.currentHiveId) {
@@ -35,15 +36,15 @@ export function loginAndLoadUserAndLoadHive(username: string, password: string) 
 /***
  * This composed function loads the user and retrieves the default hive overview if one is present on the user
  */
-export function loadUserAndLoadHive() {
-    return async function loadUserThunk(dispatch: any, getState: any) {
+export function loadUserAndLoadHive(): any {
+    return async function loadUserThunk(dispatch: AppDispatch, getState: AppGetState) {
         fetchUser(dispatch).then((action) => {
             if (action.payload.currentHiveId) {
                 fetchHiveManifest(dispatch, action.payload.currentHiveId).then(() => {})
             } else {
                 dispatch(openMyHivesAction());
             }
-        })
+        });
     }
 }
 

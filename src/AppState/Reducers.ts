@@ -67,7 +67,7 @@ export default function (state = initialAppState, action: Action): AppState {
                 savedHives: action.payload
             }
         case USER_SAVED_HIVES_LOAD_FAILED:
-            feature.feature = AppFeature.SavedHives;
+            feature.feature = AppFeature.Graph;
             feature.asyncStatus = AsyncOperation.Error;
             feature.errorIfAny = action.payload;
             return {

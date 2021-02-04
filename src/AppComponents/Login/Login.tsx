@@ -4,11 +4,15 @@ import {loadUserAndLoadHive, loginAndLoadUserAndLoadHive} from "../../AppState/I
 import {connect} from "react-redux";
 import {UserService} from "../../Services/UserService";
 
+let dispatchers = {loadUserAndLoadHive, loginAndLoadUserAndLoadHive};
+type PropDispatchers = typeof dispatchers;
+type ComponentState = {username: string, password: string};
+
 // TODO: implement validation for the field
 // TODO: implement loading screen
-class Login extends React.Component<any, any> {
+class Login extends React.Component<PropDispatchers, ComponentState> {
 
-    constructor(props: any) {
+    constructor(props: PropDispatchers) {
         super(props);
 
         this.state = {
@@ -65,4 +69,4 @@ class Login extends React.Component<any, any> {
     }
 }
 
-export default connect(null, {loginAndLoadUserAndLoadHive, loadUserAndLoadHive})(Login);
+export default connect(null, dispatchers)(Login);

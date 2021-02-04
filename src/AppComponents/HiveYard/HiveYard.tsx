@@ -8,7 +8,17 @@ import {HiveManifest} from "../../ViewModels/HiveManifest";
 import HiveCardRow from "../HiveCard/HiveCardRow";
 import {openCreateNewHiveAction} from "../../AppState/Actions";
 
-class HiveYard extends React.Component<any, any> {
+let dispatchers = {loadYardStart, searchYard, openCreateNewHiveAction};
+type PropDispatchers = typeof dispatchers;
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        foundHives: state.foundYardHives
+    }
+}
+type PropValues = ReturnType<typeof mapStateToProps>;
+
+class HiveYard extends React.Component<PropDispatchers & PropValues, any> {
     constructor(props: any) {
         super(props);
         this.searchHives = this.searchHives.bind(this);
@@ -18,6 +28,7 @@ class HiveYard extends React.Component<any, any> {
             searchPhrase: ''
         }
     }
+
     componentDidMount() {
         this.props.loadYardStart();
     }
@@ -42,9 +53,9 @@ class HiveYard extends React.Component<any, any> {
             <div>
                 <InputGroup className="mb-3" size="sm">
                     <FormControl onChange={this.updateSearchPhrase}
-                        placeholder="Search hives"
-                        aria-label="Search hives"
-                        aria-describedby="search hives"
+                                 placeholder="Search hives"
+                                 aria-label="Search hives"
+                                 aria-describedby="search hives"
                     />
                     <InputGroup.Append>
                         <Button onClick={this.searchHives} variant="secondary">Search</Button>
@@ -69,10 +80,4 @@ class HiveYard extends React.Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        foundHives: state.foundYardHives
-    }
-}
-
-export default connect(mapStateToProps, {loadYardStart, searchYard, openCreateNewHiveAction})(HiveYard);
+export default connect(mapStateToProps, dispatchers)(HiveYard);

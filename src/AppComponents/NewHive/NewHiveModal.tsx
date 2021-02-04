@@ -6,7 +6,17 @@ import {closeCreateNewHiveAction} from "../../AppState/Actions";
 import NewHive from "./NewHive";
 import {AppFeature} from "../../AppState/AppFeature";
 
-class NewHiveModal extends React.Component<any, any> {
+let dispatchers = {closeCreateNewHiveAction};
+type PropDispatchers = typeof dispatchers;
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        show: state.currentActiveFeature.feature === AppFeature.NewHive
+    }
+}
+type PropValues = ReturnType<typeof mapStateToProps>;
+
+class NewHiveModal extends React.Component<PropDispatchers & PropValues, any> {
     constructor(props: any) {
         super(props);
         this.onHide = this.onHide.bind(this);
@@ -22,7 +32,8 @@ class NewHiveModal extends React.Component<any, any> {
                 <Modal.Header closeButton>
                     <Modal.Title>
                         <div>
-                            <span style={{float: 'left'}}><img alt="New Hive" src="Images/new_hive.svg" style={{height: 45, width: 45}}/></span>
+                            <span style={{float: 'left'}}><img alt="New Hive" src="Images/new_hive.svg"
+                                                               style={{height: 45, width: 45}}/></span>
                             <span>New Hive</span>
                         </div>
                     </Modal.Title>
@@ -35,10 +46,4 @@ class NewHiveModal extends React.Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        show: state.currentActiveFeature.feature === AppFeature.NewHive
-    }
-}
-
-export default connect(mapStateToProps, {closeCreateNewHiveAction})(NewHiveModal)
+export default connect(mapStateToProps, dispatchers)(NewHiveModal)

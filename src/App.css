@@ -39,3 +39,8 @@ body, html {
 .rbt {
   width: 90%
 }
+
+/* HACK! SOMETHING IS NOT RIGHT WITH THE SPINNER SO HIDING IT FOR NOW*/
+.rbt-aux {
+  display: none;
+}

@@ -7,9 +7,20 @@ import {AsyncTypeahead} from "react-bootstrap-typeahead";
 import {FoundStatement} from "../../ViewModels/Statement";
 import {Button, InputGroup} from "react-bootstrap";
 
+let dispatchers = {loadStatementSearchResults, initStatementSearchAction, createNewStatement}
+type PropDispatchers = typeof dispatchers;
+
+const mapStateToProps = (state: AppState) => {
+    return {
+        options: state.foundStatements,
+        loading: state.statementSearchLoading
+    }
+}
+type PropValues = ReturnType<typeof mapStateToProps>;
+
 // The component uses react-bootstrap-typeahead
 // https://github.com/ericgio/react-bootstrap-typeahead
-class StatementFinderCreator extends React.Component<any, any> {
+class StatementFinderCreator extends React.Component<PropDispatchers & PropValues, { query: string }> {
     private timer: any;
 
     constructor(props: any) {
@@ -22,7 +33,8 @@ class StatementFinderCreator extends React.Component<any, any> {
         this.createNewStatement = this.createNewStatement.bind(this);
     }
 
-    private dummy(query: string){}
+    private dummy(query: string) {
+    }
 
     private handleLoadStatements() {
         this.props.initStatementSearchAction();
@@ -71,12 +83,4 @@ class StatementFinderCreator extends React.Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        options: state.foundStatements,
-        loading: state.statementSearchLoading
-    }
-}
-
-export default connect(mapStateToProps,
-    {loadStatementSearchResults, initStatementSearchAction, createNewStatement})(StatementFinderCreator);
+export default connect(mapStateToProps, dispatchers)(StatementFinderCreator);

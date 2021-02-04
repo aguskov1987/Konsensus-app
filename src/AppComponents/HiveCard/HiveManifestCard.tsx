@@ -6,8 +6,13 @@ import {connect} from "react-redux";
 import {loadHive} from "../../AppState/Intercom/YardIntercom";
 import Dial, {DialType} from "../Widgets/Dial";
 
+let dispatchers = {loadHive};
+type PropDispatchers = typeof dispatchers;
+
+type PropValues = {manifest: HiveManifest};
+
 // TODO: added stats into the footer
-class HiveManifestCard extends React.Component<{manifest: HiveManifest, loadHive: Function}, any> {
+class HiveManifestCard extends React.Component<PropDispatchers & PropValues, any> {
     constructor(props: any) {
         super(props);
         this.goToHive = this.goToHive.bind(this);
@@ -47,4 +52,4 @@ class HiveManifestCard extends React.Component<{manifest: HiveManifest, loadHive
     }
 }
 
-export default connect(null, {loadHive})(HiveManifestCard);
+export default connect(null, dispatchers)(HiveManifestCard);

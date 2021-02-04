@@ -16,7 +16,7 @@ export class YardService {
     }
 
     public static loadInitialYard(): Promise<AxiosResponse<ApiHiveManifest[]>> {
-        return axios.post<ApiHiveManifest[]>("/yard/start");
+        return axios.get<ApiHiveManifest[]>("/yard/start");
     }
 
     public static loadSearchResults(phrase: string): Promise<AxiosResponse<ApiHiveManifest[]>> {
