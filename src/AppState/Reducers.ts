@@ -47,6 +47,7 @@ export default function (state = initialAppState, action: Action): AppState {
             }
         case OPEN_MY_HIVES:
             feature.feature = AppFeature.SavedHives;
+            feature.asyncStatus = AsyncOperation.InProgress;
             return {
                 ...state,
                 currentActiveFeature: feature
@@ -67,7 +68,7 @@ export default function (state = initialAppState, action: Action): AppState {
                 savedHives: action.payload
             }
         case USER_SAVED_HIVES_LOAD_FAILED:
-            feature.feature = AppFeature.Graph;
+            feature.feature = AppFeature.SavedHives;
             feature.asyncStatus = AsyncOperation.Error;
             feature.errorIfAny = action.payload;
             return {
@@ -126,10 +127,9 @@ export default function (state = initialAppState, action: Action): AppState {
                 currentActiveHive: action.payload
             }
         case SUBGRAPH_LOADED:
-            let newHiveData = HiveService.mergeSubgraphIntoMainGraph(action.payload, state.mainGraph);
             return {
                 ...state,
-                mainGraph: newHiveData
+                lastLoadedSubGraph: action.payload
             }
         case INIT_CREATING_NEW_HIVE:
             feature.feature = AppFeature.NewHive;

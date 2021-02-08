@@ -1,7 +1,7 @@
 import {Statement} from "./Statement";
 import {Effect} from "./Effect";
 
-export class MainGraph {
+export class SubGraph {
     public statements: Statement[] = [];
     public effects: Effect[] = [];
 }

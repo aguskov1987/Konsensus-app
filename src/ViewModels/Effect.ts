@@ -1,4 +1,4 @@
-export class SynapseData {
+export class Effect {
     public id: string = '';
     public label: string = '';
     public source: string = '';
@@ -6,9 +6,4 @@ export class SynapseData {
     public myResponse: number = 0;
     public commonResponse: number = 0;
     public penetration: number = 0;
-}
-
-export class Effect {
-    public data: SynapseData = new SynapseData();
-    public color: string = 'black';
 }

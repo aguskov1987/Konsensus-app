@@ -13,6 +13,7 @@
     "@types/react-dom": "^16.9.10",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
+    "chroma.ts": "^1.0.10",
     "cytoscape": "^3.2.19",
     "jest-canvas-mock": "^2.3.0",
     "node-sass": "^4.14.1",

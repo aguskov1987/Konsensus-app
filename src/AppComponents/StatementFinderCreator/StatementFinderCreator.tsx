@@ -1,13 +1,13 @@
 import React from "react";
 import {connect} from "react-redux";
-import {createNewStatement, loadStatementSearchResults} from "../../AppState/Intercom/HiveIntercom";
+import {createNewStatement, loadStatementSearchResults, loadSubgraph} from "../../AppState/Intercom/HiveIntercom";
 import {AppState} from "../../AppState/AppState";
 import {initStatementSearchAction} from "../../AppState/Actions";
 import {AsyncTypeahead} from "react-bootstrap-typeahead";
 import {FoundStatement} from "../../ViewModels/Statement";
 import {Button, InputGroup} from "react-bootstrap";
 
-let dispatchers = {loadStatementSearchResults, initStatementSearchAction, createNewStatement}
+let dispatchers = {loadStatementSearchResults, initStatementSearchAction, createNewStatement, loadSubgraph}
 type PropDispatchers = typeof dispatchers;
 
 const mapStateToProps = (state: AppState) => {
@@ -30,6 +30,7 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
 
         this.dummy = this.dummy.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
+        this.loadStatement = this.loadStatement.bind(this);
         this.createNewStatement = this.createNewStatement.bind(this);
     }
 
@@ -56,6 +57,12 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
         this.props.createNewStatement(this.state.query);
     }
 
+    private loadStatement(event: FoundStatement[]) {
+        if (event && event.length && event.length === 1) {
+            this.props.loadSubgraph(event[0].id);
+        }
+    }
+
     render() {
         const filterBy = () => true;
         return (
@@ -70,6 +77,7 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
                         options={this.props.options}
                         filterBy={filterBy}
                         onInputChange={this.updateQuery}
+                        onChange={this.loadStatement}
                         renderMenuItemChildren={(option: FoundStatement) => (
                             <React.Fragment>{option.label}</React.Fragment>
                         )}>

@@ -34,11 +34,11 @@ class App extends React.Component<any, AppState> {
                             <StatementFinderCreator/>
                         </div>
                     </div>
-                    <div className='graph-control-container'>
-                        <GraphControls/>
-                    </div>
                     <div className='canvas-container'>
                         <GraphCanvas/>
+                    </div>
+                    <div className='graph-control-container'>
+                        <GraphControls/>
                     </div>
                 </div>
                 <SavedStatementsModal/>

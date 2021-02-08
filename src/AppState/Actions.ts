@@ -1,8 +1,8 @@
 import {ApiUser} from "../ApiModels/ApiUser";
 import {ApiHiveManifest} from "../ApiModels/ApiHiveManifest";
-import {ApiSubGraph} from "../ApiModels/ApiSubGraph";
 import {HiveManifest} from "../ViewModels/HiveManifest";
 import {FoundStatement} from "../ViewModels/Statement";
+import {SubGraph} from "../ViewModels/SubGraph";
 
 // region User
 export const USER_LOGGED_IN = "USER_LOGGED_IN";
@@ -145,8 +145,10 @@ export const hiveSearchFailedAction = (error: string) => ({
 
 // region Current Hive
 export const HIVE_LOADED = "HIVE_LOADED";
-export const SUBGRAPH_LOADED = "SUBGRAPH_LOADED";
 export const HIVE_LOAD_FAILED = "HIVE_LOAD_FAILED";
+export const SUBGRAPH_LOADED = "SUBGRAPH_LOADED";
+export const SUBGRAPH_LOAD_FAILED = "SUBGRAPH_LOAD_FAILED";
+
 
 export const hiveLoadedAction = (manifest: ApiHiveManifest) => ({
     type: HIVE_LOADED,
@@ -158,9 +160,14 @@ export const hiveLoadFailedAction = (error: string) => ({
     payload: error
 })
 
-export const subgraphLoadedAction = (data: ApiSubGraph) => ({
+export const subgraphLoadedAction = (data: SubGraph) => ({
     type: SUBGRAPH_LOADED,
     payload: data
+});
+
+export const subgraphLoadFailedAction = (error: string) => ({
+    type: SUBGRAPH_LOAD_FAILED,
+    payload: error
 });
 // endregion
 

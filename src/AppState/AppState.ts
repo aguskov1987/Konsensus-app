@@ -1,4 +1,4 @@
-import {MainGraph} from "../ViewModels/MainGraph";
+import {SubGraph} from "../ViewModels/SubGraph";
 import {HiveManifest} from "../ViewModels/HiveManifest";
 import {User} from "../ViewModels/User";
 import {HiveVisualisationParams} from "../ViewModels/HiveVisualisationParams";
@@ -7,7 +7,7 @@ import {CurrentActiveFeatureState} from "./CurrentActiveFeatureState";
 
 export class AppState {
     public currentActiveHive: HiveManifest = new HiveManifest();
-    public mainGraph: MainGraph = new MainGraph();
+    public lastLoadedSubGraph: SubGraph = new SubGraph();
 
     public user: User = new User();
     public savedHives: HiveManifest[] = [];
