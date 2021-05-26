@@ -1,6 +1,7 @@
 body, html {
   height: 100%;
   margin: 0;
+  background-color: #3e3e3e;
 }
 
 #root {
@@ -21,18 +22,15 @@ body, html {
   background-color: #3e3e3e;
 }
 
-.canvas-container {
-  height: calc(100% - 90px);
+.feedback-bar-container {
+  height: 3px;
+  width: 100%;
+  background-color: #1c2138;
 }
 
-.new-node-container {
-  height: 50px;
-  background-color: #353535;
-}
-
-.graph-control-container {
-  height: 40px;
-  background-color: #414141;
+.working-area {
+  width: 100%;
+  height: calc(100% - 3px);
 }
 
 /* HACK! USED TO INCREASE THE WIDTH OF THE STATEMENT SEARCH INPUT*/

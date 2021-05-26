@@ -1,18 +1,11 @@
 import React from "react";
 import {Card} from "react-bootstrap";
-import {HiveManifest} from "../../ViewModels/HiveManifest";
 import {Spring} from "react-spring/renderprops-universal";
-import {connect} from "react-redux";
-import {loadHive} from "../../AppState/Intercom/YardIntercom";
 import Dial, {DialType} from "../Widgets/Dial";
 
-let dispatchers = {loadHive};
-type PropDispatchers = typeof dispatchers;
-
-type PropValues = {manifest: HiveManifest};
 
 // TODO: added stats into the footer
-class HiveManifestCard extends React.Component<PropDispatchers & PropValues, any> {
+class HiveManifestCard extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.goToHive = this.goToHive.bind(this);
@@ -52,4 +45,4 @@ class HiveManifestCard extends React.Component<PropDispatchers & PropValues, any
     }
 }
 
-export default connect(null, dispatchers)(HiveManifestCard);
+export default HiveManifestCard;

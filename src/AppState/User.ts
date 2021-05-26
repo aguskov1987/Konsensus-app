@@ -1,5 +1,6 @@
-export class User {
-    public id: string = '';
+import {Model} from "./Model";
+
+export class User extends Model {
     public username: string = '';
     public defaultHiveId: string = '';
 }

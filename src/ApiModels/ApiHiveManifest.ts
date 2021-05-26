@@ -5,6 +5,5 @@ export class ApiHiveManifest {
     public activity: number = 0;
     public numberOfParticipants: number = 0;
     public numberOfStatements: number = 0;
-    public statementCollection: string = '';
-    public synapseCollection: string = '';
+    public collectionId: string = '';
 }

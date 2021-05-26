@@ -1,6 +1,6 @@
 import {ApiUser} from "../ApiModels/ApiUser";
-import {User} from "../ViewModels/User";
 import axios, {AxiosResponse} from "axios";
+import {User} from "../AppState/User";
 
 export class UserService {
 

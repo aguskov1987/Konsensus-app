@@ -1,28 +1,73 @@
 import React from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
 import {Core, Layouts} from "cytoscape";
-import FeedbackBar from "../FeedbackBar/FeedbackBar";
-import {AppState} from "../../AppState/AppState";
-import {connect} from "react-redux";
-import * as chroma from 'chroma.ts';
-
-const mapStateToProps = (state: AppState) => {
-    return {
-        graph: state.lastLoadedSubGraph
-    }
-}
-
-type PropValues = ReturnType<typeof mapStateToProps>;
+import GraphControls from "../GraphControls/GraphControls";
 
 let cyRef: Core;
 
-class GraphCanvas extends React.Component<PropValues, any> {
-    constructor(props: PropValues) {
+// region Graph Styles
+    let style: any = [
+        {
+            selector: 'node',
+            style: {
+                'width': 120,
+                'height': 50,
+                'shape': 'roundrectangle',
+                'label': 'data(label)',
+                'background-color': 'data(c)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'text-wrap': 'wrap',
+                'text-max-width': '100px',
+                'font-size': 8
+            }
+        },
+        {
+            selector: ':selected',
+            style: {
+                'border-width': 4,
+                'background-color': 'data(c)',
+                'border-color': '#ffffff',
+            }
+        },
+        {
+            selector: 'edge',
+            style: {
+                width: 5,
+                'curve-style': 'unbundled-bezier',
+                'control-point-distances': '20',
+                'control-point-weights': '0.2',
+                'target-arrow-shape': 'triangle',
+                'line-color': 'data(c)',
+                'target-arrow-color': 'data(c)'
+            }
+        },
+        {
+            selector: 'edge:selected',
+            style: {
+                width: 5,
+                'curve-style': 'unbundled-bezier',
+                'control-point-distances': '20',
+                'control-point-weights': '0.2',
+                'target-arrow-shape': 'triangle',
+                'line-color': 'white',
+                'target-arrow-color': 'white'
+            }
+        }
+    ];
+// endregion
+
+class GraphCanvas extends React.Component<any, any> {
+    constructor(props: any) {
         super(props);
         this.state = {
-            selectedStatement: undefined,
-            selectedEffect: undefined
+            selectedLabel: undefined
         };
+        this.updateDatum = this.updateDatum.bind(this);
+    }
+
+    updateDatum(id: string) {
+        // this.props.datumUpdatedAction(id);
     }
 
     componentDidMount() {
@@ -30,21 +75,25 @@ class GraphCanvas extends React.Component<PropValues, any> {
             if (event.target === cyRef) {
                 // ignore
             } else  if (event.target.isNode()) {
+                this.updateDatum(event.target.data().id);
                 this.setState({
-                    selectedEffect: undefined,
-                    selectedStatement: event.target.data()
+                    selectedLabel: event.target.data().label
                 })
             } else if (event.target.isEdge()) {
+                let s = event.target.source();
+                let t = event.target.target();
                 this.setState({
-                    selectedEffect: event.target.data(),
-                    selectedStatement: undefined
+                    selectedLabel: s.data().label + ' -> ' + t.data().label
                 })
             }
         })
     }
 
-    static getDerivedStateFromProps(props: PropValues, state: any) {
+    /*static getDerivedStateFromProps(props: any, state: any) {
+        console.log(props);
         if (cyRef != null) {
+            let firstLoad = cyRef.elements().length === 0;
+
             for (let s of props.graph.statements) {
                 if (cyRef.getElementById(s.id).length > 0) {
                     continue;
@@ -72,72 +121,55 @@ class GraphCanvas extends React.Component<PropValues, any> {
                 })
             }
 
-            // let layout: Layouts = cyRef.layout({name: "cose"});
-            // layout.run();
+            if (firstLoad) {
+                let layout: Layouts = cyRef.layout({name: "cose"});
+                layout.on('layoutstop', () => {
+                    let activeStatement: any = cyRef.getElementById(props.graph.datum.id)[0];
+                    activeStatement.select();
+
+                    cyRef.animate({
+                        fit: {
+                            eles: activeStatement,
+                            padding: 300
+                        }
+                    }, {
+                        duration: 300
+                    });
+                });
+                layout.run();
+            } else {
+                cyRef.elements().unselect();
+                let activeStatement: any = cyRef.getElementById(props.graph.datum.id)[0];
+                activeStatement.select();
+
+                cyRef.animate({
+                    fit: {
+                        eles: activeStatement,
+                        padding: 300
+                    }
+                }, {
+                    duration: 300
+                });
+            }
         }
         return null;
-    }
+    }*/
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
-                <FeedbackBar/>
+            <div style={{width: '100%', height: 'calc(100% - 50px)'}}>
                 <div style={{backgroundColor: '#2b2b2b', color: 'white', padding: 7, minHeight: 40}}>
-                    {this.state.selectedStatement?.label}
+                    {this.state.selectedLabel}
                 </div>
                 <CytoscapeComponent
                     cy={(cy) => cyRef = cy}
                     elements={[]}
-                    style={{width: '100%', height: 'calc(100% - 5px)'}}
-                    stylesheet={[
-                        {
-                            selector: 'node',
-                            style: {
-                                'width': 120,
-                                'height': 70,
-                                'shape': 'rectangle',
-                                'label': 'data(label)',
-                                'background-color': 'data(c)',
-                                'text-valign': 'center',
-                                'text-halign': 'center',
-                                'text-wrap': 'wrap',
-                                'text-max-width': '100px',
-                                'font-size': 8
-                            }
-                        },
-                        {
-                            selector: ':selected',
-                            style: {
-                                'border-width': 4,
-                                'background-color': 'data(c)',
-                                'border-color': '#ffffff',
-                            }
-                        },
-                        {
-                            selector: 'edge',
-                            style: {
-                                width: 5,
-                                'curve-style': 'bezier',
-                                'target-arrow-shape': 'triangle',
-                                'line-color': 'data(c)',
-                                'target-arrow-color': 'data(c)'
-                            }
-                        },
-                        {
-                            selector: 'edge:selected',
-                            style: {
-                                width: 5,
-                                'curve-style': 'bezier',
-                                'target-arrow-shape': 'triangle',
-                                'line-color': 'white',
-                                'target-arrow-color': 'white'
-                            }
-                        }
-                    ]}
-                />
+                    style={{width: '100%', height: 'calc(100% - 91px)'}}
+                    stylesheet={style}/>
+                <GraphControls/>
             </div>
         );
     }
 }
 
-export default connect(mapStateToProps, {})(GraphCanvas);
+export default GraphCanvas;

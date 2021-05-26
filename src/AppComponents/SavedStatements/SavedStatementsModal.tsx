@@ -1,9 +1,5 @@
 import React from "react";
 import {Modal} from "react-bootstrap";
-import {connect} from "react-redux";
-import {closeSavedStatementsAction} from "../../AppState/Actions";
-import {AppState} from "../../AppState/AppState";
-import {AppFeature} from "../../AppState/AppFeature";
 
 class SavedStatementsModal extends React.Component<any, any> {
     constructor(props: any) {
@@ -27,10 +23,4 @@ class SavedStatementsModal extends React.Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        show: state.currentActiveFeature.feature === AppFeature.SavedStatements
-    }
-}
-
-export default connect(mapStateToProps, {closeSavedStatementsAction})(SavedStatementsModal)
+export default SavedStatementsModal;

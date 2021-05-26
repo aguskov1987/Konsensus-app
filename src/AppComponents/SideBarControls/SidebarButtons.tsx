@@ -1,11 +1,16 @@
 import React from "react";
 import {Button, Image} from "react-bootstrap";
-import {connect} from "react-redux";
-import {openHiveYardAction, openMyHivesAction, openSavedStatementsAction} from "../../AppState/Actions";
+import {History} from "history";
+import {withRouter} from "react-router-dom";
+import {ActiveHiveState} from "../../AppState/State";
 
 class SidebarButtons extends React.Component<any, any> {
+    private history: History;
+
     constructor(props: any) {
         super(props);
+        this.history = props.history;
+
         this.openSavedStatements = this.openSavedStatements.bind(this);
         this.leaveApp = this.leaveApp.bind(this);
         this.openSavedHives = this.openSavedHives.bind(this);
@@ -13,11 +18,13 @@ class SidebarButtons extends React.Component<any, any> {
     }
 
     openSavedHives() {
-        this.props.openMyHivesAction();
+        this.checkIfLeavingGraphArea();
+        this.history.push('/saved-hives');
     }
 
     openSavedStatements() {
-        this.props.openSavedStatementsAction();
+        this.checkIfLeavingGraphArea();
+        this.history.push('/saved-statements');
     }
 
     leaveApp() {
@@ -25,7 +32,14 @@ class SidebarButtons extends React.Component<any, any> {
     }
 
     openYard() {
-        this.props.openHiveYardAction();
+        this.checkIfLeavingGraphArea();
+        this.history.push('/yard');
+    }
+
+    private checkIfLeavingGraphArea() {
+        if (this.history.location.pathname === '/') {
+            ActiveHiveState.notifyOfLeavingGraphArea();
+        }
     }
 
     render() {
@@ -56,5 +70,4 @@ class SidebarButtons extends React.Component<any, any> {
     }
 }
 
-export default connect(null,
-    {openSavedStatementsAction, openMyHivesAction, openHiveYardAction})(SidebarButtons);
+export default withRouter(SidebarButtons);

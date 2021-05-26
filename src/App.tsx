@@ -1,19 +1,19 @@
 import React from 'react';
 import './App.css';
 import SidebarButtons from './AppComponents/SideBarControls/SidebarButtons';
-import GraphControls from "./AppComponents/GraphControls/GraphControls";
-import GraphCanvas from './AppComponents/GraphCanvas/GraphCanvas';
-import {AppState} from "./AppState/AppState";
 import SavedStatementsModal from "./AppComponents/SavedStatements/SavedStatementsModal";
-import LoginModal from "./AppComponents/Login/LoginModal";
-import MyHivesModal from "./AppComponents/MyHives/MyHivesModal";
 import {configureAxios} from "./Services/CommonService";
-import HiveYardModal from "./AppComponents/HiveYard/HiveYardModal";
-import NewHiveModal from "./AppComponents/NewHive/NewHiveModal";
-import {connect} from "react-redux";
-import StatementFinderCreator from "./AppComponents/StatementFinderCreator/StatementFinderCreator";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import HiveGraph from "./AppComponents/HiveGraph/HiveGraph";
+import Login from "./AppComponents/Login/Login";
+import HiveYard from "./AppComponents/HiveYard/HiveYard";
+import MyHives from "./AppComponents/MyHives/MyHives";
+import NewHive from "./AppComponents/NewHive/NewHive";
+import CreateStatement from "./AppComponents/CreateStatement/CreateStatement";
+import FeedbackBar from "./AppComponents/FeedbackBar/FeedbackBar";
 
-class App extends React.Component<any, AppState> {
+class App extends React.Component<any, any> {
+
     constructor(props: any) {
         super(props);
         configureAxios();
@@ -22,39 +22,44 @@ class App extends React.Component<any, AppState> {
     render() {
         return (
             <div id='root'>
-                <div className='controls-container'>
-                    <SidebarButtons/>
-                </div>
-                <div className='right-side'>
-                    <div className='new-node-container'>
-                        <div style={{width: '50%', float: 'left', color: 'white', marginTop: 10, marginLeft: 10}}>
-                            {this.props.hiveTitle}
+                <BrowserRouter>
+                    <div className='controls-container'>
+                        <SidebarButtons/>
+                    </div>
+                    <div className='right-side'>
+                        <div className='feedback-bar-container'>
+                            <FeedbackBar/>
                         </div>
-                        <div style={{width: 'calc(50% - 10px)', float: 'left', marginTop: 7}}>
-                            <StatementFinderCreator/>
+                        <div className='working-area'>
+                            <Switch>
+                                <Route exact path="/">
+                                    <HiveGraph/>
+                                </Route>
+                                <Route path="/enter">
+                                    <Login/>
+                                </Route>
+                                <Route path="/yard">
+                                    <HiveYard/>
+                                </Route>
+                                <Route path="/saved-hives">
+                                    <MyHives/>
+                                </Route>
+                                <Route path="/new-hive">
+                                    <NewHive/>
+                                </Route>
+                                <Route path="/new-statement">
+                                    <CreateStatement/>
+                                </Route>
+                                <Route path="/saved-statements">
+                                    <SavedStatementsModal/>
+                                </Route>
+                            </Switch>
                         </div>
                     </div>
-                    <div className='canvas-container'>
-                        <GraphCanvas/>
-                    </div>
-                    <div className='graph-control-container'>
-                        <GraphControls/>
-                    </div>
-                </div>
-                <SavedStatementsModal/>
-                <LoginModal/>
-                <MyHivesModal/>
-                <HiveYardModal/>
-                <NewHiveModal/>
+                </BrowserRouter>
             </div>
         )
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        hiveTitle: state.currentActiveHive.title
-    }
-}
-
-export default connect(mapStateToProps, {})(App);
+export default App;

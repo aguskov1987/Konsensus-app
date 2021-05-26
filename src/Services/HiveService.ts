@@ -1,10 +1,10 @@
-import {SubGraph} from "../ViewModels/SubGraph";
 import axios, {AxiosResponse} from "axios";
-import {FoundStatement} from "../ViewModels/Statement";
+import {FoundStatement} from "../AppState/FoundStatement";
+import {SubGraph} from "../AppState/SubGraph";
 
 export class HiveService {
-    public static loadStatementSearchResults(phrase: string, viewId: string): Promise<AxiosResponse<FoundStatement[]>> {
-        return axios.post<any>("/hive/search", {phrase, viewId});
+    public static loadStatementSearchResults(phrase: string, identifier: string): Promise<AxiosResponse<FoundStatement[]>> {
+        return axios.post<any>("/hive/search", {phrase, identifier});
     }
 
     public static createNewStatement(statement: string, hiveId: string, statementCollectionId: string): Promise<AxiosResponse<SubGraph>> {

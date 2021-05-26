@@ -1,19 +1,20 @@
 import React from "react";
 import {Button, Form} from "react-bootstrap";
-import {loadUserAndLoadHive, loginAndLoadUserAndLoadHive} from "../../AppState/Intercom/UserIntercom";
-import {connect} from "react-redux";
 import {UserService} from "../../Services/UserService";
+import {withRouter} from "react-router-dom";
+import {History} from "history";
+import {AxiosError} from "axios";
 
-let dispatchers = {loadUserAndLoadHive, loginAndLoadUserAndLoadHive};
-type PropDispatchers = typeof dispatchers;
 type ComponentState = {username: string, password: string};
 
 // TODO: implement validation for the field
 // TODO: implement loading screen
-class Login extends React.Component<PropDispatchers, ComponentState> {
+class Login extends React.Component<any, ComponentState> {
+    private history: History;
 
-    constructor(props: PropDispatchers) {
+    constructor(props: any) {
         super(props);
+        this.history = props.history;
 
         this.state = {
             username: "",
@@ -27,7 +28,7 @@ class Login extends React.Component<PropDispatchers, ComponentState> {
 
     componentDidMount() {
         if (UserService.isJwtValid()) {
-            this.props.loadUserAndLoadHive();
+            this.history.push('/');
         }
     }
 
@@ -44,21 +45,25 @@ class Login extends React.Component<PropDispatchers, ComponentState> {
     }
 
     onSubmit(event: any) {
-        // TODO: handle wrong credentials
-        this.props.loginAndLoadUserAndLoadHive(this.state.username, this.state.password);
+        UserService.login(this.state.username, this.state.password).then((token) => {
+            UserService.saveJwt(token.data);
+            this.history.push('/');
+        }).catch((error: AxiosError) => {
+            console.log(error);
+        });
         event.preventDefault();
     }
 
     render() {
         return (
-            <Form onSubmit={this.onSubmit}>
+            <Form onSubmit={this.onSubmit} style={{padding: 500, paddingTop: 100}}>
                 <Form.Group controlId="formUser">
-                    <Form.Label>Username</Form.Label>
+                    <Form.Label style={{color: 'white'}}>Username</Form.Label>
                     <Form.Control type="text" placeholder="Username" onChange={this.updateUserName}/>
                 </Form.Group>
 
                 <Form.Group controlId="formPassword">
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label style={{color: 'white'}}>Password</Form.Label>
                     <Form.Control type="password" placeholder="Password" onChange={this.updateUserPassword}/>
                 </Form.Group>
                 <Button variant="primary" type="submit">
@@ -69,4 +74,4 @@ class Login extends React.Component<PropDispatchers, ComponentState> {
     }
 }
 
-export default connect(null, dispatchers)(Login);
+export default withRouter(Login);

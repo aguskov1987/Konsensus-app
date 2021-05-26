@@ -1,111 +1,64 @@
 import React from "react";
-import {connect} from "react-redux";
-import {loadUserSavedHives} from "../../AppState/Intercom/YardIntercom";
-import {AppState} from "../../AppState/AppState";
-import {Button, Card, CardDeck} from "react-bootstrap";
-import {openCreateNewHiveAction, openHiveYardAction} from "../../AppState/Actions";
-import {HiveManifest} from "../../ViewModels/HiveManifest";
+import {Button, ButtonGroup, Card, CardDeck} from "react-bootstrap";
+import {HiveManifest} from "../../AppState/HiveManifest";
+import {History} from "history";
+import {withRouter} from "react-router-dom";
+import HiveManifestCard from "../HiveCard/HiveManifestCard";
 
 // TODO: REFACTOR!
 class MyHives extends React.Component<any, any> {
+    private history: History;
+
     constructor(props: any) {
         super(props);
+
+        this.history = props.history;
+        this.state = {
+            hives: []
+        }
 
         this.goToYard = this.goToYard.bind(this);
         this.goToCreateNewHive = this.goToCreateNewHive.bind(this);
     }
 
     componentDidMount() {
-        this.props.loadUserSavedHives();
+        // this.props.loadUserSavedHives();
     }
 
     goToYard() {
-        this.props.openHiveYardAction();
+        this.history.push('/yard');
     }
 
     goToCreateNewHive() {
-        this.props.openCreateNewHiveAction();
+        this.history.push('/new-hive');
     }
 
     render() {
-        let inner;
-        if (!this.props.savedHives || this.props.savedHives.length < 1) {
-            inner = (
-                <Card style={{width: '100%'}}>
-                    <Card.Img variant="top" src="Images/empty_saved_hives.svg"/>
-                    <Card.Body>
-                        <Card.Title>Nothing here.</Card.Title>
-                        <Card.Text>
-                            Looks like you do not have any saved hives.
-                        </Card.Text>
-                        <Button variant="secondary" onClick={this.goToCreateNewHive} style={{marginRight: 5}}>
-                            Start a new hive
-                        </Button>
-                        <Button variant="secondary" onClick={this.goToYard}>Go to the yard</Button>
-                    </Card.Body>
-                </Card>)
-        } else if (this.props.savedHives.length > 0) {
-            const reducer = (r: any, v: any, i: any, a: any) => {
-                if (i % 2 === 0)
-                    r.push(a.slice(i, i + 2));
-                return r;
-            }
-            let result = (this.props.savedHives as HiveManifest[]).reduce(reducer, []);
-            inner = (
-                <div style={{width: '100%'}}>
-                    {result.map((pair: [HiveManifest, HiveManifest], idx: any) => {
-                        if (pair.length === 2) {
-                            return (
-                                <CardDeck key={idx}>
-                                    <Card bg="light">
-                                        <Card.Header>{pair[0].title}</Card.Header>
-                                        <Card.Body>
-                                            <Card.Text>
-                                                {pair[0].description}
-                                            </Card.Text>
-                                        </Card.Body>
-                                    </Card>
-                                    <Card bg="light">
-                                        <Card.Header>{pair[1].title}</Card.Header>
-                                        <Card.Body>
-                                            <Card.Text>
-                                                {pair[1].description}
-                                            </Card.Text>
-                                        </Card.Body>
-                                    </Card>
-                                </CardDeck>
-                            )
-                        } else {
-                            return (
-                                <CardDeck key={idx}>
-                                    <Card bg="light">
-                                        <Card.Header>{pair[0].title}</Card.Header>
-                                        <Card.Body>
-                                            <Card.Text>
-                                                {pair[0].description}
-                                            </Card.Text>
-                                        </Card.Body>
-                                    </Card>
-                                </CardDeck>
-                            )
-                        }
-                    })}
-                    <Button variant="secondary" onClick={this.goToCreateNewHive} style={{marginTop: 10}}>
-                        Start a new hive
-                    </Button>
-                </div>)
-        }
         return (
-            <div>{inner}</div>
+            <div style={{padding: 20, height: '100%', position: 'relative'}}>
+                <Card border="primary" bg="light" style={{height: '88%'}}>
+                    <Card.Body>
+                        <div>
+                            {this.state.hives.map((hive, idx) => {
+                                return (
+                                    <HiveManifestCard key={idx} manifest={hive}/>
+                                )
+                            })}
+                        </div>
+                    </Card.Body>
+                </Card>
+                <ButtonGroup  style={{bottom: 10, position: 'absolute'}}>
+                    <Button variant="secondary" onClick={this.goToCreateNewHive}>
+                        Start New Hive
+                    </Button>
+                    <Button variant="secondary" onClick={this.goToYard}>
+                        Go to Yard
+                    </Button>
+                </ButtonGroup >
+            </div>
         )
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        savedHives: state.savedHives,
-    }
-}
 
-export default connect(mapStateToProps,
-    {loadUserSavedHives, openHiveYardAction, openCreateNewHiveAction})(MyHives);
+export default withRouter(MyHives);

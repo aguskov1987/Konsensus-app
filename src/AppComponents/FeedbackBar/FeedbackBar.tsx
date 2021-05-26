@@ -1,8 +1,5 @@
 import React from "react";
-import {AppState} from "../../AppState/AppState";
-import {connect} from "react-redux";
 import {Keyframes} from "react-spring/renderprops";
-import {AsyncOperation} from "../../AppState/AsyncOperation";
 
 const Blinker: any = Keyframes.Spring({
     blinkSuccess: [
@@ -30,24 +27,17 @@ const Blinker: any = Keyframes.Spring({
 
 class FeedbackBar extends React.Component<any, any> {
     render() {
-        let state: AsyncOperation = this.props.status;
-        let action = '';
-        if (state === AsyncOperation.InProgress) {
-            action = 'blinkLoading'
-        } else if (state === AsyncOperation.Done) {
-            action = 'blinkSuccess'
-        } else if (state === AsyncOperation.Error) {
-            action = 'blinkError'
-        }
+        let state = this.props.status;
+        let action = 'blinkSuccess';
 
         return (
             <Blinker state={action} config={{duration: 150}}>
                 {(props: any) => (
                     <div style={{
                         width: '100%',
-                        height: 5,
+                        height: '100%',
                         backgroundColor: props.backgroundColor,
-                        filter: 'drop-shadow(0 1mm 0.5mm #006622)'
+                        filter: 'drop-shadow(0 0.5mm 0.5mm #006622)'
                     }}>.</div>
                 )}
             </Blinker>
@@ -55,10 +45,4 @@ class FeedbackBar extends React.Component<any, any> {
     }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        status: state.currentActiveFeature.asyncStatus,
-    }
-}
-
-export default connect(mapStateToProps, {})(FeedbackBar);
+export default FeedbackBar;

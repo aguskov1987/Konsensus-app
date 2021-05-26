@@ -1,32 +1,29 @@
 import React from "react";
-import {connect} from "react-redux";
-import {createNewStatement, loadStatementSearchResults, loadSubgraph} from "../../AppState/Intercom/HiveIntercom";
-import {AppState} from "../../AppState/AppState";
-import {initStatementSearchAction} from "../../AppState/Actions";
 import {AsyncTypeahead} from "react-bootstrap-typeahead";
-import {FoundStatement} from "../../ViewModels/Statement";
 import {Button, InputGroup} from "react-bootstrap";
+import {LoadingStatus} from "../../AppState/LoadingStatus";
+import {FoundStatement} from "../../AppState/FoundStatement";
+import {ActiveHiveState} from "../../AppState/State";
+import {Subscription} from "rxjs";
 
-let dispatchers = {loadStatementSearchResults, initStatementSearchAction, createNewStatement, loadSubgraph}
-type PropDispatchers = typeof dispatchers;
-
-const mapStateToProps = (state: AppState) => {
-    return {
-        options: state.foundStatements,
-        loading: state.statementSearchLoading
-    }
+class InternalState {
+    public query: string = '';
+    public loadingStatus: LoadingStatus = LoadingStatus.Ready;
+    public foundStatements: FoundStatement[] = [];
 }
-type PropValues = ReturnType<typeof mapStateToProps>;
+
 
 // The component uses react-bootstrap-typeahead
 // https://github.com/ericgio/react-bootstrap-typeahead
-class StatementFinderCreator extends React.Component<PropDispatchers & PropValues, { query: string }> {
+class StatementFinderCreator extends React.Component<any, InternalState> {
     private timer: any;
+    private foundStatementSub: Subscription = new Subscription();
+    private foundStatementsStatusSub: Subscription = new Subscription();
 
     constructor(props: any) {
         super(props);
 
-        this.state = {query: ''}
+        this.state = new InternalState();
 
         this.dummy = this.dummy.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
@@ -34,12 +31,29 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
         this.createNewStatement = this.createNewStatement.bind(this);
     }
 
+    public componentDidMount() {
+        this.foundStatementSub = ActiveHiveState.foundStatements.notifier.subscribe((statements) => {
+            this.setState({
+                foundStatements: statements
+            })
+        });
+        this.foundStatementsStatusSub = ActiveHiveState.foundStatements.status.subscribe((status) => {
+            this.setState({
+                loadingStatus: status
+            })
+        });
+    }
+
+    public componentWillUnmount() {
+        this.foundStatementSub.unsubscribe();
+        this.foundStatementsStatusSub.unsubscribe();
+    }
+
     private dummy(query: string) {
     }
 
-    private handleLoadStatements() {
-        this.props.initStatementSearchAction();
-        this.props.loadStatementSearchResults(this.state.query);
+    private handleLoadSearchResults() {
+        ActiveHiveState.searchStatements(this.state.query);
     }
 
     private updateQuery(event: any) {
@@ -48,18 +62,18 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
         clearTimeout(this.timer);
 
         this.timer = setTimeout(() => {
-            this.handleLoadStatements();
+            this.handleLoadSearchResults();
             this.timer = null;
         }, 1000)
     }
 
     private createNewStatement() {
-        this.props.createNewStatement(this.state.query);
+        // go to create new statement
     }
 
     private loadStatement(event: FoundStatement[]) {
         if (event && event.length && event.length === 1) {
-            this.props.loadSubgraph(event[0].id);
+            ActiveHiveState.loadSubgraph(event[0].id);
         }
     }
 
@@ -72,9 +86,9 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
                         emptyLabel="Nothing catches the eye. Add a new statement to kickstart a discussion!"
                         id="search-statements-typeahead"
                         size="small"
-                        isLoading={this.props.loading}
+                        isLoading={this.state.loadingStatus === LoadingStatus.Pending}
                         onSearch={this.dummy}
-                        options={this.props.options}
+                        options={this.state.foundStatements}
                         filterBy={filterBy}
                         onInputChange={this.updateQuery}
                         onChange={this.loadStatement}
@@ -91,4 +105,4 @@ class StatementFinderCreator extends React.Component<PropDispatchers & PropValue
     }
 }
 
-export default connect(mapStateToProps, dispatchers)(StatementFinderCreator);
+export default StatementFinderCreator;

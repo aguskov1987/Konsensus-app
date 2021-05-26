@@ -1,5 +1,6 @@
-export class HiveManifest {
-    public id: string = '';
+import {Model} from "./Model";
+
+export class HiveManifest extends Model{
     public title: string = '';
     public description: string = '';
     public numberOfParticipants: number = 0;
