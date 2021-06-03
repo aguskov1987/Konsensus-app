@@ -4,16 +4,18 @@ import {LoadingStatus} from "./LoadingStatus";
 import cloneDeep from "lodash.clonedeep";
 
 export class StatefulObject<T extends Model | Model[] | null> {
-    public value: T = null as any;
-    public notifier: Subject<T> = new Subject<T>();
-    public status: Subject<LoadingStatus> = new Subject<LoadingStatus>();
+    private value: T = null as any;
+
+    public valueUpdatedEvent: Subject<T> = new Subject<T>();
+    public statusUpdatedEvent: Subject<LoadingStatus> = new Subject<LoadingStatus>();
+
     public error: string = '';
     public history: T[] = [];
 
-    public update(value: T) {
+    public updateValue(value: T) {
         this.history.push(cloneDeep(this.value));
 
-        this.notifier.next(value);
+        this.valueUpdatedEvent.next(value);
         this.value = value;
 
         if (this.history.length > 100) {
@@ -21,23 +23,27 @@ export class StatefulObject<T extends Model | Model[] | null> {
         }
     }
 
+    public getValue(): T {
+        return cloneDeep(this.value);
+    }
+
     public setStatusPending() {
-        this.status.next(LoadingStatus.Pending);
+        this.statusUpdatedEvent.next(LoadingStatus.Pending);
         this.error = '';
     }
 
     public setStatusLoaded() {
-        this.status.next(LoadingStatus.Loaded);
+        this.statusUpdatedEvent.next(LoadingStatus.Loaded);
         this.error = '';
     }
 
     public setStatusError(error: string) {
-        this.status.next(LoadingStatus.Error);
+        this.statusUpdatedEvent.next(LoadingStatus.Error);
         this.error = error;
     }
 
     public resetStatus() {
-        this.status.next(LoadingStatus.Ready);
+        this.statusUpdatedEvent.next(LoadingStatus.Ready);
         this.error = '';
     }
 }

@@ -2,9 +2,9 @@ import React from "react";
 import {Button, ButtonGroup, Card} from "react-bootstrap";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
-import HiveManifestCard from "../HiveCard/HiveManifestCard";
+import HiveCardComponent from "../HiveCard/HiveCardComponent";
 
-class MyHives extends React.Component<any, any> {
+class MyHivesComponent extends React.Component<any, any> {
     private history: History;
 
     constructor(props: any) {
@@ -39,7 +39,7 @@ class MyHives extends React.Component<any, any> {
                         <div>
                             {this.state.hives.map((hive, idx) => {
                                 return (
-                                    <HiveManifestCard key={idx} manifest={hive}/>
+                                    <HiveCardComponent key={idx} manifest={hive}/>
                                 )
                             })}
                         </div>
@@ -58,4 +58,4 @@ class MyHives extends React.Component<any, any> {
     }
 }
 
-export default withRouter(MyHives);
+export default withRouter(MyHivesComponent);

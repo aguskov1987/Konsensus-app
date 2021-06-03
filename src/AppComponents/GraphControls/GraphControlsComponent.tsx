@@ -3,7 +3,7 @@ import {Button, ButtonGroup, Dropdown, DropdownButton, Image, ToggleButton} from
 import Hint, {HintType} from "./Hint";
 import {ButtonCommand, HiveOperationsState} from "../../AppState/State";
 
-class GraphControls extends React.Component<any, any> {
+class GraphControlsComponent extends React.Component<any, any> {
     private graphView: any = [
         {name: 'All', value: '1'},
         {name: 'Mine', value: '2'},
@@ -64,7 +64,7 @@ class GraphControls extends React.Component<any, any> {
                     ))}
                 </ButtonGroup>
                 <span style={{marginRight: 10}}/>
-                <ButtonGroup aria-label="Zoom, pan, select and connect statements and effects">
+                <ButtonGroup aria-label="Zoom, pan, select and connect points and synapses">
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Zoom)}
                             onKeyDown={(event) => {this.processZoom(event)}} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/zoom_icon.svg"/>
@@ -108,21 +108,21 @@ class GraphControls extends React.Component<any, any> {
         } else if (event.key === 'd') {
             HiveOperationsState.lastButtonCommand.next(ButtonCommand.Disagree);
         } else if (event.key === 'e') {
-            HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsEffect);
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsTo);
         } else if (event.key === 'c') {
-            HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsCause);
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsFrom);
         }else if (event.key === 'q') {
             HiveOperationsState.lastButtonCommand.next(ButtonCommand.Discard);
         } else if (event.key === 'ArrowUp') {
-            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextStatement);
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextPoint);
         } else if (event.key === 'ArrowDown') {
-            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectPreviousStatement);
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectPreviousPoint);
         } else if (event.key === 'ArrowLeft') {
-            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectPreviousEffect);
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectPreviousSynapse);
         } else if (event.key === 'ArrowRight') {
-            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextEffect);
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextSynapse);
         }
     }
 }
 
-export default GraphControls;
+export default GraphControlsComponent;

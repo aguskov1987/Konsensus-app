@@ -25,7 +25,7 @@ const Blinker: any = Keyframes.Spring({
     ]
 });
 
-class FeedbackBar extends React.Component<any, any> {
+class FeedbackBarComponent extends React.Component<any, any> {
     render() {
         let state = this.props.status;
         let action = 'blinkSuccess';
@@ -45,4 +45,4 @@ class FeedbackBar extends React.Component<any, any> {
     }
 }
 
-export default FeedbackBar;
+export default FeedbackBarComponent;

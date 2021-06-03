@@ -1,15 +1,15 @@
 import {Model} from "./Model";
-import {Statement} from "./Statement";
-import {Effect} from "./Effect";
+import {Point} from "./Point";
+import {Synapse} from "./Synapse";
 import {Position} from "cytoscape";
 
 export class SubGraph extends Model {
-    public statements: Statement[] = [];
-    public effects: Effect[] = [];
-    public origin: Statement = new Statement();
+    public points: Point[] = [];
+    public synapses: Synapse[] = [];
+    public origin: Point = new Point();
 }
 
-export class StashedStatement {
+export class StashedPoint {
     public id: string = '';
     public label: string = '';
     public position: Position = {x: 0, y: 0};
@@ -18,7 +18,7 @@ export class StashedStatement {
     public penetration: number = 0;
 }
 
-export class StashedEffect {
+export class StashedSynapse {
     public id: string = '';
     public source: string  = '';
     public target: string = '';
@@ -28,8 +28,8 @@ export class StashedEffect {
 }
 
 export class StashedSubGraph {
-    public statements: StashedStatement[] = [];
-    public effects: StashedEffect[] = [];
+    public points: StashedPoint[] = [];
+    public synapses: StashedSynapse[] = [];
     public pan: Position = {x: 0, y: 0};
     public zoom: number = 0;
 }

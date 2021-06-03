@@ -33,7 +33,7 @@ body, html {
   height: calc(100% - 3px);
 }
 
-/* HACK! USED TO INCREASE THE WIDTH OF THE STATEMENT SEARCH INPUT*/
+/* HACK! USED TO INCREASE THE WIDTH OF THE POINT SEARCH INPUT*/
 .rbt {
   width: 90%
 }

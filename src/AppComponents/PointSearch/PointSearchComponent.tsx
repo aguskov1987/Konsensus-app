@@ -2,7 +2,7 @@ import React from "react";
 import {AsyncTypeahead} from "react-bootstrap-typeahead";
 import {Button, InputGroup} from "react-bootstrap";
 import {LoadingStatus} from "../../AppState/LoadingStatus";
-import {FoundStatement} from "../../AppState/FoundStatement";
+import {FoundPoint} from "../../AppState/FoundPoint";
 import {ActiveHiveState} from "../../AppState/State";
 import {concat, Subscription} from "rxjs";
 import {History} from "history";
@@ -11,19 +11,19 @@ import {withRouter} from "react-router-dom";
 class InternalState {
     public query: string = '';
     public loadingStatus: LoadingStatus = LoadingStatus.Ready;
-    public foundStatements: FoundStatement[] = [];
+    public found: FoundPoint[] = [];
 }
 
 
 // The component uses react-bootstrap-typeahead
 // https://github.com/ericgio/react-bootstrap-typeahead
-class StatementFinderCreator extends React.Component<any, InternalState> {
+class PointSearchComponent extends React.Component<any, InternalState> {
     private timer: any;
-    private foundStatementSub: Subscription = new Subscription();
-    private foundStatementsStatusSub: Subscription = new Subscription();
+    private foundSub: Subscription = new Subscription();
+    private foundStatusSub: Subscription = new Subscription();
     private history: History;
 
-    private statementTextSub: Subscription = new Subscription();
+    private textSub: Subscription = new Subscription();
     private graphSub: Subscription = new Subscription();
 
     constructor(props: any) {
@@ -34,17 +34,17 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
 
         this.dummy = this.dummy.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
-        this.loadStatement = this.loadStatement.bind(this);
-        this.createNewStatement = this.createNewStatement.bind(this);
+        this.loadPoint = this.loadPoint.bind(this);
+        this.createPoint = this.createPoint.bind(this);
     }
 
     public componentDidMount() {
-        this.foundStatementSub = ActiveHiveState.foundStatements.notifier.subscribe((statements) => {
+        this.foundSub = ActiveHiveState.foundPoints.valueUpdatedEvent.subscribe((points) => {
             this.setState({
-                foundStatements: statements
+                found: points
             })
         });
-        this.foundStatementsStatusSub = ActiveHiveState.foundStatements.status.subscribe((status) => {
+        this.foundStatusSub = ActiveHiveState.foundPoints.statusUpdatedEvent.subscribe((status) => {
             this.setState({
                 loadingStatus: status
             })
@@ -55,13 +55,13 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
     }
 
     private handleLoadSearchResults() {
-        ActiveHiveState.searchStatements(this.state.query);
+        ActiveHiveState.searchPoints(this.state.query);
     }
 
     public componentWillUnmount() {
-        this.foundStatementSub.unsubscribe();
-        this.foundStatementsStatusSub.unsubscribe();
-        this.statementTextSub.unsubscribe();
+        this.foundSub.unsubscribe();
+        this.foundStatusSub.unsubscribe();
+        this.textSub.unsubscribe();
         this.graphSub.unsubscribe();
     }
 
@@ -71,21 +71,21 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
             <div>
                 <InputGroup className="mb-3" size="sm">
                     <AsyncTypeahead
-                        emptyLabel="Nothing catches the eye. Add a new statement to kickstart a discussion!"
-                        id="search-statements-typeahead"
+                        emptyLabel="No Results"
+                        id="search-point-typeahead"
                         size="small"
                         isLoading={this.state.loadingStatus === LoadingStatus.Pending}
                         onSearch={this.dummy}
-                        options={this.state.foundStatements}
+                        options={this.state.found}
                         filterBy={filterBy}
                         onInputChange={this.updateQuery}
-                        onChange={this.loadStatement}
-                        renderMenuItemChildren={(option: FoundStatement) => (
+                        onChange={this.loadPoint}
+                        renderMenuItemChildren={(option: FoundPoint) => (
                             <React.Fragment>{option.label}</React.Fragment>
                         )}>
                     </AsyncTypeahead>
                     <InputGroup.Append>
-                        <Button variant="secondary" onClick={this.createNewStatement}>New</Button>
+                        <Button variant="secondary" onClick={this.createPoint}>New</Button>
                     </InputGroup.Append>
                 </InputGroup>
             </div>
@@ -103,25 +103,25 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
         }, 1000)
     }
 
-    private createNewStatement() {
-        this.statementTextSub = ActiveHiveState.newStatementText.onStash.subscribe(() => {
-            ActiveHiveState.newStatementText.put(this.state.query);
+    private createPoint() {
+        this.textSub = ActiveHiveState.newPointText.onStash.subscribe(() => {
+            ActiveHiveState.newPointText.put(this.state.query);
         });
 
-        this.graphSub = concat(ActiveHiveState.newStatementText.onStashed, ActiveHiveState.graphStash.onStashed)
+        this.graphSub = concat(ActiveHiveState.newPointText.onStashed, ActiveHiveState.graphStash.onStashed)
             .subscribe(() => {
-                this.history.push('new-statement');
+                this.history.push('new-point');
             })
 
-        ActiveHiveState.newStatementText.stash();
+        ActiveHiveState.newPointText.stash();
         ActiveHiveState.graphStash.stash();
     }
 
-    private loadStatement(event: FoundStatement[]) {
+    private loadPoint(event: FoundPoint[]) {
         if (event && event.length && event.length === 1) {
             ActiveHiveState.loadSubgraph(event[0].id);
         }
     }
 }
 
-export default withRouter(StatementFinderCreator);
+export default withRouter(PointSearchComponent);

@@ -9,7 +9,7 @@ type ComponentState = {username: string, password: string};
 
 // TODO: implement validation for the field
 // TODO: implement loading screen
-class Login extends React.Component<any, ComponentState> {
+class LoginComponent extends React.Component<any, ComponentState> {
     private history: History;
 
     constructor(props: any) {
@@ -74,4 +74,4 @@ class Login extends React.Component<any, ComponentState> {
     }
 }
 
-export default withRouter(Login);
+export default withRouter(LoginComponent);

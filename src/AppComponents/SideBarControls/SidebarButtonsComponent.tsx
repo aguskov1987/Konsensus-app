@@ -6,7 +6,7 @@ import {ActiveHiveState, UserState} from "../../AppState/State";
 import {User} from "../../AppState/User";
 import {Subscription} from "rxjs";
 
-class SidebarButtons extends React.Component<any, any> {
+class SidebarButtonsComponent extends React.Component<any, any> {
     private history: History;
     private sub: Subscription = new Subscription();
 
@@ -18,14 +18,14 @@ class SidebarButtons extends React.Component<any, any> {
             navigationDisabled: true
         }
 
-        this.openSavedStatements = this.openSavedStatements.bind(this);
+        this.openSavedPoints = this.openSavedPoints.bind(this);
         this.leaveApp = this.leaveApp.bind(this);
         this.openSavedHives = this.openSavedHives.bind(this);
         this.openYard = this.openYard.bind(this);
     }
 
     componentDidMount() {
-        this.sub = UserState.user.notifier.subscribe((user: User) => {
+        this.sub = UserState.user.valueUpdatedEvent.subscribe((user: User) => {
             if (user.id !== '') {
                 this.setState({
                     navigationDisabled: false
@@ -39,9 +39,9 @@ class SidebarButtons extends React.Component<any, any> {
         this.history.push('/saved-hives');
     }
 
-    openSavedStatements() {
+    openSavedPoints() {
         this.checkIfLeavingGraphArea();
-        this.history.push('/saved-statements');
+        this.history.push('/saved-point');
     }
 
     leaveApp() {
@@ -78,7 +78,7 @@ class SidebarButtons extends React.Component<any, any> {
                     </Button>{' '}
                 </div>
                 <div style={{margin: 6}}>
-                    <Button block variant="primary" size={'lg'} onClick={this.openSavedStatements} disabled={this.state.navigationDisabled}>
+                    <Button block variant="primary" size={'lg'} onClick={this.openSavedPoints} disabled={this.state.navigationDisabled}>
                         <Image src="Images/my_saved_statements.svg"/>
                     </Button>{' '}
                 </div>
@@ -92,4 +92,4 @@ class SidebarButtons extends React.Component<any, any> {
     }
 }
 
-export default withRouter(SidebarButtons);
+export default withRouter(SidebarButtonsComponent);

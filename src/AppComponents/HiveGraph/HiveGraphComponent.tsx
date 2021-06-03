@@ -1,6 +1,6 @@
 import React from "react";
-import StatementFinderCreator from "../StatementFinderCreator/StatementFinderCreator";
-import GraphCanvas from "../GraphCanvas/GraphCanvas";
+import PointSearchComponent from "../PointSearch/PointSearchComponent";
+import GraphCanvasComponent from "../GraphCanvas/GraphCanvasComponent";
 import {withRouter} from "react-router-dom";
 import {History} from 'history'
 import {ActiveHiveState, UserState} from "../../AppState/State";
@@ -11,7 +11,7 @@ import {LoadingStatus} from "../../AppState/LoadingStatus";
 import {HiveManifest} from "../../AppState/HiveManifest";
 
 
-class HiveGraph extends React.Component<any, any> {
+class HiveGraphComponent extends React.Component<any, any> {
     private history: History;
     private statusSub: Subscription = new Subscription();
     private userSub: Subscription = new Subscription();
@@ -29,13 +29,13 @@ class HiveGraph extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.statusSub = UserState.user.status.subscribe((status) => {
+        this.statusSub = UserState.user.statusUpdatedEvent.subscribe((status) => {
             this.setState({
                 userLoadingStatus: status
             })
         })
 
-        this.userSub = UserState.user.notifier.subscribe((user: User) => {
+        this.userSub = UserState.user.valueUpdatedEvent.subscribe((user: User) => {
             this.setState({
                 user: user
             });
@@ -46,7 +46,7 @@ class HiveGraph extends React.Component<any, any> {
             }
         });
 
-        this.hiveSub = ActiveHiveState.activeHiveManifest.notifier.subscribe((manifest: HiveManifest) => {
+        this.hiveSub = ActiveHiveState.activeHiveManifest.valueUpdatedEvent.subscribe((manifest: HiveManifest) => {
             this.setState({
                 activeHiveName: manifest.title
             })
@@ -73,13 +73,13 @@ class HiveGraph extends React.Component<any, any> {
                         {this.state.activeHiveName}
                     </div>
                     <div style={{width: 'calc(50% - 10px)', float: 'left', marginTop: 7}}>
-                        <StatementFinderCreator/>
+                        <PointSearchComponent/>
                     </div>
                 </div>
-                <GraphCanvas/>
+                <GraphCanvasComponent/>
             </div>
         )
     }
 }
 
-export default withRouter(HiveGraph);
+export default withRouter(HiveGraphComponent);

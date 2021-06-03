@@ -1,10 +1,10 @@
 import React from "react";
 import {Button, Card, FormControl, InputGroup} from "react-bootstrap";
-import HiveManifestCard from "../HiveCard/HiveManifestCard";
+import HiveCardComponent from "../HiveCard/HiveCardComponent";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
 
-class HiveYard extends React.Component<any, any> {
+class HiveYardComponent extends React.Component<any, any> {
     private history: History;
     constructor(props: any) {
         super(props);
@@ -58,7 +58,7 @@ class HiveYard extends React.Component<any, any> {
                         <div>
                             {this.state.hives.map((hive, idx) => {
                                 return (
-                                    <HiveManifestCard key={idx} manifest={hive}/>
+                                    <HiveCardComponent key={idx} manifest={hive}/>
                                 )
                             })}
                         </div>
@@ -72,4 +72,4 @@ class HiveYard extends React.Component<any, any> {
     }
 }
 
-export default withRouter(HiveYard);
+export default withRouter(HiveYardComponent);

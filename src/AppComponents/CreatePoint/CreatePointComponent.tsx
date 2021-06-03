@@ -5,9 +5,9 @@ import {Button, Form} from "react-bootstrap";
 import {ActiveHiveState} from "../../AppState/State";
 import {Subscription} from "rxjs";
 
-class CreateStatement extends React.Component<any, any> {
+class CreatePointComponent extends React.Component<any, any> {
     private history: History;
-    private newStatementSub: Subscription = new Subscription();
+    private newPointSub: Subscription = new Subscription();
 
     constructor(props: any) {
         super(props);
@@ -15,33 +15,33 @@ class CreateStatement extends React.Component<any, any> {
         this.history = this.props.history;
 
         this.onSubmit = this.onSubmit.bind(this);
-        this.updateStatement = this.updateStatement.bind(this);
+        this.updatePoint = this.updatePoint.bind(this);
         this.updateLinks = this.updateLinks.bind(this);
 
         this.state = {
-            statement: "",
+            point: "",
             links: ""
         }
     }
 
     componentDidMount() {
         this.setState({
-            statement: ActiveHiveState.newStatementText.take()
+            point: ActiveHiveState.newPointText.take()
         });
 
-        this.newStatementSub = ActiveHiveState.subgraph.notifier.subscribe((subgraph) => {
+        this.newPointSub = ActiveHiveState.subgraph.valueUpdatedEvent.subscribe((subgraph) => {
             this.history.push('/');
         })
     }
 
     onSubmit(event: any) {
-        ActiveHiveState.createNewStatement(this.state.statement, []);
+        ActiveHiveState.createNewPoint(this.state.point, []);
         event.preventDefault();
     }
 
-    updateStatement(event: any) {
+    updatePoint(event: any) {
         this.setState({
-            statement: event.target.value
+            point: event.target.value
         })
     }
 
@@ -52,7 +52,7 @@ class CreateStatement extends React.Component<any, any> {
     }
 
     componentWillUnmount() {
-        this.newStatementSub.unsubscribe();
+        this.newPointSub.unsubscribe();
     }
 
     render() {
@@ -61,7 +61,7 @@ class CreateStatement extends React.Component<any, any> {
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="statementInput">
                         <Form.Label style={{color: 'white'}}>Statement</Form.Label>
-                        <Form.Control value={this.state.statement? this.state.statement : ''} type="text" onChange={this.updateStatement}/>
+                        <Form.Control value={this.state.point? this.state.point : ''} type="text" onChange={this.updatePoint}/>
                     </Form.Group>
                     <Form.Group controlId="linksInput">
                         <Form.Label style={{color: 'white'}}>Supporting Links</Form.Label>
@@ -76,4 +76,4 @@ class CreateStatement extends React.Component<any, any> {
     }
 }
 
-export default withRouter(CreateStatement);
+export default withRouter(CreatePointComponent);

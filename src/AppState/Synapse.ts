@@ -1,6 +1,6 @@
 import {Model} from "./Model";
 
-export class Effect extends Model{
+export class Synapse extends Model{
     public source: string = '';
     public target: string = '';
     public userResponse: number = 0;

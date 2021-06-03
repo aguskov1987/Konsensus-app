@@ -4,6 +4,6 @@ export class ApiHiveManifest {
     public description: string = '';
     public activity: number = 0;
     public numberOfParticipants: number = 0;
-    public numberOfStatements: number = 0;
+    public numberOfPoints: number = 0;
     public collectionId: string = '';
 }

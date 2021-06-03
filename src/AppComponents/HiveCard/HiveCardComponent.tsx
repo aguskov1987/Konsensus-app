@@ -5,7 +5,7 @@ import Dial, {DialType} from "../Widgets/Dial";
 
 
 // TODO: added stats into the footer
-class HiveManifestCard extends React.Component<any, any> {
+class HiveCardComponent extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.goToHive = this.goToHive.bind(this);
@@ -45,4 +45,4 @@ class HiveManifestCard extends React.Component<any, any> {
     }
 }
 
-export default HiveManifestCard;
+export default HiveCardComponent;

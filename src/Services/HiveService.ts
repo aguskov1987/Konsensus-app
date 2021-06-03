@@ -1,17 +1,17 @@
 import axios, {AxiosResponse} from "axios";
-import {FoundStatement} from "../AppState/FoundStatement";
+import {FoundPoint} from "../AppState/FoundPoint";
 import {SubGraph} from "../AppState/SubGraph";
 
 export class HiveService {
-    public static loadStatementSearchResults(phrase: string, identifier: string): Promise<AxiosResponse<FoundStatement[]>> {
+    public static loadPointSearchResults(phrase: string, identifier: string): Promise<AxiosResponse<FoundPoint[]>> {
         return axios.post<any>("/hive/search", {phrase, identifier});
     }
 
-    public static createNewStatement(statement: string, hiveId: string, identifier: string): Promise<AxiosResponse<SubGraph>> {
-        return axios.post<SubGraph>("/hive/statement", {statement, hiveId, identifier});
+    public static createNewPoint(point: string, hiveId: string, identifier: string): Promise<AxiosResponse<SubGraph>> {
+        return axios.post<SubGraph>("/hive/point", {point, hiveId, identifier});
     }
 
-    public static loadSubGraph(statementId: string): Promise<AxiosResponse<SubGraph>> {
-        return axios.get<any>(`/hive/subgraph`, {params: {statementId}});
+    public static loadSubGraph(pointId: string): Promise<AxiosResponse<SubGraph>> {
+        return axios.get<any>(`/hive/subgraph`, {params: {pointId}});
     }
 }

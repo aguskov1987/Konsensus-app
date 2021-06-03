@@ -1,16 +1,16 @@
 import React from 'react';
 import './App.css';
-import SidebarButtons from './AppComponents/SideBarControls/SidebarButtons';
-import SavedStatementsModal from "./AppComponents/SavedStatements/SavedStatementsModal";
+import SidebarButtonsComponent from './AppComponents/SideBarControls/SidebarButtonsComponent';
+import SavedPointsComponent from "./AppComponents/SavedPoints/SavedPointsComponent";
 import {configureAxios} from "./Services/CommonService";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
-import HiveGraph from "./AppComponents/HiveGraph/HiveGraph";
-import Login from "./AppComponents/Login/Login";
-import HiveYard from "./AppComponents/HiveYard/HiveYard";
-import MyHives from "./AppComponents/MyHives/MyHives";
-import NewHive from "./AppComponents/NewHive/NewHive";
-import CreateStatement from "./AppComponents/CreateStatement/CreateStatement";
-import FeedbackBar from "./AppComponents/FeedbackBar/FeedbackBar";
+import HiveGraphComponent from "./AppComponents/HiveGraph/HiveGraphComponent";
+import LoginComponent from "./AppComponents/Login/LoginComponent";
+import HiveYardComponent from "./AppComponents/HiveYard/HiveYardComponent";
+import MyHivesComponent from "./AppComponents/MyHives/MyHivesComponent";
+import NewHiveComponent from "./AppComponents/NewHive/NewHiveComponent";
+import CreatePointComponent from "./AppComponents/CreatePoint/CreatePointComponent";
+import FeedbackBarComponent from "./AppComponents/FeedbackBar/FeedbackBarComponent";
 
 class App extends React.Component<any, any> {
 
@@ -24,34 +24,34 @@ class App extends React.Component<any, any> {
             <div id='root'>
                 <BrowserRouter>
                     <div className='controls-container'>
-                        <SidebarButtons/>
+                        <SidebarButtonsComponent/>
                     </div>
                     <div className='right-side'>
                         <div className='feedback-bar-container'>
-                            <FeedbackBar/>
+                            <FeedbackBarComponent/>
                         </div>
                         <div className='working-area'>
                             <Switch>
                                 <Route exact path="/">
-                                    <HiveGraph/>
+                                    <HiveGraphComponent/>
                                 </Route>
                                 <Route path="/enter">
-                                    <Login/>
+                                    <LoginComponent/>
                                 </Route>
                                 <Route path="/yard">
-                                    <HiveYard/>
+                                    <HiveYardComponent/>
                                 </Route>
                                 <Route path="/saved-hives">
-                                    <MyHives/>
+                                    <MyHivesComponent/>
                                 </Route>
                                 <Route path="/new-hive">
-                                    <NewHive/>
+                                    <NewHiveComponent/>
                                 </Route>
-                                <Route path="/new-statement">
-                                    <CreateStatement/>
+                                <Route path="/new-point">
+                                    <CreatePointComponent/>
                                 </Route>
-                                <Route path="/saved-statements">
-                                    <SavedStatementsModal/>
+                                <Route path="/saved-points">
+                                    <SavedPointsComponent/>
                                 </Route>
                             </Switch>
                         </div>

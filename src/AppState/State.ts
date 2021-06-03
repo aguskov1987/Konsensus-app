@@ -4,10 +4,10 @@ import {HiveManifest} from "./HiveManifest";
 import {YardService} from "../Services/YardService";
 import {User} from "./User";
 import {StatefulObject} from "./StatefulObject";
-import {FoundStatement} from "./FoundStatement";
+import {FoundPoint} from "./FoundPoint";
 import {HiveService} from "../Services/HiveService";
 import {StashedSubGraph, SubGraph} from "./SubGraph";
-import {Statement} from "./Statement";
+import {Point} from "./Point";
 import {Stash} from "./Stash";
 import {Subject} from "rxjs";
 
@@ -17,7 +17,7 @@ export class UserState {
     public static loadUser() {
         UserState.user.setStatusPending();
         UserService.loadUser().then((response) => {
-            UserState.user.update(UserService.convertToViewModel(response.data));
+            UserState.user.updateValue(UserService.convertToViewModel(response.data));
             UserState.user.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             UserState.user.setStatusError(!code ? '' : code);
@@ -31,7 +31,7 @@ export class NewHiveState {
     public static createNewHive(title: string, description: string) {
         NewHiveState.newHive.setStatusPending();
         YardService.createNewHive(title, description).then((manifest) => {
-            NewHiveState.newHive.update(YardService.convertToViewModel(manifest.data));
+            NewHiveState.newHive.updateValue(YardService.convertToViewModel(manifest.data));
             NewHiveState.newHive.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             NewHiveState.newHive.setStatusError(!code ? '' : code);
@@ -41,41 +41,41 @@ export class NewHiveState {
 
 export class ActiveHiveState {
     public static activeHiveManifest: StatefulObject<HiveManifest> = new StatefulObject<HiveManifest>();
-    public static foundStatements: StatefulObject<FoundStatement[]> = new StatefulObject<FoundStatement[]>();
-    public static newStatement: StatefulObject<Statement> = new StatefulObject<Statement>();
-    public static savedStatements: StatefulObject<Statement[]> = new StatefulObject<Statement[]>();
+    public static foundPoints: StatefulObject<FoundPoint[]> = new StatefulObject<FoundPoint[]>();
+    public static newPoint: StatefulObject<Point> = new StatefulObject<Point>();
+    public static savedPoints: StatefulObject<Point[]> = new StatefulObject<Point[]>();
     public static subgraph: StatefulObject<SubGraph> = new StatefulObject<SubGraph>();
 
-    public static newStatementText: Stash<string> = new Stash<string>();
+    public static newPointText: Stash<string> = new Stash<string>();
     public static graphStash: Stash<StashedSubGraph> = new Stash<StashedSubGraph>();
 
     public static loadDefaultHive(id: string) {
         ActiveHiveState.activeHiveManifest.setStatusPending();
         YardService.loadHive(id).then((response) => {
-            ActiveHiveState.activeHiveManifest.update(YardService.convertToViewModel(response.data));
+            ActiveHiveState.activeHiveManifest.updateValue(YardService.convertToViewModel(response.data));
             ActiveHiveState.activeHiveManifest.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             ActiveHiveState.activeHiveManifest.setStatusError(!code ? '' : code);
         });
     }
 
-    public static searchStatements(phrase: string) {
-        ActiveHiveState.foundStatements.setStatusPending();
-        HiveService.loadStatementSearchResults(phrase, ActiveHiveState.activeHiveManifest.value.collectionId)
+    public static searchPoints(phrase: string) {
+        ActiveHiveState.foundPoints.setStatusPending();
+        HiveService.loadPointSearchResults(phrase, ActiveHiveState.activeHiveManifest.getValue().collectionId)
             .then((response) => {
-                ActiveHiveState.foundStatements.update(response.data);
-                ActiveHiveState.foundStatements.setStatusLoaded();
+                ActiveHiveState.foundPoints.updateValue(response.data);
+                ActiveHiveState.foundPoints.setStatusLoaded();
             }).catch(({code}: AxiosError) => {
-            ActiveHiveState.foundStatements.setStatusError(!code ? '' : code);
+            ActiveHiveState.foundPoints.setStatusError(!code ? '' : code);
         });
     }
 
-    public static createNewStatement(content: string, supportingLinks: string[]) {
-        let hiveId = ActiveHiveState.activeHiveManifest.value.id;
-        let identifier = ActiveHiveState.activeHiveManifest.value.collectionId;
-        ActiveHiveState.newStatement.setStatusPending();
-        HiveService.createNewStatement(content, hiveId, identifier).then((subgraph) => {
-            ActiveHiveState.subgraph.update(subgraph.data);
+    public static createNewPoint(content: string, supportingLinks: string[]) {
+        let hiveId = ActiveHiveState.activeHiveManifest.getValue().id;
+        let identifier = ActiveHiveState.activeHiveManifest.getValue().collectionId;
+        ActiveHiveState.newPoint.setStatusPending();
+        HiveService.createNewPoint(content, hiveId, identifier).then((subgraph) => {
+            ActiveHiveState.subgraph.updateValue(subgraph.data);
             ActiveHiveState.subgraph.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             ActiveHiveState.subgraph.setStatusError(!code ? '' : code);
@@ -83,34 +83,34 @@ export class ActiveHiveState {
     }
 
     /***
-     * Connect two statements by a cause-effect relationship
-     * @param causeId ID of the causing statement
-     * @param effectId ID of the effected statement
+     * Connect two points by a synapse
+     * @param fromId ID of the 'from' point
+     * @param toId ID of the 'to' point
      */
-    public static createNewEffect(causeId: string, effectId: string) {
-        console.log('creating effect for: ' + causeId + ' ' + effectId);
+    public static createNewSynapse(fromId: string, toId: string) {
+        console.log('creating synapse for: ' + fromId + ' ' + toId);
     }
 
     /***
-     * Respond to either a statement or an effect
-     * @param id Either ID of a statement or ID of an effect
+     * Respond to either a point or synapse
+     * @param id Either ID of a point or ID of an synapse
      * @param agree Agree or disagree
      */
     public static respond(id: string, agree: boolean) {
         console.log(id);
     }
 
-    public static loadSubgraph(statementId: string) {
+    public static loadSubgraph(pointId: string) {
         ActiveHiveState.subgraph.setStatusPending();
-        HiveService.loadSubGraph(statementId).then((subgraph) => {
-            ActiveHiveState.subgraph.update(subgraph.data);
+        HiveService.loadSubGraph(pointId).then((subgraph) => {
+            ActiveHiveState.subgraph.updateValue(subgraph.data);
             ActiveHiveState.subgraph.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             ActiveHiveState.subgraph.setStatusError(!code ? '' : code);
         });
     }
 
-    public static loadSavedStatements() {
+    public static loadSavedPoints() {
 
     }
 }
@@ -122,14 +122,14 @@ export enum ButtonCommand {
     PanUp,
     PanRight,
     PanDown,
-    SelectNextStatement,
-    SelectPreviousStatement,
-    SelectNextEffect,
-    SelectPreviousEffect,
+    SelectNextPoint,
+    SelectPreviousPoint,
+    SelectNextSynapse,
+    SelectPreviousSynapse,
     Agree,
     Disagree,
-    MarkAsCause,
-    MarkAsEffect,
+    MarkAsFrom,
+    MarkAsTo,
     Discard
 }
 

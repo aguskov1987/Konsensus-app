@@ -3,10 +3,12 @@ import CytoscapeComponent from "react-cytoscapejs";
 import cytoscape, {Core, Layouts, Position} from "cytoscape";
 import * as cx from "cytoscape-cxtmenu";
 import cola from 'cytoscape-cola';
-import GraphControls from "../GraphControls/GraphControls";
+import GraphControlsComponent from "../GraphControls/GraphControlsComponent";
 import {ActiveHiveState, ButtonCommand, HiveOperationsState} from "../../AppState/State";
 import {Subscription} from "rxjs";
-import {StashedEffect, StashedStatement, StashedSubGraph, SubGraph} from "../../AppState/SubGraph";
+import {StashedSynapse, StashedPoint, StashedSubGraph, SubGraph} from "../../AppState/SubGraph";
+import {History} from "history";
+import {withRouter} from "react-router-dom";
 
 let cyRef: Core;
 let style: any = [
@@ -69,17 +71,19 @@ let style: any = [
     }
 ];
 
-class GraphCanvas extends React.Component<any, any> {
-    private maxNumberOfStatements: number = 1000;
+class GraphCanvasComponent extends React.Component<any, any> {
+    private maxNumberOfPoints: number = 1000;
 
     private stashSub: Subscription = new Subscription();
     private subgraphSub: Subscription = new Subscription();
     private opsSub: Subscription = new Subscription();
 
-    private causingStatementId: string = '';
-    private effectedStatementId: string = '';
-    private visibleStatementIds: {id: string, position: Position}[] = [];
-    private visibleEffectIds: {id: string, position: Position}[] = [];
+    private history: History;
+
+    private fromId: string = '';
+    private toId: string = '';
+    private visiblePointIds: {id: string, position: Position}[] = [];
+    private visibleSynapseIds: {id: string, position: Position}[] = [];
 
     constructor(props: any) {
         super(props);
@@ -87,10 +91,12 @@ class GraphCanvas extends React.Component<any, any> {
             selectedLabel: undefined
         };
 
+        this.history = this.props.history;
+
         this.respond = this.respond.bind(this);
-        this.markAsCause = this.markAsCause.bind(this);
-        this.markAsEffect = this.markAsEffect.bind(this);
-        this.discardCauseEffect = this.discardCauseEffect.bind(this);
+        this.markFrom = this.markFrom.bind(this);
+        this.markTo = this.markTo.bind(this);
+        this.discardFromTo = this.discardFromTo.bind(this);
     }
 
     componentDidMount() {
@@ -99,14 +105,14 @@ class GraphCanvas extends React.Component<any, any> {
         this.setupMenu();
 
         // First, check whether there is saved graph that needs restoring,
-        // restore the graph, then add the new statements from the State object
+        // restore the graph, then add the new points from the State object
         let stashedGraph = ActiveHiveState.graphStash.take();
         if (stashedGraph != null) {
             this.restoreStashedSubgraph(stashedGraph);
-            this.integrate(ActiveHiveState.subgraph.value);
+            this.integrate(ActiveHiveState.subgraph.getValue());
         }
         // Then subscribe to the subgraph changes and once a new subgraph comes in, integrate it into the existing one
-        this.subgraphSub = ActiveHiveState.subgraph.notifier.subscribe((sg: SubGraph) => {
+        this.subgraphSub = ActiveHiveState.subgraph.valueUpdatedEvent.subscribe((sg: SubGraph) => {
             this.integrate(sg);
         });
         this.stashSub = ActiveHiveState.graphStash.onStash.subscribe(() => {
@@ -131,7 +137,7 @@ class GraphCanvas extends React.Component<any, any> {
                 </div>
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={[]}
                                     style={{width: '100%', height: 'calc(100% - 91px)'}} stylesheet={style}/>
-                <GraphControls/>
+                <GraphControlsComponent/>
             </div>
         );
     }
@@ -164,13 +170,13 @@ class GraphCanvas extends React.Component<any, any> {
                 case ButtonCommand.PanDown:
                     cyRef.panBy({x: 0, y: 30});
                     break;
-                case ButtonCommand.SelectNextStatement:
+                case ButtonCommand.SelectNextPoint:
                     break;
-                case ButtonCommand.SelectPreviousStatement:
+                case ButtonCommand.SelectPreviousPoint:
                     break;
-                case ButtonCommand.SelectNextEffect:
+                case ButtonCommand.SelectNextSynapse:
                     break;
-                case ButtonCommand.SelectPreviousEffect:
+                case ButtonCommand.SelectPreviousSynapse:
                     break;
                 case ButtonCommand.Agree:
                     if (selected.length && selected.length === 1) {
@@ -182,25 +188,25 @@ class GraphCanvas extends React.Component<any, any> {
                         this.respond(selected[0].id(), true);
                     }
                     break;
-                case ButtonCommand.MarkAsCause:
+                case ButtonCommand.MarkAsFrom:
                     if (selected.length && selected.length === 1 && selected[0].isNode()) {
-                        this.markAsCause(selected[0].id());
+                        this.markFrom(selected[0].id());
                     }
                     break;
-                case ButtonCommand.MarkAsEffect:
+                case ButtonCommand.MarkAsTo:
                     if (selected.length && selected.length === 1 && selected[0].isNode()) {
-                        this.markAsEffect(selected[0].id());
+                        this.markTo(selected[0].id());
                     }
                     break;
                 case ButtonCommand.Discard:
-                    this.discardCauseEffect();
+                    this.discardFromTo();
                     break;
             }
         });
     }
 
     private registerCanvasEvents() {
-        // Setup click events. When the user clicks on a statement, a new sub-graph is loaded and integrated into the
+        // Setup click events. When the user clicks on a point, a new sub-graph is loaded and integrated into the
         // current one.
         cyRef.on('tap', (event) => {
             if (event.target === cyRef) {
@@ -244,15 +250,15 @@ class GraphCanvas extends React.Component<any, any> {
         let els = cyRef.elements();
         els.forEach((el) => {
             let pos = el.position();
-            let stashedElement = el.data() as StashedStatement;
+            let stashedElement = el.data() as StashedPoint;
             stashedElement.position = pos;
-            stash.statements.push(stashedElement);
+            stash.points.push(stashedElement);
         });
 
         let edges = cyRef.edges();
         edges.forEach((edge) => {
-            let stashedEffect = edge.data() as StashedEffect;
-            stash.effects.push(stashedEffect);
+            let stashedEffect = edge.data() as StashedSynapse;
+            stash.synapses.push(stashedEffect);
         });
 
         return stash;
@@ -280,7 +286,7 @@ class GraphCanvas extends React.Component<any, any> {
     private populateInitialSubGraph(sg: SubGraph | StashedSubGraph) {
         let stash = sg instanceof StashedSubGraph
 
-        for (let s of sg.statements) {
+        for (let s of sg.points) {
             cyRef.add({
                 data: {
                     id: s.id,
@@ -291,11 +297,11 @@ class GraphCanvas extends React.Component<any, any> {
                     c: 'green',
                     timestamp: Date.now()
                 },
-                position: stash ? (s as StashedStatement).position : {x: 0, y: 0}
+                position: stash ? (s as StashedPoint).position : {x: 0, y: 0}
             });
         }
 
-        for (let e of sg.effects) {
+        for (let e of sg.synapses) {
             cyRef.add({
                 data: {
                     id: e.id,
@@ -319,22 +325,22 @@ class GraphCanvas extends React.Component<any, any> {
     }
 
     private mergeIntoExistingSubGraph(sg: SubGraph) {
-        for (let st of sg.statements) {
+        for (let st of sg.points) {
             console.log(st);
         }
 
-        for (let ef of sg.effects) {
+        for (let ef of sg.synapses) {
             console.log(ef);
         }
     }
 
     // Once the graph becomes too large, it becomes neither performant nor useful.
-    // To solve this, remove oldest elements and only keep a certain number of statements in the graph
+    // To solve this, remove oldest elements and only keep a certain number of points in the graph
     private prune() {
-        let statements = cyRef.nodes();
+        let points = cyRef.nodes();
 
-        if (statements.length > this.maxNumberOfStatements) {
-            let ids: {id: string, timestamp: number}[] = statements.map((st) => {
+        if (points.length > this.maxNumberOfPoints) {
+            let ids: {id: string, timestamp: number}[] = points.map((st) => {
                 return {id: st.id(), timestamp: st.data('timestamp')}
             });
 
@@ -343,8 +349,8 @@ class GraphCanvas extends React.Component<any, any> {
                 return second.timestamp - first.timestamp;
             });
 
-            // get rid of everything after the maximum number of statements; they will be the oldest
-            let toRemove = ids.slice(this.maxNumberOfStatements - 1);
+            // get rid of everything after the maximum number of points; they will be the oldest
+            let toRemove = ids.slice(this.maxNumberOfPoints - 1);
             for (let element of toRemove) {
                 let node = cyRef.getElementById(element.id);
                 cyRef.remove(node);
@@ -356,7 +362,7 @@ class GraphCanvas extends React.Component<any, any> {
 
     }
 
-    // Cxt Menu setup
+    // Cxt radial menu setup
     private setupMenu() {
         (cyRef as any).cxtmenu({
             selector: "core",
@@ -364,15 +370,15 @@ class GraphCanvas extends React.Component<any, any> {
             activeFillColor: 'rgba(184,111,25,0.75)',
             commands: [
                 {
-                    content: "New Statement",
+                    content: "New Point",
                     select: () => {
-                        console.log("new statement clicked");
+                        this.goToNewPoint();
                     }
                 },
                 {
                     content: "Discard",
                     select: () => {
-                        this.discardCauseEffect();
+                        this.discardFromTo();
                     }
                 }]
         });
@@ -388,15 +394,15 @@ class GraphCanvas extends React.Component<any, any> {
                     }
                 },
                 {
-                    content: "Mark as Cause",
+                    content: "Mark From",
                     select: (el) => {
-                        this.markAsCause(el.data().id);
+                        this.markFrom(el.data().id);
                     }
                 },
                 {
-                    content: "Mark as Effect",
+                    content: "Mark To",
                     select: (el) => {
-                        this.markAsEffect(el.data().id);
+                        this.markTo(el.data().id);
                     }
                 },
                 {
@@ -412,29 +418,29 @@ class GraphCanvas extends React.Component<any, any> {
         ActiveHiveState.respond(id, agree);
     }
 
-    private markAsCause(id: string) {
-        if (this.effectedStatementId !== '') {
-            ActiveHiveState.createNewEffect(id, this.effectedStatementId);
-            this.discardCauseEffect();
+    private markFrom(id: string) {
+        if (this.toId !== '') {
+            ActiveHiveState.createNewSynapse(id, this.toId);
+            this.discardFromTo();
         } else {
-            this.causingStatementId = id;
+            this.fromId = id;
             cyRef.getElementById(id).addClass('cause');
         }
     }
 
-    private markAsEffect(id: string) {
-        if (this.causingStatementId !== '') {
-            ActiveHiveState.createNewEffect(this.causingStatementId, id);
-            this.discardCauseEffect();
+    private markTo(id: string) {
+        if (this.fromId !== '') {
+            ActiveHiveState.createNewSynapse(this.fromId, id);
+            this.discardFromTo();
         } else {
-            this.effectedStatementId = id;
+            this.toId = id;
             cyRef.getElementById(id).addClass('effect');
         }
     }
 
-    private discardCauseEffect() {
-        this.effectedStatementId = '';
-        this.causingStatementId = '';
+    private discardFromTo() {
+        this.toId = '';
+        this.fromId = '';
         cyRef.elements().removeClass('cause');
         cyRef.elements().removeClass('effect');
     }
@@ -444,6 +450,12 @@ class GraphCanvas extends React.Component<any, any> {
     private cashVisibleElements() {
 
     }
+
+    private goToNewPoint() {
+        let stash = this.packAndStashSubGraph();
+        ActiveHiveState.graphStash.put(stash);
+        this.history.push('new-point');
+    }
 }
 
-export default GraphCanvas;
+export default withRouter(GraphCanvasComponent);

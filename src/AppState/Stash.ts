@@ -2,12 +2,15 @@ import {Subject} from "rxjs";
 import cloneDeep from "lodash.clonedeep";
 
 /***
- * @description Temporarily stashed object. Can be used to exchange data between components or to save and restore
- * component data. The structure is used by two parties: 1. the initiator (calling code) which calls
- * the stash() method and listens to the onStashed event to further proceed. 2. The stasher (code responsible
- * for saving the value) listens to the onStash event and executes the put() method which saves the value.
- * Either the initiator or the stasher can call the take() method to retrieve the value back (the retrieval)
- * will clear the stash.
+ * @description Temporarily stashed value. Can be used to exchange objects between components or to save and
+ * restore component data. The values are deep copied so the original object's changes will not affect the stash.
+ *
+ * The structure is used by two parties: 1. the initiator (calling code) which calls the stash() method
+ * and listens to the onStashed event to further proceed. 2. The stasher (code responsible for saving the
+ * value) listens to the onStash event and executes the put() method which saves the value. Either the
+ * initiator or the stasher can call the take() method to retrieve the value back. The retrieval will clear
+ * the stash. Alternatively the drop() method can be called. It will drop the value without returning
+ * anything.
  */
 export class Stash<T> {
     private value: T = null as any;
@@ -26,7 +29,7 @@ export class Stash<T> {
 
     /***
      * @description Saves the passed object into the stash and fires the onStashed notification
-     * @param value Object to store
+     * @param value Value to store
      */
     public put(value: T) {
         this.value = cloneDeep(value);
@@ -34,12 +37,19 @@ export class Stash<T> {
     }
 
     /***
-     * @description Returns the saved object and clears the stash
-     * @return The stashed object
+     * @description Returns the saved value and clears the stash
+     * @return The stashed value
      */
     public take(): T {
         let response = cloneDeep(this.value);
         this.value = null as any;
         return response;
+    }
+
+    /***
+     * Clear the value
+     */
+    public drop() {
+        this.value = null as any;
     }
 }

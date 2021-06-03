@@ -7,7 +7,7 @@ import {History} from "history";
 import {withRouter} from "react-router-dom";
 
 // TODO: add validation
-class NewHive extends React.Component<any, { title: string, description: string }> {
+class NewHiveComponent extends React.Component<any, { title: string, description: string }> {
     private newHiveStatusSub: Subscription = new Subscription();
     private history: History;
 
@@ -27,7 +27,7 @@ class NewHive extends React.Component<any, { title: string, description: string 
     }
 
     componentDidMount() {
-        this.newHiveStatusSub = NewHiveState.newHive.status.subscribe((status: LoadingStatus) => {
+        this.newHiveStatusSub = NewHiveState.newHive.statusUpdatedEvent.subscribe((status: LoadingStatus) => {
             if (status === LoadingStatus.Loaded) {
                 this.history.push('/');
             }
@@ -76,4 +76,4 @@ class NewHive extends React.Component<any, { title: string, description: string 
     }
 }
 
-export default withRouter(NewHive);
+export default withRouter(NewHiveComponent);
