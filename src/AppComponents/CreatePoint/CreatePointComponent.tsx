@@ -59,8 +59,8 @@ class CreatePointComponent extends React.Component<any, any> {
         return (
             <div style={{padding: 200}}>
                 <Form onSubmit={this.onSubmit}>
-                    <Form.Group controlId="statementInput">
-                        <Form.Label style={{color: 'white'}}>Statement</Form.Label>
+                    <Form.Group controlId="pointInput">
+                        <Form.Label style={{color: 'white'}}>Point</Form.Label>
                         <Form.Control value={this.state.point? this.state.point : ''} type="text" onChange={this.updatePoint}/>
                     </Form.Group>
                     <Form.Group controlId="linksInput">

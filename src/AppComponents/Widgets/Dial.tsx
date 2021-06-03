@@ -2,7 +2,7 @@ import React from "react";
 
 export enum DialType {
     TotalUsers,
-    TotalStatements,
+    TotalPoints,
     TotalResponses
 }
 
@@ -16,7 +16,7 @@ class Dial extends React.Component<{type: DialType, value: number}, any> {
                     <path stroke="red" d="M65, 95 L95, 95 A15, 15, 0, 0, 0, 65, 95" fill="none"/>
                 </g>
             )
-        } else if (this.props.type === DialType.TotalStatements) {
+        } else if (this.props.type === DialType.TotalPoints) {
             icon = (
                 <polygon points="80,100 62,90 62,70 80,60 98,70 98,90" fill="none" stroke="red"/>
             )

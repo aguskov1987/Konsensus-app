@@ -305,8 +305,8 @@ class GraphCanvasComponent extends React.Component<any, any> {
             cyRef.add({
                 data: {
                     id: e.id,
-                    source: e.source,
-                    target: e.target,
+                    source: e.from,
+                    target: e.to,
                     userResponse: e.userResponse,
                     commonResponse: e.commonResponse,
                     penetration: e.penetration,

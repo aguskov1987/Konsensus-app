@@ -1,5 +1,5 @@
 export class ApiHiveManifest {
-    public _id: string = '';
+    public id: string = '';
     public title: string = '';
     public description: string = '';
     public activity: number = 0;

@@ -29,7 +29,7 @@ class HiveCardComponent extends React.Component<any, any> {
                                     <Dial type={DialType.TotalUsers} value={1}/>
                                 </div>
                                 <div style={{width: 80, height: 80, float: 'left', marginRight: 20}}>
-                                    <Dial type={DialType.TotalStatements} value={1}/>
+                                    <Dial type={DialType.TotalPoints} value={1}/>
                                 </div>
                             </Card.Footer>
                         </Card>

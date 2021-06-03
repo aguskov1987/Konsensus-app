@@ -11,8 +11,7 @@ export class UserService {
     public static loadUser(): Promise<AxiosResponse<ApiUser>> {
         let jwt: string | null = this.getJwt();
         if (jwt != null) {
-            let userId: string = (UserService.parseJwt()).id;
-            return axios.get<ApiUser>(`/user/user/${userId.replace("/", "_")}`);
+            return axios.get<ApiUser>(`/user/user`);
         } else {
             return Promise.reject("missing jwt");
         }
@@ -39,7 +38,7 @@ export class UserService {
 
     public static convertToViewModel(data: ApiUser): User {
         let user: User = new User();
-        user.id = data._id;
+        user.id = data.id;
         user.defaultHiveId = data.currentHiveId;
         user.username = data.username;
         return user;

@@ -4,7 +4,7 @@ import axios, {AxiosResponse} from "axios";
 
 export class YardService {
     public static loadHive(hiveId: string): Promise<AxiosResponse<ApiHiveManifest>> {
-        return axios.get<ApiHiveManifest>("/yard/hive/" + encodeURIComponent(hiveId));
+        return axios.get<ApiHiveManifest>("/yard/hive/", {params: {hiveId}});
     }
 
     public static createNewHive(title: string, description: string): Promise<AxiosResponse<ApiHiveManifest>> {
@@ -27,7 +27,7 @@ export class YardService {
         let hive = new HiveManifest();
 
         // * one-to-one mapping
-        hive.id= data._id;
+        hive.id= data.id;
         hive.description = data.description;
         hive.title = data.title;
         hive.numberOfParticipants = data.numberOfParticipants;

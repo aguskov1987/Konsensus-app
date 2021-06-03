@@ -21,12 +21,12 @@ class Hint extends Component<{type: HintType}, any> {
             case HintType.Selection:
                 hint = (
                     <div>
-                        <div>Use up/down keys to select a statement</div>
+                        <div>Use up/down keys to select a point</div>
                         <div>Use left/right keys to select an effect</div>
-                        <div>Press A to agree with  a statement/effect</div>
-                        <div>Press D to disagree with  a statement/effect</div>
-                        <div>Press C to mark a statement as a cause</div>
-                        <div>Press E to mark a statement as an effect</div>
+                        <div>Press A to agree with  a point/effect</div>
+                        <div>Press D to disagree with  a point/effect</div>
+                        <div>Press C to mark a point as a cause</div>
+                        <div>Press E to mark a point as an effect</div>
                         <div>Press Q to discard</div>
                     </div>
                 )
