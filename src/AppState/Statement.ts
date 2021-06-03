@@ -11,7 +11,7 @@ Hive participant:
 
 export class Statement extends Model{
     public label: string = '';
-    public myResponse: number = 0; // either positive or negative
+    public userResponse: number = 0; // either positive or negative
     public commonResponse: number = 0; // (Positive + Negative) / Total
     public penetration: number = 0; // ration of all responses to the total number of hive participants
 }

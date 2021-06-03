@@ -1,10 +1,15 @@
 import React from "react";
 import {Button, Card, FormControl, InputGroup} from "react-bootstrap";
 import HiveManifestCard from "../HiveCard/HiveManifestCard";
+import {History} from "history";
+import {withRouter} from "react-router-dom";
 
 class HiveYard extends React.Component<any, any> {
+    private history: History;
     constructor(props: any) {
         super(props);
+
+        this.history = this.props.history;
 
         this.searchHives = this.searchHives.bind(this);
         this.updateSearchPhrase = this.updateSearchPhrase.bind(this);
@@ -23,7 +28,7 @@ class HiveYard extends React.Component<any, any> {
     updateSearchPhrase(event: any) {
         this.setState({
             searchPhrase: event.target.value
-        })
+        });
     }
 
     searchHives() {
@@ -31,7 +36,7 @@ class HiveYard extends React.Component<any, any> {
     }
 
     goToCreateNewHive() {
-        // this.props.openCreateNewHiveAction();
+        this.history.push('new-hive');
     }
 
     render() {
@@ -59,7 +64,7 @@ class HiveYard extends React.Component<any, any> {
                         </div>
                     </Card.Body>
                 </Card>
-                <Button variant="secondary" onClick={this.goToCreateNewHive} style={{bottom: 10, position: 'absolute'}}>
+                <Button variant="secondary" onClick={this.goToCreateNewHive} style={{bottom: 20, position: 'absolute'}}>
                     Start a new hive
                 </Button>
             </div>
@@ -67,4 +72,4 @@ class HiveYard extends React.Component<any, any> {
     }
 }
 
-export default HiveYard;
+export default withRouter(HiveYard);

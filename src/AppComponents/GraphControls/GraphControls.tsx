@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, ButtonGroup, Dropdown, DropdownButton, Image, ToggleButton} from "react-bootstrap";
 import Hint, {HintType} from "./Hint";
+import {ButtonCommand, HiveOperationsState} from "../../AppState/State";
 
 class GraphControls extends React.Component<any, any> {
     private graphView: any = [
@@ -12,12 +13,12 @@ class GraphControls extends React.Component<any, any> {
         super(props);
         this.state = {
             view: '1',
-            layout: '#Random',
+            layout: '#Tree',
             hint: HintType
         }
     }
 
-    setRadioValue(value: string) {
+    setResponseView(value: string) {
         this.setState({
             view: value
         });
@@ -26,14 +27,14 @@ class GraphControls extends React.Component<any, any> {
     setLayout(value: string | null) {
         this.setState({
             layout: value
-        })
+        });
 
     }
 
     setHint(hint: HintType) {
         this.setState({
             hint: hint
-        })
+        });
     }
 
     render() {
@@ -48,7 +49,7 @@ class GraphControls extends React.Component<any, any> {
                                 onSelect={(s) => {
                                     this.setLayout(s)
                                 }}>
-                    <Dropdown.Item href="#Random">Random</Dropdown.Item>
+                    <Dropdown.Item href="#Tree">Random</Dropdown.Item>
                     <Dropdown.Item href="#COSE">COSE</Dropdown.Item>
                     <Dropdown.Item href="#Radial">Radial</Dropdown.Item>
                 </DropdownButton>
@@ -57,7 +58,7 @@ class GraphControls extends React.Component<any, any> {
                         <ToggleButton size="sm" key={idx} type="radio" variant="secondary" name="graphView"
                                       value={radio.value}
                                       checked={this.state.view === radio.value}
-                                      onChange={(e) => this.setRadioValue(e.currentTarget.value)}>
+                                      onChange={(e) => this.setResponseView(e.currentTarget.value)}>
                             {radio.name}
                         </ToggleButton>
                     ))}
@@ -65,20 +66,62 @@ class GraphControls extends React.Component<any, any> {
                 <span style={{marginRight: 10}}/>
                 <ButtonGroup aria-label="Zoom, pan, select and connect statements and effects">
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Zoom)}
-                            onBlur={() => this.setHint(HintType.None)}>
+                            onKeyDown={(event) => {this.processZoom(event)}} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/zoom_icon.svg"/>
                     </Button>
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Pan)}
-                            onBlur={() => this.setHint(HintType.None)}>
+                            onKeyDown={(event) => {this.processPan(event)}} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/pan_icon.svg"/>
                     </Button>
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Selection)}
-                            onBlur={() => this.setHint(HintType.None)}>
+                            onKeyDown={(event) => {this.processSelection(event)}} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/select_icon.svg"/>
                     </Button>
                 </ButtonGroup>
             </div>
         )
+    }
+
+    private processZoom(event: React.KeyboardEvent<HTMLElement>) {
+        if (event.key === 'ArrowUp') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.ZoomIn);
+        } else if (event.key === 'ArrowDown') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.ZoomOut);
+        }
+    }
+
+    private processPan(event: React.KeyboardEvent<HTMLElement>) {
+        if (event.key === 'ArrowUp') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.PanUp);
+        } else if (event.key === 'ArrowDown') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.PanDown);
+        } else if (event.key === 'ArrowLeft') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.PanLeft);
+        } else if (event.key === 'ArrowRight') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.PanRight);
+        }
+    }
+
+    private processSelection(event: React.KeyboardEvent<HTMLElement>) {
+        if (event.key === 'a') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.Agree);
+        } else if (event.key === 'd') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.Disagree);
+        } else if (event.key === 'e') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsEffect);
+        } else if (event.key === 'c') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsCause);
+        }else if (event.key === 'q') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.Discard);
+        } else if (event.key === 'ArrowUp') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextStatement);
+        } else if (event.key === 'ArrowDown') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectPreviousStatement);
+        } else if (event.key === 'ArrowLeft') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectPreviousEffect);
+        } else if (event.key === 'ArrowRight') {
+            HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextEffect);
+        }
     }
 }
 

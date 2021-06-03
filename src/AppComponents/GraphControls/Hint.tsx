@@ -27,6 +27,7 @@ class Hint extends Component<{type: HintType}, any> {
                         <div>Press D to disagree with  a statement/effect</div>
                         <div>Press C to mark a statement as a cause</div>
                         <div>Press E to mark a statement as an effect</div>
+                        <div>Press Q to discard</div>
                     </div>
                 )
                 break;

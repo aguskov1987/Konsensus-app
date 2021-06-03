@@ -4,17 +4,17 @@ import {LoadingStatus} from "./LoadingStatus";
 import cloneDeep from "lodash.clonedeep";
 
 export class StatefulObject<T extends Model | Model[] | null> {
-    public obj: T = null as any;
+    public value: T = null as any;
     public notifier: Subject<T> = new Subject<T>();
     public status: Subject<LoadingStatus> = new Subject<LoadingStatus>();
     public error: string = '';
     public history: T[] = [];
 
     public update(value: T) {
-        this.history.push(cloneDeep(this.obj));
+        this.history.push(cloneDeep(this.value));
 
         this.notifier.next(value);
-        this.obj = value;
+        this.value = value;
 
         if (this.history.length > 100) {
             this.history.pop();

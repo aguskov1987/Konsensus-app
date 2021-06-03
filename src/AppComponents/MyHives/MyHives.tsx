@@ -1,11 +1,9 @@
 import React from "react";
-import {Button, ButtonGroup, Card, CardDeck} from "react-bootstrap";
-import {HiveManifest} from "../../AppState/HiveManifest";
+import {Button, ButtonGroup, Card} from "react-bootstrap";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
 import HiveManifestCard from "../HiveCard/HiveManifestCard";
 
-// TODO: REFACTOR!
 class MyHives extends React.Component<any, any> {
     private history: History;
 
@@ -36,7 +34,7 @@ class MyHives extends React.Component<any, any> {
     render() {
         return (
             <div style={{padding: 20, height: '100%', position: 'relative'}}>
-                <Card border="primary" bg="light" style={{height: '88%'}}>
+                <Card border="primary" bg="light" style={{height: '93%'}}>
                     <Card.Body>
                         <div>
                             {this.state.hives.map((hive, idx) => {
@@ -47,7 +45,7 @@ class MyHives extends React.Component<any, any> {
                         </div>
                     </Card.Body>
                 </Card>
-                <ButtonGroup  style={{bottom: 10, position: 'absolute'}}>
+                <ButtonGroup  style={{bottom: 20, position: 'absolute'}}>
                     <Button variant="secondary" onClick={this.goToCreateNewHive}>
                         Start New Hive
                     </Button>
@@ -59,6 +57,5 @@ class MyHives extends React.Component<any, any> {
         )
     }
 }
-
 
 export default withRouter(MyHives);

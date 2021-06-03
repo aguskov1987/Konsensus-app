@@ -4,7 +4,9 @@ import {Button, InputGroup} from "react-bootstrap";
 import {LoadingStatus} from "../../AppState/LoadingStatus";
 import {FoundStatement} from "../../AppState/FoundStatement";
 import {ActiveHiveState} from "../../AppState/State";
-import {Subscription} from "rxjs";
+import {concat, Subscription} from "rxjs";
+import {History} from "history";
+import {withRouter} from "react-router-dom";
 
 class InternalState {
     public query: string = '';
@@ -19,11 +21,16 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
     private timer: any;
     private foundStatementSub: Subscription = new Subscription();
     private foundStatementsStatusSub: Subscription = new Subscription();
+    private history: History;
+
+    private statementTextSub: Subscription = new Subscription();
+    private graphSub: Subscription = new Subscription();
 
     constructor(props: any) {
         super(props);
 
         this.state = new InternalState();
+        this.history = this.props.history;
 
         this.dummy = this.dummy.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
@@ -44,11 +51,6 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
         });
     }
 
-    public componentWillUnmount() {
-        this.foundStatementSub.unsubscribe();
-        this.foundStatementsStatusSub.unsubscribe();
-    }
-
     private dummy(query: string) {
     }
 
@@ -56,25 +58,11 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
         ActiveHiveState.searchStatements(this.state.query);
     }
 
-    private updateQuery(event: any) {
-        this.setState({query: event});
-
-        clearTimeout(this.timer);
-
-        this.timer = setTimeout(() => {
-            this.handleLoadSearchResults();
-            this.timer = null;
-        }, 1000)
-    }
-
-    private createNewStatement() {
-        // go to create new statement
-    }
-
-    private loadStatement(event: FoundStatement[]) {
-        if (event && event.length && event.length === 1) {
-            ActiveHiveState.loadSubgraph(event[0].id);
-        }
+    public componentWillUnmount() {
+        this.foundStatementSub.unsubscribe();
+        this.foundStatementsStatusSub.unsubscribe();
+        this.statementTextSub.unsubscribe();
+        this.graphSub.unsubscribe();
     }
 
     render() {
@@ -103,6 +91,37 @@ class StatementFinderCreator extends React.Component<any, InternalState> {
             </div>
         )
     }
+
+    private updateQuery(event: any) {
+        this.setState({query: event});
+
+        clearTimeout(this.timer);
+
+        this.timer = setTimeout(() => {
+            this.handleLoadSearchResults();
+            this.timer = null;
+        }, 1000)
+    }
+
+    private createNewStatement() {
+        this.statementTextSub = ActiveHiveState.newStatementText.onStash.subscribe(() => {
+            ActiveHiveState.newStatementText.put(this.state.query);
+        });
+
+        this.graphSub = concat(ActiveHiveState.newStatementText.onStashed, ActiveHiveState.graphStash.onStashed)
+            .subscribe(() => {
+                this.history.push('new-statement');
+            })
+
+        ActiveHiveState.newStatementText.stash();
+        ActiveHiveState.graphStash.stash();
+    }
+
+    private loadStatement(event: FoundStatement[]) {
+        if (event && event.length && event.length === 1) {
+            ActiveHiveState.loadSubgraph(event[0].id);
+        }
+    }
 }
 
-export default StatementFinderCreator;
+export default withRouter(StatementFinderCreator);
