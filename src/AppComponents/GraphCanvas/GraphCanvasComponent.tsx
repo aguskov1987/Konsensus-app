@@ -6,7 +6,7 @@ import cola from 'cytoscape-cola';
 import GraphControlsComponent from "../GraphControls/GraphControlsComponent";
 import {ActiveHiveState, ButtonCommand, HiveOperationsState} from "../../AppState/State";
 import {Subscription} from "rxjs";
-import {StashedSynapse, StashedPoint, StashedSubGraph, SubGraph} from "../../AppState/SubGraph";
+import {StashedPoint, StashedSubGraph, StashedSynapse, SubGraph} from "../../AppState/SubGraph";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
 
@@ -101,7 +101,9 @@ class GraphCanvasComponent extends React.Component<any, any> {
 
     componentDidMount() {
         cytoscape.use(cola);
-        cytoscape.use(cx);
+        if ((cyRef as any).cxtmenu == null) {
+            cytoscape.use(cx);
+        }
         this.setupMenu();
 
         // First, check whether there is saved graph that needs restoring,
@@ -247,8 +249,8 @@ class GraphCanvasComponent extends React.Component<any, any> {
         stash.pan = p;
         stash.zoom = z;
 
-        let els = cyRef.elements();
-        els.forEach((el) => {
+        let nodes = cyRef.nodes();
+        nodes.forEach((el) => {
             let pos = el.position();
             let stashedElement = el.data() as StashedPoint;
             stashedElement.position = pos;
@@ -257,8 +259,10 @@ class GraphCanvasComponent extends React.Component<any, any> {
 
         let edges = cyRef.edges();
         edges.forEach((edge) => {
-            let stashedEffect = edge.data() as StashedSynapse;
-            stash.synapses.push(stashedEffect);
+            let syn = edge.data() as StashedSynapse;
+            syn.from = edge.data().source;
+            syn.to = edge.data().target;
+            stash.synapses.push(syn);
         });
 
         return stash;
@@ -266,11 +270,16 @@ class GraphCanvasComponent extends React.Component<any, any> {
 
     private restoreStashedSubgraph(stashedGraph: StashedSubGraph) {
         console.log('restoring...');
-        this.populateInitialSubGraph(stashedGraph);
+        if (stashedGraph.points.length && stashedGraph.points.length > 0) {
+            this.populateInitialSubGraph(stashedGraph);
+        }
     }
 
     private integrate(sg: SubGraph) {
         console.log('integrating...');
+        if (sg == null) {
+            return;
+        }
 
         let firstLoad = cyRef.elements().length === 0;
         if (firstLoad) {
@@ -280,10 +289,13 @@ class GraphCanvasComponent extends React.Component<any, any> {
         }
 
         this.prune();
-        this.colorizeAndResize();
     }
 
     private populateInitialSubGraph(sg: SubGraph | StashedSubGraph) {
+        if (sg == null) {
+            return;
+        }
+
         let stash = sg instanceof StashedSubGraph
 
         for (let s of sg.points) {
@@ -315,6 +327,8 @@ class GraphCanvasComponent extends React.Component<any, any> {
             });
         }
 
+        this.colorizeAndResize();
+
         if (!stash) {
             let layout: Layouts = cyRef.makeLayout({name: "cola"});
             layout.run();
@@ -325,13 +339,70 @@ class GraphCanvasComponent extends React.Component<any, any> {
     }
 
     private mergeIntoExistingSubGraph(sg: SubGraph) {
-        for (let st of sg.points) {
-            console.log(st);
+        if (sg == null) {
+            return;
         }
 
-        for (let ef of sg.synapses) {
-            console.log(ef);
+        // lock the existing points
+        cyRef.nodes().forEach((n) => {
+            n.lock();
+        });
+
+        // add the new points
+        for (let st of sg.points) {
+            if (cyRef.getElementById(st.id).length === 0) {
+                cyRef.add({
+                    data: {
+                        id: st.id,
+                        label: st.label,
+                        userResponse: st.userResponse,
+                        commonResponse: st.commonResponse,
+                        penetration: st.penetration,
+                        c: 'green',
+                        timestamp: Date.now()
+                    }
+                });
+            }
         }
+
+        // add the new synapses
+        for (let ef of sg.synapses) {
+            if (cyRef.getElementById(ef.id).length === 0) {
+                cyRef.add({
+                    data: {
+                        id: ef.id,
+                        source: ef.from,
+                        target: ef.to,
+                        userResponse: ef.userResponse,
+                        commonResponse: ef.commonResponse,
+                        penetration: ef.penetration,
+                        c: 'green'
+                    }
+                });
+            }
+        }
+
+        this.colorizeAndResize();
+
+        // run the layout and unlock the graph
+        const layout = cyRef.makeLayout({
+            name: "cola",
+            handleDisconnected: true,
+            animate: true,
+            avoidOverlap: true,
+            infinite: false,
+            unconstrIter: 1,
+            userConstIter: 0,
+            allConstIter: 1,
+            fit: false
+        } as any)
+        layout.run();
+
+        layout.on("layoutstop", () => {
+            cyRef.nodes().forEach(node => {
+                node.unlock();
+            })
+        })
     }
 
     // Once the graph becomes too large, it becomes neither performant nor useful.
@@ -383,7 +454,7 @@ class GraphCanvasComponent extends React.Component<any, any> {
                 }]
         });
         (cyRef as any).cxtmenu({
-            selector: "node, edge",
+            selector: "node",
             menuRadius: (ele) => {return 80},
             activeFillColor: 'rgba(184,111,25,0.75)',
             commands: [
@@ -403,6 +474,24 @@ class GraphCanvasComponent extends React.Component<any, any> {
                     content: "Mark To",
                     select: (el) => {
                         this.markTo(el.data().id);
+                    }
+                },
+                {
+                    content: "Disagree",
+                    select: (el) => {
+                        this.respond(el.data().id, false);
+                    }
+                },]
+        });
+        (cyRef as any).cxtmenu({
+            selector: "edge",
+            menuRadius: (ele) => {return 80},
+            activeFillColor: 'rgba(184,111,25,0.75)',
+            commands: [
+                {
+                    content: "Agree",
+                    select: (el) => {
+                        this.respond(el.data().id, true);
                     }
                 },
                 {
@@ -454,7 +543,9 @@ class GraphCanvasComponent extends React.Component<any, any> {
     private goToNewPoint() {
         let stash = this.packAndStashSubGraph();
         ActiveHiveState.graphStash.put(stash);
-        this.history.push('new-point');
+        setTimeout(() => {
+            this.history.push('new-point');
+        }, 100);
     }
 }
 

@@ -26,6 +26,10 @@ class SidebarButtonsComponent extends React.Component<any, any> {
 
     componentDidMount() {
         this.sub = UserState.user.valueUpdatedEvent.subscribe((user: User) => {
+            if (!user) {
+                return;
+            }
+
             if (user.id !== '') {
                 this.setState({
                     navigationDisabled: false

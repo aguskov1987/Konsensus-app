@@ -36,6 +36,10 @@ class HiveGraphComponent extends React.Component<any, any> {
         })
 
         this.userSub = UserState.user.valueUpdatedEvent.subscribe((user: User) => {
+            if (!user) {
+                return;
+            }
+
             this.setState({
                 user: user
             });
@@ -47,6 +51,9 @@ class HiveGraphComponent extends React.Component<any, any> {
         });
 
         this.hiveSub = ActiveHiveState.activeHiveManifest.valueUpdatedEvent.subscribe((manifest: HiveManifest) => {
+            if (!manifest) {
+                return;
+            }
             this.setState({
                 activeHiveName: manifest.title
             })

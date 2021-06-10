@@ -29,13 +29,14 @@ class CreatePointComponent extends React.Component<any, any> {
             point: ActiveHiveState.newPointText.take()
         });
 
-        this.newPointSub = ActiveHiveState.subgraph.valueUpdatedEvent.subscribe((subgraph) => {
-            this.history.push('/');
-        })
+        // this.newPointSub = ActiveHiveState.subgraph.valueUpdatedEvent.subscribe((subgraph) => {
+        //     this.history.push('/');
+        // })
     }
 
     onSubmit(event: any) {
         ActiveHiveState.createNewPoint(this.state.point, []);
+        this.history.push('/');
         event.preventDefault();
     }
 

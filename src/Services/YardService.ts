@@ -1,39 +1,24 @@
-import {ApiHiveManifest} from "../ApiModels/ApiHiveManifest";
 import {HiveManifest} from "../AppState/HiveManifest";
 import axios, {AxiosResponse} from "axios";
 
 export class YardService {
-    public static loadHive(hiveId: string): Promise<AxiosResponse<ApiHiveManifest>> {
-        return axios.get<ApiHiveManifest>("/yard/hive/", {params: {hiveId}});
+    public static loadHive(hiveId: string): Promise<AxiosResponse<HiveManifest>> {
+        return axios.get<HiveManifest>("/yard/hive/", {params: {hiveId}});
     }
 
-    public static createNewHive(title: string, description: string): Promise<AxiosResponse<ApiHiveManifest>> {
-        return axios.post<ApiHiveManifest>("/yard/hive", {title, description});
+    public static createNewHive(title: string, description: string): Promise<AxiosResponse<HiveManifest>> {
+        return axios.post<HiveManifest>("/yard/hive", {title, description});
     }
 
-    public static loadUserSavedHives(): Promise<AxiosResponse<ApiHiveManifest[]>> {
-        return axios.get<ApiHiveManifest[]>("/yard/saved");
+    public static loadUserSavedHives(): Promise<AxiosResponse<HiveManifest[]>> {
+        return axios.get<HiveManifest[]>("/yard/saved");
     }
 
-    public static loadInitialYard(): Promise<AxiosResponse<ApiHiveManifest[]>> {
-        return axios.get<ApiHiveManifest[]>("/yard/start");
+    public static loadInitialYard(): Promise<AxiosResponse<HiveManifest[]>> {
+        return axios.get<HiveManifest[]>("/yard/start");
     }
 
-    public static loadSearchResults(phrase: string): Promise<AxiosResponse<ApiHiveManifest[]>> {
-        return axios.post<ApiHiveManifest[]>("/yard/search", {phrase});
-    }
-
-    public static convertToViewModel(data: ApiHiveManifest): HiveManifest {
-        let hive = new HiveManifest();
-
-        // * one-to-one mapping
-        hive.id= data.id;
-        hive.description = data.description;
-        hive.title = data.title;
-        hive.numberOfParticipants = data.numberOfParticipants;
-        hive.numberOfPoints = data.numberOfPoints;
-        hive.collectionId = data.collectionId;
-
-        return hive;
+    public static loadSearchResults(phrase: string): Promise<AxiosResponse<HiveManifest[]>> {
+        return axios.post<HiveManifest[]>("/yard/search", {phrase});
     }
  }

@@ -1,4 +1,4 @@
-import {Subject} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import cloneDeep from "lodash.clonedeep";
 
 /***
@@ -17,14 +17,14 @@ export class Stash<T> {
     /***
      * @description Fires when the initiator calls the stash() method
      */
-    public onStash: Subject<void> = new Subject<void>();
+    public onStash: BehaviorSubject<number> = new BehaviorSubject<number>(1);
     /***
      * @description Fires when the stasher calls the put() method to store the value
      */
-    public onStashed: Subject<void> = new Subject<void>();
+    public onStashed: BehaviorSubject<number> = new BehaviorSubject<number>(1);
 
     public stash() {
-        this.onStash.next();
+        this.onStash.next(1);
     }
 
     /***
@@ -33,7 +33,7 @@ export class Stash<T> {
      */
     public put(value: T) {
         this.value = cloneDeep(value);
-        this.onStashed.next();
+        this.onStashed.next(1);
     }
 
     /***

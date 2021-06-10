@@ -40,11 +40,19 @@ class PointSearchComponent extends React.Component<any, InternalState> {
 
     public componentDidMount() {
         this.foundSub = ActiveHiveState.foundPoints.valueUpdatedEvent.subscribe((points) => {
+            if (!points) {
+                return;
+            }
+
             this.setState({
                 found: points
             })
         });
         this.foundStatusSub = ActiveHiveState.foundPoints.statusUpdatedEvent.subscribe((status) => {
+            if (!status) {
+                return;
+            }
+
             this.setState({
                 loadingStatus: status
             })
@@ -109,7 +117,7 @@ class PointSearchComponent extends React.Component<any, InternalState> {
         });
 
         this.graphSub = concat(ActiveHiveState.newPointText.onStashed, ActiveHiveState.graphStash.onStashed)
-            .subscribe(() => {
+            .subscribe((a, b) => {
                 this.history.push('new-point');
             })
 

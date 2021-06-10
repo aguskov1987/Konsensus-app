@@ -31,7 +31,7 @@ export class NewHiveState {
     public static createNewHive(title: string, description: string) {
         NewHiveState.newHive.setStatusPending();
         YardService.createNewHive(title, description).then((manifest) => {
-            NewHiveState.newHive.updateValue(YardService.convertToViewModel(manifest.data));
+            NewHiveState.newHive.updateValue(manifest.data);
             NewHiveState.newHive.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             NewHiveState.newHive.setStatusError(!code ? '' : code);
@@ -52,7 +52,7 @@ export class ActiveHiveState {
     public static loadDefaultHive(id: string) {
         ActiveHiveState.activeHiveManifest.setStatusPending();
         YardService.loadHive(id).then((response) => {
-            ActiveHiveState.activeHiveManifest.updateValue(YardService.convertToViewModel(response.data));
+            ActiveHiveState.activeHiveManifest.updateValue(response.data);
             ActiveHiveState.activeHiveManifest.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
             ActiveHiveState.activeHiveManifest.setStatusError(!code ? '' : code);
@@ -88,7 +88,17 @@ export class ActiveHiveState {
      * @param toId ID of the 'to' point
      */
     public static createNewSynapse(fromId: string, toId: string) {
-        console.log('creating synapse for: ' + fromId + ' ' + toId);
+        ActiveHiveState.subgraph.setStatusPending();
+        HiveService.createNewSynapse(fromId, toId, ActiveHiveState.activeHiveManifest.getValue().id)
+            .then((subgraph) => {
+                if (subgraph.data.origin == null) {
+                    subgraph.data.origin = ActiveHiveState.subgraph.getValue().origin;
+                }
+                ActiveHiveState.subgraph.updateValue(subgraph.data);
+                ActiveHiveState.subgraph.setStatusLoaded();
+            }).catch(({code}: AxiosError) => {
+            ActiveHiveState.subgraph.setStatusError(!code ? '' : code);
+        });
     }
 
     /***
@@ -97,7 +107,14 @@ export class ActiveHiveState {
      * @param agree Agree or disagree
      */
     public static respond(id: string, agree: boolean) {
-        console.log(id);
+        ActiveHiveState.subgraph.setStatusPending();
+        HiveService.respond(id, agree, ActiveHiveState.activeHiveManifest.getValue().id).then((sg) => {
+            sg.data.origin = ActiveHiveState.subgraph.getValue().origin;
+            ActiveHiveState.subgraph.updateValue(sg.data);
+            ActiveHiveState.subgraph.setStatusLoaded();
+        }).catch(({code}: AxiosError) => {
+            ActiveHiveState.subgraph.setStatusError(!code ? '' : code);
+        });
     }
 
     public static loadSubgraph(pointId: string) {
