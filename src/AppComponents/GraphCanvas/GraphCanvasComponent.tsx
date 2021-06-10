@@ -9,52 +9,53 @@ import {Subscription} from "rxjs";
 import {StashedPoint, StashedSubGraph, StashedSynapse, SubGraph} from "../../AppState/SubGraph";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
+import chroma from "chroma-js";
 
 let cyRef: Core;
 let style: any = [
     {
         selector: 'node',
         style: {
-            'width': 100,
-            'height': 100,
+            'width': 50,
+            'height': 50,
             'label': 'data(label)',
-            'background-color': 'data(c)',
+            'background-color': 'white',
             'text-valign': 'center',
             'text-halign': 'center',
             'text-wrap': 'wrap',
-            'text-max-width': '100px',
-            'font-size': 8
+            'text-max-width': '50px',
+            'font-size': 4
         }
     },
     {
         selector: ':selected',
         style: {
-            'border-width': 6,
+            'border-width': 4,
             'border-color': '#ffffff',
         }
     },
     {
         selector: 'edge',
         style: {
-            width: 3,
-            'curve-style': 'unbundled-bezier',
+            width: 2,
+            'curve-style': 'bezier',
             'control-point-distances': '20',
             'control-point-weights': '0.2',
-            'target-arrow-shape': 'triangle',
-            'line-color': 'data(c)',
-            'target-arrow-color': 'data(c)'
+            'target-arrow-shape': 'circle',
+            'line-color': '#1d1d1d',
+            'target-arrow-color': '#1d1d1d'
         }
     },
     {
         selector: 'edge:selected',
         style: {
-            width: 5,
-            'curve-style': 'unbundled-bezier',
+            width: 4,
+            'curve-style': 'bezier',
             'control-point-distances': '20',
             'control-point-weights': '0.2',
-            'target-arrow-shape': 'triangle',
-            'line-color': 'white',
-            'target-arrow-color': 'white'
+            'target-arrow-shape': 'circle',
+            'line-color': '#1d1d1d',
+            'target-arrow-color': '#1d1d1d'
         }
     },
     {
@@ -72,7 +73,9 @@ let style: any = [
 ];
 
 class GraphCanvasComponent extends React.Component<any, any> {
-    private maxNumberOfPoints: number = 1000;
+    private maxNumberOfPoints: number = 300;
+
+    private color = chroma.scale(['red', 'orange', 'green']).domain([-1, 1]);
 
     private stashSub: Subscription = new Subscription();
     private subgraphSub: Subscription = new Subscription();
@@ -306,7 +309,6 @@ class GraphCanvasComponent extends React.Component<any, any> {
                     userResponse: s.userResponse,
                     commonResponse: s.commonResponse,
                     penetration: s.penetration,
-                    c: 'green',
                     timestamp: Date.now()
                 },
                 position: stash ? (s as StashedPoint).position : {x: 0, y: 0}
@@ -322,7 +324,6 @@ class GraphCanvasComponent extends React.Component<any, any> {
                     userResponse: e.userResponse,
                     commonResponse: e.commonResponse,
                     penetration: e.penetration,
-                    c: 'green'
                 }
             });
         }
@@ -358,7 +359,6 @@ class GraphCanvasComponent extends React.Component<any, any> {
                         userResponse: st.userResponse,
                         commonResponse: st.commonResponse,
                         penetration: st.penetration,
-                        c: 'green',
                         timestamp: Date.now()
                     }
                 });
@@ -376,7 +376,6 @@ class GraphCanvasComponent extends React.Component<any, any> {
                         userResponse: ef.userResponse,
                         commonResponse: ef.commonResponse,
                         penetration: ef.penetration,
-                        c: 'green'
                     }
                 });
             }
@@ -430,7 +429,11 @@ class GraphCanvasComponent extends React.Component<any, any> {
     }
 
     private colorizeAndResize() {
-
+        cyRef.elements().forEach((element) => {
+            let value = element.data('commonResponse');
+            let c: any = this.color(value);
+            element.style('background-color', c.hex());
+        });
     }
 
     // Cxt radial menu setup
