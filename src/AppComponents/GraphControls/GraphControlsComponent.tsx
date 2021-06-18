@@ -1,34 +1,56 @@
 import React from "react";
 import {Button, ButtonGroup, Dropdown, DropdownButton, Image, ToggleButton} from "react-bootstrap";
 import Hint, {HintType} from "./Hint";
-import {ButtonCommand, HiveOperationsState} from "../../AppState/State";
+import {ButtonCommand, HiveLayout, HiveOperationsState, ResponseView} from "../../AppState/State";
 
 class GraphControlsComponent extends React.Component<any, any> {
     private graphView: any = [
-        {name: 'All', value: '1'},
-        {name: 'Mine', value: '2'},
+        {name: 'Mine', value: '1'},
+        {name: 'All', value: '2'},
     ];
 
     constructor(props: any) {
         super(props);
         this.state = {
             view: '1',
-            layout: '#Tree',
+            layout: '#Cola',
             hint: HintType
         }
     }
 
     setResponseView(value: string) {
+        HiveOperationsState.responseView.updateOption(value === '1' ? ResponseView.Mine : ResponseView.Common);
         this.setState({
             view: value
         });
     }
 
     setLayout(value: string | null) {
+        let layout: HiveLayout;
+        switch (value) {
+            case '#Cola':
+                layout = HiveLayout.Cola;
+                break;
+            case '#COSE':
+                layout = HiveLayout.Cose;
+                break;
+            case '#Grid':
+                layout = HiveLayout.Grid;
+                break;
+            case '#Concentric':
+                layout = HiveLayout.Concentric;
+                break;
+            case '#CircleSpring':
+                layout = HiveLayout.CircularSpring;
+                break;
+            default:
+                layout = HiveLayout.Cola;
+                break;
+        }
+        HiveOperationsState.layout.updateOption(layout);
         this.setState({
             layout: value
         });
-
     }
 
     setHint(hint: HintType) {
@@ -49,9 +71,11 @@ class GraphControlsComponent extends React.Component<any, any> {
                                 onSelect={(s) => {
                                     this.setLayout(s)
                                 }}>
-                    <Dropdown.Item href="#Tree">Random</Dropdown.Item>
-                    <Dropdown.Item href="#COSE">COSE</Dropdown.Item>
-                    <Dropdown.Item href="#Radial">Radial</Dropdown.Item>
+                    <Dropdown.Item href="#Cola">Cola</Dropdown.Item>
+                    <Dropdown.Item href="#COSE">Cose</Dropdown.Item>
+                    <Dropdown.Item href="#Grid">Grid</Dropdown.Item>
+                    <Dropdown.Item href="#Concentric">Concentric</Dropdown.Item>
+                    <Dropdown.Item href="#CircleSpring">Circle Spring</Dropdown.Item>
                 </DropdownButton>
                 <ButtonGroup toggle>
                     {this.graphView.map((radio: any, idx: any) => (

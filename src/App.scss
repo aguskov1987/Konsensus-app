@@ -1,0 +1,44 @@
+$feedback-bar-height: 3px;
+$control-panel-width: 70px;
+
+$main-color: #3e3e3e;
+$controls-color: darken($main-color, 5%);
+
+body, html {
+  height: 100%;
+  margin: 0;
+  // background-color: #3e3e3e;
+}
+
+#root {
+  height: 100%;
+}
+
+.controls-container {
+  height: 100%;
+  width: $control-panel-width;
+  float: left;
+  background-color: $controls-color
+}
+
+.main-container {
+  height: 100%;
+  width: calc(100% - #{$control-panel-width});
+  margin-left: $control-panel-width;
+  background-color: $main-color;
+}
+
+.feedback-bar-container {
+  height: $feedback-bar-height;
+  width: 100%;
+}
+
+.working-area-container {
+  width: 100%;
+  height: calc(100% - #{$feedback-bar-height});
+}
+
+/* HACK! SOMETHING IS NOT RIGHT WITH THE SPINNER SO HIDING IT FOR NOW*/
+.rbt-aux {
+  display: none;
+}

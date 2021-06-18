@@ -8,6 +8,7 @@ import {Subscription} from "rxjs";
 class CreatePointComponent extends React.Component<any, any> {
     private history: History;
     private newPointSub: Subscription = new Subscription();
+    private inputRef: any;
 
     constructor(props: any) {
         super(props);
@@ -28,7 +29,7 @@ class CreatePointComponent extends React.Component<any, any> {
         this.setState({
             point: ActiveHiveState.newPointText.take()
         });
-
+        this.inputRef.focus();
         // this.newPointSub = ActiveHiveState.subgraph.valueUpdatedEvent.subscribe((subgraph) => {
         //     this.history.push('/');
         // })
@@ -62,7 +63,9 @@ class CreatePointComponent extends React.Component<any, any> {
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="pointInput">
                         <Form.Label style={{color: 'white'}}>Point</Form.Label>
-                        <Form.Control value={this.state.point? this.state.point : ''} type="text" onChange={this.updatePoint}/>
+                        <Form.Control
+                            value={this.state.point? this.state.point : ''} type="text"
+                            onChange={this.updatePoint} ref={c => (this.inputRef = c)}/>
                     </Form.Group>
                     <Form.Group controlId="linksInput">
                         <Form.Label style={{color: 'white'}}>Supporting Links</Form.Label>

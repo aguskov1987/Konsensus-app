@@ -9,6 +9,7 @@ import {UserService} from "../../Services/UserService";
 import {User} from "../../AppState/User";
 import {LoadingStatus} from "../../AppState/LoadingStatus";
 import {HiveManifest} from "../../AppState/HiveManifest";
+import './HiveGraphStyle.scss';
 
 
 class HiveGraphComponent extends React.Component<any, any> {
@@ -74,17 +75,13 @@ class HiveGraphComponent extends React.Component<any, any> {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
-                <div style={{height: 50, backgroundColor: '#353535'}}>
-                    <div style={{width: '50%', float: 'left', color: 'white', marginTop: 10, marginLeft: 10}}>
-                        {this.state.activeHiveName}
-                    </div>
-                    <div style={{width: 'calc(50% - 10px)', float: 'left', marginTop: 7}}>
-                        <PointSearchComponent/>
-                    </div>
+            <React.Fragment>
+                <div className='details-panel'>
+                    <div className='hive-name-container'>{this.state.activeHiveName}</div>
+                    <div className='search-container'><PointSearchComponent/></div>
                 </div>
                 <GraphCanvasComponent/>
-            </div>
+            </React.Fragment>
         )
     }
 }

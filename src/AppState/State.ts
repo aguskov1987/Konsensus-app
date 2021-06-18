@@ -10,6 +10,7 @@ import {StashedSubGraph, SubGraph} from "./SubGraph";
 import {Point} from "./Point";
 import {Stash} from "./Stash";
 import {Subject} from "rxjs";
+import {StatefulOption} from "./StatefulOption";
 
 export class UserState {
     public static user: StatefulObject<User> = new StatefulObject<User>();
@@ -150,9 +151,22 @@ export enum ButtonCommand {
     Discard
 }
 
+export enum ResponseView {
+    Mine,
+    Common
+}
+
+export enum HiveLayout {
+    Cola,
+    Cose,
+    Grid,
+    Concentric,
+    CircularSpring
+}
+
 export class HiveOperationsState {
-    public static layout: Subject<string> = new Subject<string>();
-    public static responseView: Subject<string> = new Subject<string>();
+    public static layout: StatefulOption<HiveLayout> = new StatefulOption<HiveLayout>();
+    public static responseView: StatefulOption<ResponseView> = new StatefulOption<ResponseView>();
     public static lastButtonCommand: Subject<ButtonCommand> = new Subject<ButtonCommand>();
 }
 

@@ -5,11 +5,13 @@ import {Subscription} from "rxjs";
 import {NewHiveState} from "../../AppState/State";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
+import TitleBarComponent from "../TitleBar/TitleBarComponent";
 
 // TODO: add validation
 class NewHiveComponent extends React.Component<any, { title: string, description: string }> {
     private newHiveStatusSub: Subscription = new Subscription();
     private history: History;
+    private inputRef: any;
 
     constructor(props: any) {
         super(props);
@@ -31,7 +33,8 @@ class NewHiveComponent extends React.Component<any, { title: string, description
             if (status === LoadingStatus.Loaded) {
                 this.history.push('/');
             }
-        })
+        });
+        this.inputRef.focus();
     }
 
     onSubmit(event: any) {
@@ -57,15 +60,16 @@ class NewHiveComponent extends React.Component<any, { title: string, description
 
     render() {
         return (
-            <div style={{padding: 200}}>
+            <div style={{padding: 20}}>
+                <TitleBarComponent title='New Hive' icon='Images/new_hive.svg'/>
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="titleInput">
                         <Form.Label style={{color: 'white'}}>Title</Form.Label>
-                        <Form.Control type="text" onChange={this.updateTitle}/>
+                        <Form.Control type="text" onChange={this.updateTitle} ref={c => (this.inputRef = c)}/>
                     </Form.Group>
                     <Form.Group controlId="descriptionInput">
                         <Form.Label style={{color: 'white'}}>Description</Form.Label>
-                        <Form.Control as="textarea" rows={3} onChange={this.updateDescription}/>
+                        <Form.Control as="textarea" rows={4} onChange={this.updateDescription}/>
                     </Form.Group>
                     <Button variant="secondary" type="submit">
                         Submit

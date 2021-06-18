@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 import SidebarButtonsComponent from './AppComponents/SideBarControls/SidebarButtonsComponent';
 import SavedPointsComponent from "./AppComponents/SavedPoints/SavedPointsComponent";
 import {configureAxios} from "./Services/CommonService";
@@ -26,11 +26,11 @@ class App extends React.Component<any, any> {
                     <div className='controls-container'>
                         <SidebarButtonsComponent/>
                     </div>
-                    <div className='right-side'>
+                    <div className='main-container'>
                         <div className='feedback-bar-container'>
                             <FeedbackBarComponent/>
                         </div>
-                        <div className='working-area'>
+                        <div className='working-area-container'>
                             <Switch>
                                 <Route exact path="/">
                                     <HiveGraphComponent/>
@@ -50,7 +50,7 @@ class App extends React.Component<any, any> {
                                 <Route path="/new-point">
                                     <CreatePointComponent/>
                                 </Route>
-                                <Route path="/saved-points">
+                                <Route path="/saved-point">
                                     <SavedPointsComponent/>
                                 </Route>
                             </Switch>

@@ -22,6 +22,7 @@ class SidebarButtonsComponent extends React.Component<any, any> {
         this.leaveApp = this.leaveApp.bind(this);
         this.openSavedHives = this.openSavedHives.bind(this);
         this.openYard = this.openYard.bind(this);
+        this.openNewHive = this.openNewHive.bind(this);
     }
 
     componentDidMount() {
@@ -57,6 +58,11 @@ class SidebarButtonsComponent extends React.Component<any, any> {
         this.history.push('/yard');
     }
 
+    openNewHive() {
+        this.checkIfLeavingGraphArea();
+        this.history.push('/new-hive');
+    }
+
     private checkIfLeavingGraphArea() {
         if (this.history.location.pathname === '/') {
             console.log('leaving graph area...')
@@ -73,22 +79,32 @@ class SidebarButtonsComponent extends React.Component<any, any> {
             <div>
                 <div style={{margin: 6}}>
                     <Button block variant="primary" size={'lg'} onClick={this.openYard} disabled={this.state.navigationDisabled}>
-                        <Image src="Images/yard_button.svg"/>
+                        <Image src="Images/Navigation/YardIcon.svg"/>
                     </Button>{' '}
                 </div>
                 <div style={{margin: 6}}>
                     <Button block variant="primary" size={'lg'} onClick={this.openSavedHives} disabled={this.state.navigationDisabled}>
-                        <Image src="Images/my_saved_hives.svg"/>
+                        <Image src="Images/Navigation/MyHivesIcon.svg"/>
                     </Button>{' '}
                 </div>
                 <div style={{margin: 6}}>
                     <Button block variant="primary" size={'lg'} onClick={this.openSavedPoints} disabled={this.state.navigationDisabled}>
-                        <Image src="Images/my_saved_statements.svg"/>
+                        <Image src="Images/Navigation/MyPointsIcon.svg"/>
+                    </Button>{' '}
+                </div>
+                <div style={{margin: 6}}>
+                    <Button block variant="primary" size={'lg'} onClick={this.openNewHive} disabled={this.state.navigationDisabled}>
+                        <Image src="Images/Navigation/NewHiveIcon.svg"/>
                     </Button>{' '}
                 </div>
                 <div style={{margin: 6}}>
                     <Button block variant="danger" size={'lg'} onClick={this.leaveApp} disabled={this.state.navigationDisabled}>
-                        <Image src="Images/exit_button.svg"/>
+                        <Image src="Images/Navigation/ExitIcon.svg"/>
+                    </Button>{' '}
+                </div>
+                <div style={{margin: 6}}>
+                    <Button block variant="outline-info" size={'lg'} disabled={this.state.navigationDisabled}>
+                        <Image src="Images/Navigation/HelpIcon.svg"/>
                     </Button>{' '}
                 </div>
             </div>

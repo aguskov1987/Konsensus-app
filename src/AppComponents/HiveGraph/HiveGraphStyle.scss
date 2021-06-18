@@ -1,0 +1,23 @@
+@use "src/App";
+
+$details-panel-height: 50px;
+
+.details-panel {
+  height: $details-panel-height;
+  background-color: App.$main-color;
+}
+
+.hive-name-container {
+  width: 50%;
+  float: left;
+  color: white;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.search-container {
+  width: 50%;
+  float: left;
+  padding-top: 10px;
+  padding-right: 10px;
+}

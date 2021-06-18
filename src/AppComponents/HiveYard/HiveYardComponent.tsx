@@ -3,6 +3,7 @@ import {Button, Card, FormControl, InputGroup} from "react-bootstrap";
 import HiveCardComponent from "../HiveCard/HiveCardComponent";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
+import TitleBarComponent from "../TitleBar/TitleBarComponent";
 
 class HiveYardComponent extends React.Component<any, any> {
     private history: History;
@@ -13,7 +14,6 @@ class HiveYardComponent extends React.Component<any, any> {
 
         this.searchHives = this.searchHives.bind(this);
         this.updateSearchPhrase = this.updateSearchPhrase.bind(this);
-        this.goToCreateNewHive = this.goToCreateNewHive.bind(this);
 
         this.state = {
             searchPhrase: '',
@@ -35,13 +35,10 @@ class HiveYardComponent extends React.Component<any, any> {
         // this.props.searchYard(this.state.searchPhrase);
     }
 
-    goToCreateNewHive() {
-        this.history.push('new-hive');
-    }
-
     render() {
         return (
             <div style={{padding: 20, height: '100%', position: 'relative'}}>
+                <TitleBarComponent title='Yard' icon='Images/Navigation/YardIcon.svg'/>
                 <InputGroup className="mb-3" size="sm">
                     <FormControl onChange={this.updateSearchPhrase}
                                  placeholder="Search hives"
@@ -53,7 +50,7 @@ class HiveYardComponent extends React.Component<any, any> {
                         <Button variant="secondary">Home</Button>
                     </InputGroup.Append>
                 </InputGroup>
-                <Card border="primary" bg="light" style={{height: '88%'}}>
+                <Card border="primary" bg="light" style={{height: '86%'}}>
                     <Card.Body>
                         <div>
                             {this.state.hives.map((hive, idx) => {
@@ -64,9 +61,6 @@ class HiveYardComponent extends React.Component<any, any> {
                         </div>
                     </Card.Body>
                 </Card>
-                <Button variant="secondary" onClick={this.goToCreateNewHive} style={{bottom: 20, position: 'absolute'}}>
-                    Start a new hive
-                </Button>
             </div>
         )
     }

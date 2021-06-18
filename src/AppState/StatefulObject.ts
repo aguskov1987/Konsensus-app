@@ -48,3 +48,4 @@ export class StatefulObject<T extends Model | Model[] | null> {
         this.error = '';
     }
 }
+
