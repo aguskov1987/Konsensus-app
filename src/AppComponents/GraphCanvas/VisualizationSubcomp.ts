@@ -17,7 +17,6 @@ export class VisualizationSubcomp implements Subcomp {
                 'width': this.minPointSize,
                 'height': this.minPointSize,
                 'label': 'data(label)',
-                'background-color': 'white',
                 'text-valign': 'center',
                 'text-halign': 'center',
                 'text-wrap': 'wrap',
@@ -57,8 +56,6 @@ export class VisualizationSubcomp implements Subcomp {
             style: {
                 width: 2,
                 'curve-style': 'bezier',
-                'control-point-distances': '20',
-                'control-point-weights': '0.2',
                 'target-arrow-shape': 'circle',
                 'line-color': '#ffffbf',
                 'target-arrow-color': '#ffffbf'
@@ -69,8 +66,6 @@ export class VisualizationSubcomp implements Subcomp {
             style: {
                 width: 4,
                 'curve-style': 'bezier',
-                'control-point-distances': '20',
-                'control-point-weights': '0.2',
                 'target-arrow-shape': 'circle',
                 'line-color': '#1f1f1f',
                 'target-arrow-color': '#1f1f1f'
@@ -115,9 +110,14 @@ export class VisualizationSubcomp implements Subcomp {
 
         this.cyRef.elements().forEach((element) => {
             let value = element.data(response);
-            let color: any = this.color(value);
+            let c: any = this.color(value);
+            let color = c as Color;
+            let accent = color.darken(1);
+            let border = color.brighten(1);
             if (element.isNode()) {
-                element.style('background-color', color.hex());
+                element.style('background-fill', 'radial-gradient');
+                element.style('background-gradient-stop-colors', `${color.hex()} ${accent.hex()} ${border.hex()}`);
+                element.style('background-gradient-stop-positions', '0 40% 55%');
             }
             if (element.isEdge()) {
                 element.style('line-color', color.hex());
