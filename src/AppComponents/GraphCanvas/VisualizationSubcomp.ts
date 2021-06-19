@@ -1,5 +1,5 @@
 import {Core, Position} from "cytoscape";
-import chroma from "chroma-js";
+import chroma, {Color} from "chroma-js";
 import {ResponseView} from "../../AppState/State";
 import {Subcomp} from "./Subcomp";
 import {ICanvasLayer} from "cytoscape-layers";
@@ -7,6 +7,7 @@ import {ICanvasLayer} from "cytoscape-layers";
 type RelationType = 'from'|'to';
 
 export class VisualizationSubcomp implements Subcomp {
+    private cyRef: Core;
     private minPointSize = 50;
     private maxPointSize = 200;
     private style: any = [
@@ -42,18 +43,6 @@ export class VisualizationSubcomp implements Subcomp {
                     -0.87, -0.44,
                     -0.82, -0.53
                 ]
-            }
-        },
-        {
-            selector: '.cause',
-            style: {
-                'shape': 'rectangle'
-            }
-        },
-        {
-            selector: '.effect',
-            style: {
-                'shape': 'rhomboid'
             }
         },
         {
@@ -99,9 +88,11 @@ export class VisualizationSubcomp implements Subcomp {
         '#66bd63',
         '#1a9850'
     ]).domain([-1, 1]);
-    private cyRef: Core;
+
     private fromToLayer: ICanvasLayer|null = null;
     private pointMarked = false;
+    private innerRadiusFactor = 1;
+    private outerRadiusFactor = 3;
 
     constructor(cy: Core) {
         this.cyRef = cy;
@@ -119,18 +110,18 @@ export class VisualizationSubcomp implements Subcomp {
          * size of the nodes accordingly.
          */
 
-            // colorize
-        let r = view === ResponseView.Mine ? 'userResponse' : 'commonResponse';
+        // colorize
+        let response = view === ResponseView.Mine ? 'userResponse' : 'commonResponse';
 
         this.cyRef.elements().forEach((element) => {
-            let value = element.data(r);
-            let c: any = this.color(value);
+            let value = element.data(response);
+            let color: any = this.color(value);
             if (element.isNode()) {
-                element.style('background-color', c.hex());
+                element.style('background-color', color.hex());
             }
             if (element.isEdge()) {
-                element.style('line-color', c.hex());
-                element.style('target-arrow-color', c.hex());
+                element.style('line-color', color.hex());
+                element.style('target-arrow-color', color.hex());
             }
         });
 
@@ -148,21 +139,62 @@ export class VisualizationSubcomp implements Subcomp {
     public clearSubscriptions(): void {}
 
     public markPoint(as: RelationType, id: string) {
-        let position: Position = this.cyRef.getElementById(id)[0].renderedPosition();
+        if (this.pointMarked) {
+            return;
+        }
+        let point = this.cyRef.getElementById(id)[0];
+        let pointRadius = point.renderedBoundingBox({}).h / 2;
+        let position: Position = point.renderedPosition();
+
         let layers = (this.cyRef as any).layers();
         this.fromToLayer = layers.nodeLayer.insertAfter('canvas');
+
         let ctx:CanvasRenderingContext2D = (this.fromToLayer as any).ctx;
         let canvas = (this.fromToLayer as any).node;
+
         let xFactor = canvas.width / this.cyRef.width();
         let yFactor = canvas.height / this.cyRef.height();
 
         this.pointMarked = true;
+        let initInnerRadius = pointRadius*this.innerRadiusFactor;
+        let initOuterRadius = pointRadius*this.outerRadiusFactor;
+        let currentRadius: number = as === 'from'? initInnerRadius : initOuterRadius;
+
+        let gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0.0, "#DBBB04");
+        gradient.addColorStop(0.1 ,"#00FF57");
+        gradient.addColorStop(0.2, "#FF6000");
+        gradient.addColorStop(0.3, "#DBBB04");
+        gradient.addColorStop(0.4 ,"#00FF57");
+        gradient.addColorStop(0.5, "#FF6000");
+        gradient.addColorStop(0.6, "#DBBB04");
+        gradient.addColorStop(0.7 ,"#00FF57");
+        gradient.addColorStop(0.8, "#FF6000");
+        gradient.addColorStop(1.0, "#DBBB04");
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = gradient;
+
         let update: FrameRequestCallback|null = (time: number) => {
+            pointRadius = point.renderedBoundingBox({}).h / 2;
+            initInnerRadius = pointRadius*this.innerRadiusFactor;
+            initOuterRadius = pointRadius*this.outerRadiusFactor;
+
+            if (as === 'from') {
+                currentRadius += currentRadius*0.03;
+                if (currentRadius > initOuterRadius) {
+                    currentRadius = initInnerRadius;
+                }
+            } else {
+                currentRadius -= currentRadius*0.03;
+                if (currentRadius < initInnerRadius) {
+                    currentRadius = initOuterRadius;
+                }
+            }
+
             position = this.cyRef.getElementById(id)[0].renderedPosition();
-            ctx.clearRect(0, 0, 2000, 2000);
+            ctx.clearRect(0, 0, 3000, 3000);
             ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(position.x * xFactor, position.y * yFactor);
+            ctx.arc(position.x*xFactor, position.y*yFactor, currentRadius, 0, 2*Math.PI);
             ctx.stroke();
 
             if (this.pointMarked) {
@@ -173,7 +205,7 @@ export class VisualizationSubcomp implements Subcomp {
     }
 
     public clearMarkings() {
-        // this.fromToLayer?.remove();
+        this.fromToLayer?.remove();
         this.pointMarked = false;
     }
 }
