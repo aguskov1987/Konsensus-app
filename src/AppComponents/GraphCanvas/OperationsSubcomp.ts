@@ -285,6 +285,7 @@ export class OperationsSubcomp implements Subcomp {
             this.discardFromTo();
         } else {
             this.fromId = id;
+            this.viz.markPoint('from', id);
             this.cyRef.getElementById(id).addClass('cause');
 
             this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
@@ -298,6 +299,7 @@ export class OperationsSubcomp implements Subcomp {
             this.discardFromTo();
         } else {
             this.toId = id;
+            this.viz.markPoint('to', id);
             this.cyRef.getElementById(id).addClass('effect');
 
             this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
@@ -310,6 +312,7 @@ export class OperationsSubcomp implements Subcomp {
         this.fromId = '';
         this.cyRef.elements().removeClass('cause');
         this.cyRef.elements().removeClass('effect');
+        this.viz.clearMarkings();
 
         this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
             false, false);

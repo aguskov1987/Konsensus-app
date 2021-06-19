@@ -1,7 +1,10 @@
-import {Core} from "cytoscape";
+import {Core, Position} from "cytoscape";
 import chroma from "chroma-js";
 import {ResponseView} from "../../AppState/State";
 import {Subcomp} from "./Subcomp";
+import {ICanvasLayer} from "cytoscape-layers";
+
+type RelationType = 'from'|'to';
 
 export class VisualizationSubcomp implements Subcomp {
     private minPointSize = 50;
@@ -97,6 +100,8 @@ export class VisualizationSubcomp implements Subcomp {
         '#1a9850'
     ]).domain([-1, 1]);
     private cyRef: Core;
+    private fromToLayer: ICanvasLayer|null = null;
+    private pointMarked = false;
 
     constructor(cy: Core) {
         this.cyRef = cy;
@@ -140,6 +145,35 @@ export class VisualizationSubcomp implements Subcomp {
         }
     }
 
-    public clearSubscriptions(): void {
+    public clearSubscriptions(): void {}
+
+    public markPoint(as: RelationType, id: string) {
+        let position: Position = this.cyRef.getElementById(id)[0].renderedPosition();
+        let layers = (this.cyRef as any).layers();
+        this.fromToLayer = layers.nodeLayer.insertAfter('canvas');
+        let ctx:CanvasRenderingContext2D = (this.fromToLayer as any).ctx;
+        let canvas = (this.fromToLayer as any).node;
+        let xFactor = canvas.width / this.cyRef.width();
+        let yFactor = canvas.height / this.cyRef.height();
+
+        this.pointMarked = true;
+        let update: FrameRequestCallback|null = (time: number) => {
+            position = this.cyRef.getElementById(id)[0].renderedPosition();
+            ctx.clearRect(0, 0, 2000, 2000);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(position.x * xFactor, position.y * yFactor);
+            ctx.stroke();
+
+            if (this.pointMarked) {
+                requestAnimationFrame(update as FrameRequestCallback);
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    public clearMarkings() {
+        // this.fromToLayer?.remove();
+        this.pointMarked = false;
     }
 }

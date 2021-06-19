@@ -41,7 +41,7 @@ class GraphCanvasComponent extends React.Component<any, any> {
             cytoscape.use(cx);
         }
         if ((cyRef as any).layers == null) {
-            cytoscape.use(Layers as any);
+            cytoscape.use(Layers as cytoscape.Ext);
         }
 
         this.visualization = new VisualizationSubcomp(cyRef);
