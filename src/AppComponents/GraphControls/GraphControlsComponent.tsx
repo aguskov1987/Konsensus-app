@@ -94,15 +94,15 @@ class GraphControlsComponent extends React.Component<any, any> {
                 <ButtonGroup aria-label="Zoom, pan, select and connect points and synapses">
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Zoom)}
                             onKeyDown={(event) => {this.processZoom(event)}} onBlur={() => this.setHint(HintType.None)}>
-                        <Image width={15} src="Images/zoom_icon.svg"/>
+                        <Image width={15} src="Images/Operations/zoom_icon.svg"/>
                     </Button>
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Pan)}
                             onKeyDown={(event) => {this.processPan(event)}} onBlur={() => this.setHint(HintType.None)}>
-                        <Image width={15} src="Images/pan_icon.svg"/>
+                        <Image width={15} src="Images/Operations/pan_icon.svg"/>
                     </Button>
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Selection)}
                             onKeyDown={(event) => {this.processSelection(event)}} onBlur={() => this.setHint(HintType.None)}>
-                        <Image width={15} src="Images/select_icon.svg"/>
+                        <Image width={15} src="Images/Operations/select_icon.svg"/>
                     </Button>
                 </ButtonGroup>
             </div>
