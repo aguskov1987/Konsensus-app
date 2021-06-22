@@ -3,11 +3,12 @@ import {BehaviorSubject} from "rxjs";
 import {LoadingStatus} from "./LoadingStatus";
 import cloneDeep from "lodash.clonedeep";
 
-export class StatefulObject<T extends Model | Model[] | null> {
+
+export class StatefulObject<T> {
     private value: T = null as any;
 
-    public valueUpdatedEvent: BehaviorSubject<T> = new BehaviorSubject<T>(null);
-    public statusUpdatedEvent: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>(null);
+    public valueUpdatedEvent: BehaviorSubject<T> = new BehaviorSubject<T>(null as any);
+    public statusUpdatedEvent: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>(null as any);
 
     public error: string = '';
     public history: T[] = [];

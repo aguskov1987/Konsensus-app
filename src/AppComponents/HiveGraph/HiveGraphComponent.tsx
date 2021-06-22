@@ -3,13 +3,14 @@ import PointSearchComponent from "../PointSearch/PointSearchComponent";
 import GraphCanvasComponent from "../GraphCanvas/GraphCanvasComponent";
 import {withRouter} from "react-router-dom";
 import {History} from 'history'
-import {ActiveHiveState, UserState} from "../../AppState/State";
+import {UserState} from "../../AppState/UserState";
 import {Subscription} from "rxjs";
 import {UserService} from "../../Services/UserService";
 import {User} from "../../AppState/User";
 import {LoadingStatus} from "../../AppState/LoadingStatus";
 import {HiveManifest} from "../../AppState/HiveManifest";
 import './HiveGraphStyle.scss';
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
 
 class HiveGraphComponent extends React.Component<any, any> {

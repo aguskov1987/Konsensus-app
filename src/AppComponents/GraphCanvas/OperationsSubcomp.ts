@@ -1,13 +1,24 @@
 import {Core, Position} from "cytoscape";
 import {VisualizationSubcomp} from "./VisualizationSubcomp";
-import {ActiveHiveState, ButtonCommand, HiveLayout, HiveOperationsState, ResponseView} from "../../AppState/State";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {HiveManifest} from "../../AppState/HiveManifest";
 import {Subcomp} from "./Subcomp";
+import {ButtonCommand} from "../../AppState/ButtonCommand";
+import {ResponseView} from "../../AppState/ResponseView";
+import {HiveLayout} from "../../AppState/HiveLayout";
+import {HiveOperationsState} from "../../AppState/HiveOperationsState";
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
 export class OperationsSubcomp implements Subcomp {
+    public userRespondedEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    public userClickedEvent: BehaviorSubject<Position|null> = new BehaviorSubject<Position|null>(null);
+    public userSelectedPointEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    public newPointEvent: BehaviorSubject<{fromId: string, toId: string, label: string}|null>
+        = new BehaviorSubject<{fromId: string, toId: string, label: string}|null>(null);
+
     private readonly cyRef: Core;
     private readonly viz: VisualizationSubcomp;
+
     private readonly panInterval: number = 30;
     private readonly zoomInterval: number = 0.5;
 
@@ -16,17 +27,12 @@ export class OperationsSubcomp implements Subcomp {
     private responseViewSub: Subscription = new Subscription();
     private layoutSub: Subscription = new Subscription();
 
-    private menu: any = null;
+    private newPointMenu: any = null;
 
     private fromId: string = '';
     private toId: string = '';
-
     private visiblePointIds: {id: string, position: Position}[] = [];
     private visibleSynapseIds: {id: string, position: Position}[] = [];
-
-    public userRespondedEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    public userClickedEvent: BehaviorSubject<Position|null> = new BehaviorSubject<Position|null>(null);
-    public userSelectedPointEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(cy: Core, viz: VisualizationSubcomp) {
         this.cyRef = cy;
@@ -55,6 +61,14 @@ export class OperationsSubcomp implements Subcomp {
         this.hiveSub.unsubscribe();
         this.responseViewSub.unsubscribe();
         this.layoutSub.unsubscribe();
+    }
+
+    public discardFromTo() {
+        this.toId = '';
+        this.fromId = '';
+        this.viz.clearMarkings();
+        this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
+            false, false);
     }
 
     private registerCommands() {
@@ -166,7 +180,6 @@ export class OperationsSubcomp implements Subcomp {
         });
     }
 
-    // Cxt radial menu setup
     private setupMenu() {
         (this.cyRef as any).cxtmenu({
             selector: "node",
@@ -219,8 +232,8 @@ export class OperationsSubcomp implements Subcomp {
     }
 
     private setupNewPointMenu(allowDangling: boolean, allowTo: boolean, allowFrom: boolean) {
-        if (this.menu != null) {
-            this.menu.destroy();
+        if (this.newPointMenu != null) {
+            this.newPointMenu.destroy();
         }
 
         let discardCommand = {
@@ -239,7 +252,7 @@ export class OperationsSubcomp implements Subcomp {
             content: "New to Here",
             select: () => {
                 if (this.fromId) {
-                    this.goToNewPoint(this.fromId);
+                    this.goToNewPoint(this.fromId, '');
                 }
             }
         }
@@ -247,7 +260,7 @@ export class OperationsSubcomp implements Subcomp {
             content: "New from Here",
             select: () => {
                 if (this.toId) {
-                    this.goToNewPoint(this.toId);
+                    this.goToNewPoint('', this.toId);
                 }
             }
         }
@@ -263,7 +276,7 @@ export class OperationsSubcomp implements Subcomp {
             commands.push(fromCommand);
         }
 
-        this.menu = (this.cyRef as any).cxtmenu({
+        this.newPointMenu = (this.cyRef as any).cxtmenu({
             selector: "core",
             menuRadius: () => {
                 return 80
@@ -279,11 +292,11 @@ export class OperationsSubcomp implements Subcomp {
     }
 
     private markFrom(id: string) {
-        // TODO: make the style of the node more attractive (canvas animation?)
         if (this.toId !== '') {
             ActiveHiveState.createNewSynapse(id, this.toId);
             this.discardFromTo();
         } else {
+            this.discardFromTo();
             this.fromId = id;
             this.viz.markPoint('from', id);
             this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
@@ -296,6 +309,7 @@ export class OperationsSubcomp implements Subcomp {
             ActiveHiveState.createNewSynapse(this.fromId, id);
             this.discardFromTo();
         } else {
+            this.discardFromTo();
             this.toId = id;
             this.viz.markPoint('to', id);
             this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
@@ -303,23 +317,16 @@ export class OperationsSubcomp implements Subcomp {
         }
     }
 
-    private discardFromTo() {
-        this.toId = '';
-        this.fromId = '';
-        this.viz.clearMarkings();
-        this.setupNewPointMenu(ActiveHiveState.activeHiveManifest.getValue().allowDanglingPoints,
-            false, false);
-    }
-
     private cashVisibleElements() {
         // Every time the viewport changes, go through the elements and get the visible ones.
         // They are required in case the user steps through nodes using the keyboard
     }
 
-    // TODO: get rid of the new page; it's distracting. Open a ---movable--- window
     private goToNewPoint(fromId: string = '', toId: string = '') {
-
-    }
+        let element = this.cyRef.getElementById(fromId !== '' ? fromId : toId)[0];
+        setTimeout(() => {
+            this.newPointEvent.next({fromId, toId, label: element.data('label')});
+        }, 300)}
 
     private applyLayout(layout: HiveLayout) {
 

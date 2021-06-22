@@ -2,10 +2,10 @@ import React from "react";
 import {Button, Form} from "react-bootstrap";
 import {LoadingStatus} from "../../AppState/LoadingStatus";
 import {Subscription} from "rxjs";
-import {NewHiveState} from "../../AppState/State";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
 import TitleBarComponent from "../TitleBar/TitleBarComponent";
+import {NewHiveState} from "../../AppState/NewHiveState";
 
 // TODO: add validation
 class NewHiveComponent extends React.Component<any, { title: string, description: string }> {

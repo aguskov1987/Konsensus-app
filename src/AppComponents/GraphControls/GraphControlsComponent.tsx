@@ -1,7 +1,10 @@
 import React from "react";
 import {Button, ButtonGroup, Dropdown, DropdownButton, Image, ToggleButton} from "react-bootstrap";
 import Hint, {HintType} from "./Hint";
-import {ButtonCommand, HiveLayout, HiveOperationsState, ResponseView} from "../../AppState/State";
+import {ButtonCommand} from "../../AppState/ButtonCommand";
+import {ResponseView} from "../../AppState/ResponseView";
+import {HiveLayout} from "../../AppState/HiveLayout";
+import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 
 class GraphControlsComponent extends React.Component<any, any> {
     private graphView: any = [

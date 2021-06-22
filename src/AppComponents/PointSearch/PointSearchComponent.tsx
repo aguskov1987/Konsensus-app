@@ -2,10 +2,10 @@ import React from "react";
 import {AsyncTypeahead} from "react-bootstrap-typeahead";
 import {LoadingStatus} from "../../AppState/LoadingStatus";
 import {FoundPoint} from "../../AppState/FoundPoint";
-import {ActiveHiveState} from "../../AppState/State";
 import {Subscription} from "rxjs";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
 class InternalState {
     public query: string = '';

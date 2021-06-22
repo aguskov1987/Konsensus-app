@@ -47,9 +47,6 @@ class App extends React.Component<any, any> {
                                 <Route path="/new-hive">
                                     <NewHiveComponent/>
                                 </Route>
-                                <Route path="/new-point">
-                                    <CreatePointComponent/>
-                                </Route>
                                 <Route path="/saved-point">
                                     <SavedPointsComponent/>
                                 </Route>

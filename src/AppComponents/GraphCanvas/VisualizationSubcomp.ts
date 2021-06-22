@@ -1,8 +1,8 @@
 import {Core, Position} from "cytoscape";
 import chroma, {Color} from "chroma-js";
-import {ResponseView} from "../../AppState/State";
 import {Subcomp} from "./Subcomp";
 import {ICanvasLayer} from "cytoscape-layers";
+import {ResponseView} from "../../AppState/ResponseView";
 
 type RelationType = 'from'|'to';
 
@@ -73,7 +73,7 @@ export class VisualizationSubcomp implements Subcomp {
         }
     ];
     private color = chroma.scale([
-        '#d53e4f',
+        '#c64141',
         '#f46d43',
         '#fdae61',
         '#fee08b',
@@ -117,7 +117,7 @@ export class VisualizationSubcomp implements Subcomp {
             if (element.isNode()) {
                 element.style('background-fill', 'radial-gradient');
                 element.style('background-gradient-stop-colors', `${color.hex()} ${accent.hex()} ${border.hex()}`);
-                element.style('background-gradient-stop-positions', '0 40% 55%');
+                element.style('background-gradient-stop-positions', '0 45% 55%');
             }
             if (element.isEdge()) {
                 element.style('line-color', color.hex());
@@ -160,21 +160,12 @@ export class VisualizationSubcomp implements Subcomp {
         let initOuterRadius = pointRadius*this.outerRadiusFactor;
         let currentRadius: number = as === 'from'? initInnerRadius : initOuterRadius;
 
-        let gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0.0, "#DBBB04");
-        gradient.addColorStop(0.1 ,"#00FF57");
-        gradient.addColorStop(0.2, "#FF6000");
-        gradient.addColorStop(0.3, "#DBBB04");
-        gradient.addColorStop(0.4 ,"#00FF57");
-        gradient.addColorStop(0.5, "#FF6000");
-        gradient.addColorStop(0.6, "#DBBB04");
-        gradient.addColorStop(0.7 ,"#00FF57");
-        gradient.addColorStop(0.8, "#FF6000");
-        gradient.addColorStop(1.0, "#DBBB04");
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = gradient;
+        this.setupTargetLightGradient(ctx, canvas);
+        setInterval(() => {
+            this.setupTargetLightGradient(ctx, canvas);
+        }, 300);
 
-        let update: FrameRequestCallback|null = (time: number) => {
+        let update: FrameRequestCallback|null = () => {
             pointRadius = point.renderedBoundingBox({}).h / 2;
             initInnerRadius = pointRadius*this.innerRadiusFactor;
             initOuterRadius = pointRadius*this.outerRadiusFactor;
@@ -207,5 +198,21 @@ export class VisualizationSubcomp implements Subcomp {
     public clearMarkings() {
         this.fromToLayer?.remove();
         this.pointMarked = false;
+    }
+
+    private setupTargetLightGradient(ctx: CanvasRenderingContext2D, canvas: any) {
+        let gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0.0, "#DBBB04");
+        gradient.addColorStop(0.1 ,"#00FF57");
+        gradient.addColorStop(0.2, "#FF6000");
+        gradient.addColorStop(0.3, "#DBBB04");
+        gradient.addColorStop(0.4 ,"#00FF57");
+        gradient.addColorStop(0.5, "#FF6000");
+        gradient.addColorStop(0.6, "#DBBB04");
+        gradient.addColorStop(0.7 ,"#00FF57");
+        gradient.addColorStop(0.8, "#FF6000");
+        gradient.addColorStop(1.0, "#DBBB04");
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = gradient;
     }
 }

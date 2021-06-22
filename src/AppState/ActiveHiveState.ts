@@ -1,44 +1,12 @@
-import {UserService} from "../Services/UserService";
-import {AxiosError} from "axios";
-import {HiveManifest} from "./HiveManifest";
-import {YardService} from "../Services/YardService";
-import {User} from "./User";
 import {StatefulObject} from "./StatefulObject";
+import {HiveManifest} from "./HiveManifest";
 import {FoundPoint} from "./FoundPoint";
-import {HiveService} from "../Services/HiveService";
-import {StashedSubGraph, SubGraph} from "./SubGraph";
 import {Point} from "./Point";
+import {StashedSubGraph, SubGraph} from "./SubGraph";
 import {Stash} from "./Stash";
-import {Subject} from "rxjs";
-import {StatefulOption} from "./StatefulOption";
-
-export class UserState {
-    public static user: StatefulObject<User> = new StatefulObject<User>();
-
-    public static loadUser() {
-        UserState.user.setStatusPending();
-        UserService.loadUser().then((response) => {
-            UserState.user.updateValue(UserService.convertToViewModel(response.data));
-            UserState.user.setStatusLoaded();
-        }).catch(({code}: AxiosError) => {
-            UserState.user.setStatusError(!code ? '' : code);
-        });
-    }
-}
-
-export class NewHiveState {
-    public static newHive: StatefulObject<HiveManifest> = new StatefulObject<HiveManifest>();
-
-    public static createNewHive(title: string, description: string) {
-        NewHiveState.newHive.setStatusPending();
-        YardService.createNewHive(title, description).then((manifest) => {
-            NewHiveState.newHive.updateValue(manifest.data);
-            NewHiveState.newHive.setStatusLoaded();
-        }).catch(({code}: AxiosError) => {
-            NewHiveState.newHive.setStatusError(!code ? '' : code);
-        });
-    }
-}
+import {YardService} from "../Services/YardService";
+import {AxiosError} from "axios";
+import {HiveService} from "../Services/HiveService";
 
 export class ActiveHiveState {
     public static activeHiveManifest: StatefulObject<HiveManifest> = new StatefulObject<HiveManifest>();
@@ -47,7 +15,6 @@ export class ActiveHiveState {
     public static savedPoints: StatefulObject<Point[]> = new StatefulObject<Point[]>();
     public static subgraph: StatefulObject<SubGraph> = new StatefulObject<SubGraph>();
 
-    public static newPointText: Stash<string> = new Stash<string>();
     public static graphStash: Stash<StashedSubGraph> = new Stash<StashedSubGraph>();
 
     public static loadDefaultHive(id: string) {
@@ -131,49 +98,4 @@ export class ActiveHiveState {
     public static loadSavedPoints() {
 
     }
-}
-
-export enum ButtonCommand {
-    ZoomIn,
-    ZoomOut,
-    PanLeft,
-    PanUp,
-    PanRight,
-    PanDown,
-    SelectNextPoint,
-    SelectPreviousPoint,
-    SelectNextSynapse,
-    SelectPreviousSynapse,
-    Agree,
-    Disagree,
-    MarkAsFrom,
-    MarkAsTo,
-    Discard
-}
-
-export enum ResponseView {
-    Mine,
-    Common
-}
-
-export enum HiveLayout {
-    Cola,
-    Cose,
-    Grid,
-    Concentric,
-    CircularSpring
-}
-
-export class HiveOperationsState {
-    public static layout: StatefulOption<HiveLayout> = new StatefulOption<HiveLayout>();
-    public static responseView: StatefulOption<ResponseView> = new StatefulOption<ResponseView>();
-    public static lastButtonCommand: Subject<ButtonCommand> = new Subject<ButtonCommand>();
-}
-
-export class YardState {
-
-}
-
-export class SavedHivesState {
-
 }

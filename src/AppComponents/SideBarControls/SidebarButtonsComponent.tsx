@@ -2,9 +2,10 @@ import React from "react";
 import {Button, Image} from "react-bootstrap";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
-import {ActiveHiveState, UserState} from "../../AppState/State";
+import {UserState} from "../../AppState/UserState";
 import {User} from "../../AppState/User";
 import {Subscription} from "rxjs";
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
 class SidebarButtonsComponent extends React.Component<any, any> {
     private history: History;

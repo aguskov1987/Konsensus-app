@@ -1,9 +1,10 @@
 import {Core, Layouts, Position} from "cytoscape";
 import {StashedPoint, StashedSubGraph, StashedSynapse, SubGraph} from "../../AppState/SubGraph";
 import {Subscription} from "rxjs";
-import {ActiveHiveState, HiveOperationsState} from "../../AppState/State";
 import {VisualizationSubcomp} from "./VisualizationSubcomp";
 import {Subcomp} from "./Subcomp";
+import {HiveOperationsState} from "../../AppState/HiveOperationsState";
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
 export class IntegrationSubcomp implements Subcomp {
     public lastRespondedId: string = '';

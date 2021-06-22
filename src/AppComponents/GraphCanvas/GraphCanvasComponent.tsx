@@ -12,25 +12,34 @@ import {IntegrationSubcomp} from "./IntegrationSubcomp";
 import {VisualizationSubcomp} from "./VisualizationSubcomp";
 import {OperationsSubcomp} from "./OperationsSubcomp";
 import {Subscription} from "rxjs";
+import CreatePointComponent from "../CreatePoint/CreatePointComponent";
 
 let cyRef: Core;
 
 class GraphCanvasComponent extends React.Component<any, any> {
     private history: History;
 
-    private integration: IntegrationSubcomp | null = null;
-    private visualization: VisualizationSubcomp | null = null;
-    private operations: OperationsSubcomp | null = null;
+    private integration: IntegrationSubcomp|null = null;
+    private visualization: VisualizationSubcomp|null = null;
+    private operations: OperationsSubcomp|null = null;
 
     private s1: Subscription = new Subscription();
     private s2: Subscription = new Subscription();
     private s3: Subscription = new Subscription();
+    private s4: Subscription = new Subscription();
 
     constructor(props: any) {
         super(props);
         this.state = {
             selectedLabel: undefined,
+            showNewPointDialog: false,
+            newPointLabelTest: '',
+            newPointFromId: '',
+            newPointToId: '',
+            fromOrToLabel: ''
         };
+
+        this.handleClose = this.handleClose.bind(this);
 
         this.history = this.props.history;
     }
@@ -63,6 +72,30 @@ class GraphCanvasComponent extends React.Component<any, any> {
                 selectedLabel: label
             })
         });
+
+        this.s4 = this.operations.newPointEvent.subscribe((data: {fromId: string, toId: string, label: string}|null) => {
+            if (data == null) {
+                return;
+            }
+
+            if (data.fromId) {
+                this.setState({
+                    showNewPointDialog: true,
+                    newPointFromId: data.fromId,
+                    fromOrToLabel: data.label
+                });
+            } else if (data.toId) {
+                this.setState({
+                    showNewPointDialog: true,
+                    newPointToId: data.toId,
+                    fromOrToLabel: data.label
+                });
+            } else {
+                this.setState({
+                    showNewPointDialog: true,
+                });
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -73,6 +106,7 @@ class GraphCanvasComponent extends React.Component<any, any> {
         this.s1.unsubscribe();
         this.s2.unsubscribe();
         this.s3.unsubscribe();
+        this.s4.unsubscribe();
     }
 
     render() {
@@ -82,8 +116,24 @@ class GraphCanvasComponent extends React.Component<any, any> {
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={[]}
                                     style={{width: '100%', height: 'calc(100% - 91px)'}}/>
                 <GraphControlsComponent/>
+                <CreatePointComponent showDialog={this.state.showNewPointDialog}
+                                      fromId={this.state.newPointFromId}
+                                      toId={this.state.newPointToId}
+                                      fromToLabel={this.state.fromOrToLabel}
+                                      closeCallback={this.handleClose}/>
             </div>
         );
+    }
+
+    private handleClose() {
+        this.setState({
+            showNewPointDialog: false,
+            newPointLabelTest: '',
+            newPointFromId: '',
+            newPointToId: '',
+            fromOrToLabel: ''
+        });
+        this.operations?.discardFromTo();
     }
 }
 

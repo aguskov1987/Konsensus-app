@@ -1,16 +1,24 @@
 import React from "react";
 import {History} from "history";
-import {withRouter} from "react-router-dom";
-import {Button, Form} from "react-bootstrap";
-import {ActiveHiveState} from "../../AppState/State";
+import {withRouter, RouteComponentProps} from "react-router-dom";
+import {Button, Form, Modal} from "react-bootstrap";
 import {Subscription} from "rxjs";
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
-class CreatePointComponent extends React.Component<any, any> {
+interface CretePointProps {
+    showDialog: boolean;
+    fromId: string;
+    toId: string;
+    fromToLabel: string;
+    closeCallback: () => void;
+}
+
+class CreatePointComponent extends React.Component<CretePointProps & RouteComponentProps, any> {
     private history: History;
     private newPointSub: Subscription = new Subscription();
     private inputRef: any;
 
-    constructor(props: any) {
+    constructor(props: CretePointProps & RouteComponentProps) {
         super(props);
 
         this.history = this.props.history;
@@ -26,18 +34,16 @@ class CreatePointComponent extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.setState({
-            point: ActiveHiveState.newPointText.take()
-        });
-        this.inputRef.focus();
-        // this.newPointSub = ActiveHiveState.subgraph.valueUpdatedEvent.subscribe((subgraph) => {
-        //     this.history.push('/');
-        // })
+        if (this.inputRef != null) {
+            this.inputRef.focus();
+        }
     }
 
     onSubmit(event: any) {
         ActiveHiveState.createNewPoint(this.state.point, []);
-        this.history.push('/');
+        this.setState({
+            showNewPointDialog: false
+        })
         event.preventDefault();
     }
 
@@ -58,24 +64,32 @@ class CreatePointComponent extends React.Component<any, any> {
     }
 
     render() {
+        let pointLabel = 'New Point';
+        if (this.props.fromId) {
+            pointLabel = `From: ${this.props.fromToLabel}`;
+        } else if (this.props.toId) {
+            pointLabel = `To: ${this.props.fromToLabel}`;
+        }
         return (
-            <div style={{padding: 200}}>
-                <Form onSubmit={this.onSubmit}>
+            <Modal show={this.props.showDialog} onHide={this.props.closeCallback} backdrop="static" size='lg'>
+                <Modal.Header closeButton>
+                    <Modal.Title>{pointLabel}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     <Form.Group controlId="pointInput">
-                        <Form.Label style={{color: 'white'}}>Point</Form.Label>
-                        <Form.Control
-                            value={this.state.point? this.state.point : ''} type="text"
-                            onChange={this.updatePoint} ref={c => (this.inputRef = c)}/>
+                        <Form.Label>Point</Form.Label>
+                        <Form.Control type="text" onChange={this.updatePoint} ref={c => (this.inputRef = c)}/>
                     </Form.Group>
                     <Form.Group controlId="linksInput">
-                        <Form.Label style={{color: 'white'}}>Supporting Links</Form.Label>
-                        <Form.Control as="textarea" rows={3} onChange={this.updateLinks}/>
+                        <Form.Label>Supporting Links</Form.Label>
+                        <Form.Control as="textarea" rows={2} onChange={this.updateLinks}/>
                     </Form.Group>
-                    <Button variant="secondary" type="submit">
-                        Submit
-                    </Button>
-                </Form>
-            </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={this.props.closeCallback}>Cancel</Button>
+                    <Button variant="primary">Submit</Button>
+                </Modal.Footer>
+            </Modal>
         )
     }
 }

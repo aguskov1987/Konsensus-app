@@ -5,7 +5,7 @@ import {BehaviorSubject} from "rxjs";
 export class StatefulOption<T> {
     private option: T = null as any;
 
-    public optionUpdatedEvent: BehaviorSubject<T> = new BehaviorSubject<T>(null);
+    public optionUpdatedEvent: BehaviorSubject<T> = new BehaviorSubject<T>(null as any);
 
     public updateOption(option: T) {
         let newOption = cloneDeep(option);
