@@ -138,6 +138,25 @@ export class IntegrationSubcomp implements Subcomp {
             return;
         }
 
+        // if adding a new point
+        if (sg.points && sg.points.length === 1
+            && this.cyRef.getElementById(sg.points[0].id).length === 0
+            && this.lastClickPosition) {
+
+            let st = sg.points[0]
+            this.cyRef.add({
+                data: {
+                    id: st.id,
+                    label: st.label,
+                    userResponse: st.userResponse,
+                    commonResponse: st.commonResponse,
+                    penetration: st.penetration,
+                    timestamp: Date.now()
+                },
+                position: this.lastClickPosition
+            });
+        }
+
         this.cyRef.nodes().forEach((n) => {
             n.lock();
         });

@@ -325,7 +325,7 @@ export class OperationsSubcomp implements Subcomp {
     private goToNewPoint(fromId: string = '', toId: string = '') {
         let element = this.cyRef.getElementById(fromId !== '' ? fromId : toId)[0];
         setTimeout(() => {
-            this.newPointEvent.next({fromId, toId, label: element.data('label')});
+            this.newPointEvent.next({fromId, toId, label: element?.data('label')});
         }, 300)}
 
     private applyLayout(layout: HiveLayout) {

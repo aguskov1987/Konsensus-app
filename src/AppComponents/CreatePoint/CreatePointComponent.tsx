@@ -23,7 +23,7 @@ class CreatePointComponent extends React.Component<CretePointProps & RouteCompon
 
         this.history = this.props.history;
 
-        this.onSubmit = this.onSubmit.bind(this);
+        this.submit = this.submit.bind(this);
         this.updatePoint = this.updatePoint.bind(this);
         this.updateLinks = this.updateLinks.bind(this);
 
@@ -39,11 +39,9 @@ class CreatePointComponent extends React.Component<CretePointProps & RouteCompon
         }
     }
 
-    onSubmit(event: any) {
-        ActiveHiveState.createNewPoint(this.state.point, []);
-        this.setState({
-            showNewPointDialog: false
-        })
+    submit(event: any) {
+        ActiveHiveState.createNewPoint(this.state.point, [], this.props.fromId, this.props.toId);
+        this.props.closeCallback();
         event.preventDefault();
     }
 
@@ -70,6 +68,7 @@ class CreatePointComponent extends React.Component<CretePointProps & RouteCompon
         } else if (this.props.toId) {
             pointLabel = `To: ${this.props.fromToLabel}`;
         }
+
         return (
             <Modal show={this.props.showDialog} onHide={this.props.closeCallback} backdrop="static" size='lg'>
                 <Modal.Header closeButton>
@@ -87,7 +86,7 @@ class CreatePointComponent extends React.Component<CretePointProps & RouteCompon
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.closeCallback}>Cancel</Button>
-                    <Button variant="primary">Submit</Button>
+                    <Button variant="primary" onClick={this.submit}>Submit</Button>
                 </Modal.Footer>
             </Modal>
         )

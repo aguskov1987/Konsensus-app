@@ -7,6 +7,7 @@ import {Stash} from "./Stash";
 import {YardService} from "../Services/YardService";
 import {AxiosError} from "axios";
 import {HiveService} from "../Services/HiveService";
+import {from} from "rxjs";
 
 export class ActiveHiveState {
     public static activeHiveManifest: StatefulObject<HiveManifest> = new StatefulObject<HiveManifest>();
@@ -38,11 +39,11 @@ export class ActiveHiveState {
         });
     }
 
-    public static createNewPoint(content: string, supportingLinks: string[]) {
+    public static createNewPoint(content: string, supportingLinks: string[], fromId: string, toId: string) {
         let hiveId = ActiveHiveState.activeHiveManifest.getValue().id;
         let identifier = ActiveHiveState.activeHiveManifest.getValue().collectionId;
         ActiveHiveState.newPoint.setStatusPending();
-        HiveService.createNewPoint(content, hiveId, identifier).then((subgraph) => {
+        HiveService.createNewPoint(content, hiveId, identifier, fromId, toId).then((subgraph) => {
             ActiveHiveState.subgraph.updateValue(subgraph.data);
             ActiveHiveState.subgraph.setStatusLoaded();
         }).catch(({code}: AxiosError) => {
