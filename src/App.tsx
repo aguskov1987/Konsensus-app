@@ -11,6 +11,7 @@ import MyHivesComponent from "./AppComponents/MyHives/MyHivesComponent";
 import NewHiveComponent from "./AppComponents/NewHive/NewHiveComponent";
 import CreatePointComponent from "./AppComponents/CreatePoint/CreatePointComponent";
 import FeedbackBarComponent from "./AppComponents/FeedbackBar/FeedbackBarComponent";
+import TestBench from "./AppComponents/Widgets/TestBench";
 
 class App extends React.Component<any, any> {
 
@@ -49,6 +50,9 @@ class App extends React.Component<any, any> {
                                 </Route>
                                 <Route path="/saved-point">
                                     <SavedPointsComponent/>
+                                </Route>
+                                <Route path="/test-bench">
+                                    <TestBench/>
                                 </Route>
                             </Switch>
                         </div>

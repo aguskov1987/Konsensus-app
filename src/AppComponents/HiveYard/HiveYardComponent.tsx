@@ -59,6 +59,9 @@ class HiveYardComponent extends React.Component<any, any> {
                                 )
                             })}
                         </div>
+                        <div style={{width: '100%', height: 250}}>
+                            <HiveCardComponent/>
+                        </div>
                     </Card.Body>
                 </Card>
             </div>

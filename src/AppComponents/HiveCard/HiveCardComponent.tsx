@@ -1,8 +1,7 @@
 import React from "react";
-import {Card} from "react-bootstrap";
-import {Spring} from "react-spring/renderprops-universal";
-import Dial, {DialType} from "../Widgets/Dial";
-
+import './HiveCardStyle.scss'
+import HiveImageWidget from "../Widgets/HiveImageWidget/HiveImageWidget";
+import HiveActivityWidget from "../Widgets/HiveActivityWidget/HiveActivityWidget";
 
 // TODO: added stats into the footer
 class HiveCardComponent extends React.Component<any, any> {
@@ -12,35 +11,21 @@ class HiveCardComponent extends React.Component<any, any> {
     }
     render() {
         return (
-            <Spring from={{opacity: 0}} to={{opacity: 1}}>
-                {(props) => {
-                    return (
-                        <Card bg="dark" style={{color: "white", opacity: props.opacity}}>
-                            <Card.Header>
-                                <a onClick={this.goToHive} style={{color: "white"}} href="empty">{this.props.manifest.title}</a>
-                            </Card.Header>
-                            <Card.Body>
-                                <Card.Text>
-                                    {this.props.manifest.description}
-                                </Card.Text>
-                            </Card.Body>
-                            <Card.Footer className="text-muted">
-                                <div style={{width: 80, height: 80, float: 'left', marginRight: 20}}>
-                                    <Dial type={DialType.TotalUsers} value={1}/>
-                                </div>
-                                <div style={{width: 80, height: 80, float: 'left', marginRight: 20}}>
-                                    <Dial type={DialType.TotalPoints} value={1}/>
-                                </div>
-                            </Card.Footer>
-                        </Card>
-                    )
-                }}
-            </Spring>
+            <div className='hive-card-container'>
+                <div className='hive-card-picture'>
+                    <HiveImageWidget pointCount={10}/>
+                </div>
+                <div className='hive-card-name'>Title</div>
+                <div className='hive-card-description'>Description</div>
+                <div className='hive-card-activity'>
+                    <HiveActivityWidget dataPoints={[[34, 45, 65, 1, 56, 14, 89], [34, 45, 65, 1, 56, 14, 89].reverse()]}/>
+                </div>
+            </div>
         )
     }
 
     private goToHive(event: any) {
-        this.props.loadHive(this.props.manifest.id);
+        // this.props.loadHive(this.props.manifest.id);
         event.preventDefault();
     }
 }
