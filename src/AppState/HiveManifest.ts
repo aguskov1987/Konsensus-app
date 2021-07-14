@@ -1,6 +1,6 @@
 import {Model} from "./Model";
 
-export class HiveManifest extends Model{
+export class HiveManifest extends Model {
     public allowDanglingPoints: boolean = false;
     public collectionId: string = '';
     public dateCreated: string = '';
@@ -8,4 +8,6 @@ export class HiveManifest extends Model{
     public participationCount: number[] = [];
     public pointCount: number[] = [];
     public title: string = '';
+    public totalParticipation: number = 0;
+    public totalPoints: number = 0;
 }

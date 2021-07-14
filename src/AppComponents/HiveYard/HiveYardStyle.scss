@@ -1,0 +1,14 @@
+.hive-yard-header {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 50% auto;
+  grid-template-areas: 'sorting paging';
+}
+
+.hive-sort-container {
+  grid-area: sorting;
+}
+
+.hive-paging-container {
+  grid-area: paging;
+}

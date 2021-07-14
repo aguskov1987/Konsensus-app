@@ -14,3 +14,9 @@ export function configureAxios() {
         return Promise.reject(error);
     });
 }
+
+export function logIfDevelopment(log: any) {
+    if (process.env.NODE_ENV === 'development') {
+        console.log(log);
+    }
+}

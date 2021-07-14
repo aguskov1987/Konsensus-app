@@ -1,0 +1,22 @@
+.pagination > li {
+  padding: 4px 10px 4px 10px;
+  border-top: black solid 1px;
+  border-bottom: black solid 1px;
+}
+
+.previous {
+  border-bottom-left-radius: 0.25rem;
+  border-top-left-radius: 0.25rem;
+  border-left: black solid 1px;
+}
+
+.next {
+  border-bottom-right-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  border-right: black solid 1px;
+}
+
+.active {
+  background-color: #161a2b;
+  color: white;
+}

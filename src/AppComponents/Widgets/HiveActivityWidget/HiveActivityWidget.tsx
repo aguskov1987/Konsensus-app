@@ -1,46 +1,56 @@
 import React from "react";
+import chroma from "chroma-js";
 
 interface HiveActivityProps {
     dataPoints: (number[])[];
 }
 
-class ActivitySlice {
-    public h: string = '';
-    public dataPoints: string[] = [];
-}
-
 class HiveActivityWidget extends React.Component<HiveActivityProps, any> {
     render() {
         this.checkData(this.props.dataPoints);
-        let normalized = this.normalizeDataPoints(this.props.dataPoints);
+        let normalizeDataPoints = this.normalizeDataPoints(this.props.dataPoints);
 
-        let lineWidthInPercent = (100 / (normalized[0].length - 1));
-        let middle: any[] = [];
+        let colors = chroma.brewer.Set2;
 
-        let verts: string[] = [];
-        for (let i = 1; i < normalized[0].length - 1; i++) {
-            let width = (lineWidthInPercent * i).toFixed(0) + '%';
-            middle.push(<line x1={width} y1='0' x2={width} y2='100%' stroke="grey" key={i}/>);
-            verts.push(width);
+        let sectionWidth = (100 / (normalizeDataPoints[0].length - 1));
+        let middleLines: any[] = [];
+
+        // exclude the first line at 0. It's drawn manually later on but it needs to be omitted
+        // from the array sine it's used to draw lines between points.
+        let xPositions: string[] = [];
+        for (let i = 1; i < normalizeDataPoints[0].length - 1; i++) {
+            let width = (sectionWidth * i).toFixed(0) + '%';
+            middleLines.push(<line x1={width} y1='0' x2={width} y2='100%' stroke="grey" key={i}/>);
+            xPositions.push(width);
         }
-        verts.push('100%');
+        xPositions.push('100%');
 
         let prevPointBuffer: [x: string, y: string][] = [];
 
-
         return (
             <svg width="100%" height="100%">
+                {/*draw the labels*/}
+                <text x='1%' y='20px' fontSize='small' fill='white'>{(middleLines.length + 2) + ' days ago'}</text>
+                <text x='96%' y='20px' fontSize='small' fill='white'>Today</text>
+
+                <text x='45%' y='20px' fontSize='small' fontWeight='bold' fill={colors[0]}>Activity</text>
+                <text x='51%' y='20px' fontSize='small' fontWeight='bold' fill={colors[1]}>Points</text>
+
+                {/*draw the vertical lines*/}
                 <line x1="0" y1="0" x2="0" y2="100%" stroke="grey" />
-                {middle}
+                {middleLines}
                 <line x1="100%" y1="0" x2="100%" y2="100%" stroke="grey" />
 
-                {normalized.map((slice, idx) => {
-                    prevPointBuffer.push(['0%', ((1 - slice[0])*100).toFixed(0) + '%']);
-                    return <circle r='5' fill='red' cx='0' cy={((1 - slice[0])*100).toFixed(0) + '%'} key={idx}/>
+                {/*draw the first vertical line with the data points*/}
+                {normalizeDataPoints.map((slice, idx) => {
+                    let cy = ((1 - slice[0])*100).toFixed(0) + '%';
+                    prevPointBuffer.push(['0%', cy]);
+                    return <circle r='3' fill={colors[idx]} cx='0' cy={cy} key={idx}/>
                 })}
 
-                {verts.map((vertical, idx) => {
-                    return normalized.map((slice, index) => {
+                {/*draw the rest of the vertical lines with data points + connecting lines from the previous data point*/}
+                {xPositions.map((vertical, idx) => {
+                    return normalizeDataPoints.map((slice, index) => {
                         let key = idx.toString() + index.toString();
                         let cy = ((1 - slice[idx+1])*100).toFixed(0) + '%'
                         let x1 = prevPointBuffer[index][0].toString();
@@ -49,8 +59,8 @@ class HiveActivityWidget extends React.Component<HiveActivityProps, any> {
                         prevPointBuffer[index][1] = cy;
                         return (
                             <React.Fragment>
-                                <circle r='5' fill='red' cx={vertical} key={key} cy={cy}/>
-                                <line x1={x1} y1={y1} x2={vertical} y2={cy} key={'l' +key} stroke="red" strokeWidth={2}/>
+                                <circle r='3' fill={colors[index]} cx={vertical} key={'c' + key} cy={cy}/>
+                                <line x1={x1} y1={y1} x2={vertical} y2={cy} key={'l' + key} stroke={colors[index]} strokeWidth={1}/>
                             </React.Fragment>
                         )
                     })
