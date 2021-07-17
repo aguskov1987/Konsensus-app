@@ -4,8 +4,10 @@ import {History} from "history";
 import {withRouter} from "react-router-dom";
 import {UserState} from "../../AppState/UserState";
 import {User} from "../../AppState/User";
-import {Subscription} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import {NewHiveState} from "../../AppState/NewHiveState";
+import {LoadingStatus} from "../../AppState/LoadingStatus";
 
 class SidebarButtonsComponent extends React.Component<any, any> {
     private history: History;
@@ -61,6 +63,7 @@ class SidebarButtonsComponent extends React.Component<any, any> {
 
     openNewHive() {
         this.checkIfLeavingGraphArea();
+        NewHiveState.newHive.restartListener();
         this.history.push('/new-hive');
     }
 

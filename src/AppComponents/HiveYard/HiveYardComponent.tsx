@@ -16,7 +16,11 @@ import {HiveOrder} from "../../AppState/HiveOrder";
 class HiveYardComponent extends React.Component<any, any> {
     private history: History;
     private hivesSub: Subscription = new Subscription();
-    private hivesPerPage: number = 10;
+    private pageSub: Subscription = new Subscription();
+    private querySub: Subscription = new Subscription();
+    private sortSub: Subscription = new Subscription();
+    private initLoad: boolean = true;
+    private hivesPerPage: number = 5;
 
     constructor(props: any) {
         super(props);
@@ -27,13 +31,52 @@ class HiveYardComponent extends React.Component<any, any> {
 
     componentDidMount() {
         this.hivesSub = YardState.hives.valueUpdatedEvent.subscribe((set) => {
-            if (set == null || set.hives == null) {
+            if (set == null || set.hives == null || this.initLoad) {
                 return;
             }
-            console.log(set);
+
             this.setState({
                 hives: set.hives
             })
+        });
+
+        this.pageSub = YardState.currentPage.optionUpdatedEvent.subscribe((page) => {
+            if (page == null || this.initLoad) {
+                return;
+            }
+            YardState.loadYard({
+                query: YardState.hivesSearchQuery.getOption(),
+                page: page,
+                hivesPerPage: this.hivesPerPage,
+                sort: YardState.hiveSorting.getOption(),
+                order: HiveOrder.Desc
+            });
+        });
+
+        this.sortSub = YardState.hiveSorting.optionUpdatedEvent.subscribe((sort) => {
+            if (sort == null || this.initLoad) {
+                return;
+            }
+            YardState.loadYard({
+                query: YardState.hivesSearchQuery.getOption(),
+                page: YardState.currentPage.getOption(),
+                hivesPerPage: this.hivesPerPage,
+                sort: sort,
+                order: HiveOrder.Desc
+            });
+        });
+
+        this.querySub = YardState.hivesSearchQuery.optionUpdatedEvent.subscribe((query) => {
+            if (query == null || this.initLoad) {
+                return;
+            }
+            YardState.loadYard({
+                query: query,
+                page: YardState.currentPage.getOption(),
+                hivesPerPage: this.hivesPerPage,
+                sort: YardState.hiveSorting.getOption(),
+                order: HiveOrder.Desc
+            });
         });
 
         YardState.loadYard({
@@ -41,12 +84,16 @@ class HiveYardComponent extends React.Component<any, any> {
             page: 1,
             hivesPerPage: this.hivesPerPage,
             sort: HiveSorting.ByActivity,
-            order: HiveOrder.Asc
+            order: HiveOrder.Desc
         });
+        this.initLoad = false;
     }
 
     componentWillUnmount() {
         this.hivesSub.unsubscribe();
+        this.pageSub.unsubscribe();
+        this.querySub.unsubscribe();
+        this.sortSub.unsubscribe();
     }
 
     render() {

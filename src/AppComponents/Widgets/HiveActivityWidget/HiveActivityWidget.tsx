@@ -1,5 +1,6 @@
 import React from "react";
 import chroma from "chroma-js";
+import {retry} from "rxjs/operators";
 
 interface HiveActivityProps {
     dataPoints: (number[])[];
@@ -84,10 +85,13 @@ class HiveActivityWidget extends React.Component<HiveActivityProps, any> {
         let result: (number[])[] = [];
 
         for(let array of data) {
-            let newArray = array.map(p => (p / Math.max(...array)));
+            let maximum = Math.max(...array);
+            if (maximum === 0) {
+                maximum = 0.001;
+            }
+            let newArray = array.map(p => (p / maximum));
             result.push(newArray);
         }
-
         return result;
     }
 }

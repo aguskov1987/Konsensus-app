@@ -8,6 +8,7 @@ import {History} from "history";
 import {YardState} from "../../AppState/YardState";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 import dateformat from 'dateformat';
+import {Subscription} from "rxjs";
 
 interface HiveCardProps {
     manifest: HiveManifest
@@ -16,6 +17,7 @@ interface HiveCardProps {
 // TODO: added stats into the footer
 class HiveCardComponent extends React.Component<HiveCardProps & RouteComponentProps, any> {
     private history: History;
+    private sub: Subscription = new Subscription();
 
     constructor(props: HiveCardProps & RouteComponentProps) {
         super(props);
@@ -38,15 +40,18 @@ class HiveCardComponent extends React.Component<HiveCardProps & RouteComponentPr
                     {this.props.manifest.description}
                 </div>
                 <div className='hive-card-activity'>
-                    <HiveActivityWidget dataPoints={[this.props.manifest.pointCount, this.props.manifest.participationCount]}/>
+                    <HiveActivityWidget dataPoints={[this.props.manifest.participationCount, this.props.manifest.pointCount]}/>
                 </div>
             </div>
         )
     }
 
+    componentWillUnmount() {
+        this.sub.unsubscribe();
+    }
+
     private goToHive(event: any) {
-        let sub = ActiveHiveState.activeHiveManifest.valueUpdatedEvent.subscribe((hive) => {
-            sub.unsubscribe();
+        this.sub = ActiveHiveState.activeHiveManifest.valueUpdatedEvent.subscribe((hive) => {
             this.history.push('/');
         });
         YardState.loadHive(this.props.manifest.id);

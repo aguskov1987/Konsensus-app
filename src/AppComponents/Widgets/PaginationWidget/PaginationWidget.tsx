@@ -2,9 +2,11 @@ import React from "react";
 import ReactPaginate from 'react-paginate';
 import './PaginationWidget.scss'
 import {YardState} from "../../../AppState/YardState";
+import {Subscription} from "rxjs";
 
 
 class PaginationWidget extends React.Component<any, any> {
+    private pagesSub: Subscription = new Subscription();
 
     constructor(props: any) {
         super(props);
@@ -12,8 +14,23 @@ class PaginationWidget extends React.Component<any, any> {
         this.handlePageClick = this.handlePageClick.bind(this);
 
         this.state = {
-            totalPages: 100
+            totalPages: 1
         }
+    }
+
+    componentDidMount() {
+        this.pagesSub = YardState.hives.valueUpdatedEvent.subscribe((set) => {
+            if (set === null) {
+                return;
+            }
+            this.setState({
+                totalPages: set.totalPages
+            })
+        })
+    }
+
+    componentWillUnmount() {
+        this.pagesSub.unsubscribe();
     }
 
     render() {
@@ -32,7 +49,7 @@ class PaginationWidget extends React.Component<any, any> {
     }
 
     private handlePageClick(data) {
-        YardState.currentPage.updateOption(data.selected);
+        YardState.currentPage.updateOption(data.selected + 1);
     }
 }
 

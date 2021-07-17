@@ -48,5 +48,13 @@ export class StatefulObject<T> {
         this.statusUpdatedEvent.next(LoadingStatus.Ready);
         this.error = '';
     }
+
+    public restartListener() {
+        this.statusUpdatedEvent.complete();
+        this.statusUpdatedEvent = new BehaviorSubject<LoadingStatus>(null as any);
+
+        this.valueUpdatedEvent.complete();
+        this.valueUpdatedEvent = new BehaviorSubject<T>(null as any);
+    }
 }
 

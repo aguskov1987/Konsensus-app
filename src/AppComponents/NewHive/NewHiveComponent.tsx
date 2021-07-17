@@ -61,7 +61,7 @@ class NewHiveComponent extends React.Component<any, { title: string, description
     render() {
         return (
             <div style={{padding: 20}}>
-                <TitleBarComponent title='New Hive' icon='Images/new_hive.svg'/>
+                <TitleBarComponent title='New Hive' icon='Images/Navigation/NewHiveIcon.svg'/>
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="titleInput">
                         <Form.Label style={{color: 'white'}}>Title</Form.Label>
