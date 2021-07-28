@@ -44,6 +44,7 @@ export class StatefulObject<T> {
         this.error = error;
     }
 
+    // TODO: merge reset methods?
     public resetStatus() {
         this.statusUpdatedEvent.next(LoadingStatus.Ready);
         this.error = '';

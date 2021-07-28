@@ -8,6 +8,7 @@ import {ResponseView} from "../../AppState/ResponseView";
 import {HiveLayout} from "../../AppState/HiveLayout";
 import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import {Image} from "react-bootstrap";
 
 export class OperationsSubcomp implements Subcomp {
     public userRespondedEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -187,27 +188,27 @@ export class OperationsSubcomp implements Subcomp {
             activeFillColor: 'rgba(184,111,25,0.75)',
             commands: [
                 {
-                    content: "Agree",
+                    content: "<span><Image src=\"Images/Operations/PlusIcon.svg\"></Image></span>",
                     select: (el) => {
                         this.respond(el.data().id, true);
                     }
                 },
                 {
-                    content: "Mark From",
+                    content: "<span><Image src=\"Images/Operations/MinusIcon.svg\"></Image></span>",
+                    select: (el) => {
+                        this.respond(el.data().id, false);
+                    }
+                },
+                {
+                    content: "<span><Image src=\"Images/Operations/FromPointIcon.svg\"></Image></span>",
                     select: (el) => {
                         this.markFrom(el.data().id);
                     }
                 },
                 {
-                    content: "Mark To",
+                    content: "<span><Image src=\"Images/Operations/ToPointIcon.svg\"></Image></span>",
                     select: (el) => {
                         this.markTo(el.data().id);
-                    }
-                },
-                {
-                    content: "Disagree",
-                    select: (el) => {
-                        this.respond(el.data().id, false);
                     }
                 },]
         });
@@ -217,13 +218,13 @@ export class OperationsSubcomp implements Subcomp {
             activeFillColor: 'rgba(184,111,25,0.75)',
             commands: [
                 {
-                    content: "Agree",
+                    content: "<span><Image src=\"Images/Operations/PlusIcon.svg\"></Image></span>",
                     select: (el) => {
                         this.respond(el.data().id, true);
                     }
                 },
                 {
-                    content: "Disagree",
+                    content: "<span><Image src=\"Images/Operations/MinusIcon.svg\"></Image></span>",
                     select: (el) => {
                         this.respond(el.data().id, false);
                     }
@@ -237,19 +238,19 @@ export class OperationsSubcomp implements Subcomp {
         }
 
         let discardCommand = {
-            content: "Discard",
+            content: "<span><Image src=\"Images/Operations/DiscardIcon.svg\"></Image></span>",
             select: () => {
                 this.discardFromTo();
             }
         }
         let danglingPointCommand = {
-            content: "New Point",
+            content: "<span><Image src=\"Images/Operations/NewPointIcon.svg\"></Image></span>",
             select: () => {
                 this.goToNewPoint();
             }
         }
         let toCommand = {
-            content: "New to Here",
+            content: "<span><Image src=\"Images/Operations/ToPointIcon.svg\"></Image></span>",
             select: () => {
                 if (this.fromId) {
                     this.goToNewPoint(this.fromId, '');
@@ -257,7 +258,7 @@ export class OperationsSubcomp implements Subcomp {
             }
         }
         let fromCommand = {
-            content: "New from Here",
+            content: "<span><Image src=\"Images/Operations/FromPointIcon.svg\"></Image></span>",
             select: () => {
                 if (this.toId) {
                     this.goToNewPoint('', this.toId);

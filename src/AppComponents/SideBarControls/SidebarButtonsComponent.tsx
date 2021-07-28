@@ -4,10 +4,9 @@ import {History} from "history";
 import {withRouter} from "react-router-dom";
 import {UserState} from "../../AppState/UserState";
 import {User} from "../../AppState/User";
-import {BehaviorSubject, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 import {NewHiveState} from "../../AppState/NewHiveState";
-import {LoadingStatus} from "../../AppState/LoadingStatus";
 
 class SidebarButtonsComponent extends React.Component<any, any> {
     private history: History;
@@ -21,7 +20,6 @@ class SidebarButtonsComponent extends React.Component<any, any> {
             navigationDisabled: true
         }
 
-        this.openSavedPoints = this.openSavedPoints.bind(this);
         this.leaveApp = this.leaveApp.bind(this);
         this.openSavedHives = this.openSavedHives.bind(this);
         this.openYard = this.openYard.bind(this);
@@ -45,11 +43,6 @@ class SidebarButtonsComponent extends React.Component<any, any> {
     openSavedHives() {
         this.checkIfLeavingGraphArea();
         this.history.push('/saved-hives');
-    }
-
-    openSavedPoints() {
-        this.checkIfLeavingGraphArea();
-        this.history.push('/saved-point');
     }
 
     leaveApp() {
@@ -89,11 +82,6 @@ class SidebarButtonsComponent extends React.Component<any, any> {
                 <div style={{margin: 6}}>
                     <Button block variant="primary" size={'lg'} onClick={this.openSavedHives} disabled={this.state.navigationDisabled}>
                         <Image src="Images/Navigation/MyHivesIcon.svg"/>
-                    </Button>{' '}
-                </div>
-                <div style={{margin: 6}}>
-                    <Button block variant="primary" size={'lg'} onClick={this.openSavedPoints} disabled={this.state.navigationDisabled}>
-                        <Image src="Images/Navigation/MyPointsIcon.svg"/>
                     </Button>{' '}
                 </div>
                 <div style={{margin: 6}}>

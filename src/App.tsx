@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.scss';
 import SidebarButtonsComponent from './AppComponents/SideBarControls/SidebarButtonsComponent';
-import SavedPointsComponent from "./AppComponents/SavedPoints/SavedPointsComponent";
 import {configureAxios} from "./Services/CommonService";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import HiveGraphComponent from "./AppComponents/HiveGraph/HiveGraphComponent";
@@ -45,9 +44,6 @@ class App extends React.Component<any, any> {
                                 </Route>
                                 <Route path="/new-hive">
                                     <NewHiveComponent/>
-                                </Route>
-                                <Route path="/saved-point">
-                                    <SavedPointsComponent/>
                                 </Route>
                             </Switch>
                         </div>

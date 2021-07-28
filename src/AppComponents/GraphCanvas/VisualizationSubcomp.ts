@@ -22,7 +22,7 @@ export class VisualizationSubcomp implements Subcomp {
                 'text-wrap': 'wrap',
                 'text-max-width': '50px',
                 'font-size': 4,
-                'shape': 'polygon',
+                'shape': 'circle',
                 'shape-polygon-points': [ // hexagon
                     -0.06, -0.96,
                     0.06, -0.96,

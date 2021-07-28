@@ -37,8 +37,3 @@ body, html {
   width: 100%;
   height: calc(100% - #{$feedback-bar-height});
 }
-
-/* HACK! SOMETHING IS NOT RIGHT WITH THE SPINNER SO HIDING IT FOR NOW*/
-.rbt-aux {
-  display: none;
-}

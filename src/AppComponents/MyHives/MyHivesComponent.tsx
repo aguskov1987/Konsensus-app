@@ -24,7 +24,7 @@ class MyHivesComponent extends React.Component<any, any> {
     render() {
         return (
             <div style={{padding: 20, height: '100%', position: 'relative'}}>
-                <TitleBarComponent title='My Hives' icon='Images/my_saved_hives.svg'/>
+                <TitleBarComponent title='My Hives' icon='Images/Navigation/MyHivesIcon.svg'/>
                 <Card border="primary" bg="light" style={{height: '85%', marginBottom: '1%'}}>
                     <Card.Body>
                         <div>
