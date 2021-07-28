@@ -6,9 +6,12 @@ import {Subscription} from "rxjs";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import {QuantSearchSubcomp} from "./QuantSearchSubcomp";
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 class InternalState {
     public query: string = '';
+    public queryValid: boolean = true;
     public loadingStatus: LoadingStatus = LoadingStatus.Ready;
     public found: FoundPoint[] = [];
 }
@@ -24,6 +27,8 @@ class PointSearchComponent extends React.Component<any, InternalState> {
 
     private textSub: Subscription = new Subscription();
     private graphSub: Subscription = new Subscription();
+
+    private quant: QuantSearchSubcomp = new QuantSearchSubcomp();
 
     constructor(props: any) {
         super(props);
@@ -77,7 +82,7 @@ class PointSearchComponent extends React.Component<any, InternalState> {
             <AsyncTypeahead
                 emptyLabel="No Results"
                 id="search-point-typeahead"
-                size="small"
+                size="small" isInvalid={!this.state.queryValid} isValid={this.state.queryValid}
                 isLoading={this.state.loadingStatus === LoadingStatus.Pending}
                 onSearch={this.dummy}
                 options={this.state.found}
