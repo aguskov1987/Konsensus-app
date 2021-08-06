@@ -50,11 +50,11 @@ it('should return positive/old/active/connected/fresh if "!! most" is supplied',
     let result = subcomp.getOptions('!! most');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(5);
-    expect(result.options[0].label).toBe('active');
-    expect(result.options[1].label).toBe('connected');
-    expect(result.options[2].label).toBe('old');
-    expect(result.options[3].label).toBe('positive');
-    expect(result.options[4].label).toBe('fresh');
+    expect(result.options[0].label).toBe('most active');
+    expect(result.options[1].label).toBe('most connected');
+    expect(result.options[2].label).toBe('most old');
+    expect(result.options[3].label).toBe('most positive');
+    expect(result.options[4].label).toBe('most fresh');
 });
 
 it('should return positive/old/active/connected/fresh if "!! least" is supplied', () => {
@@ -62,11 +62,11 @@ it('should return positive/old/active/connected/fresh if "!! least" is supplied'
     let result = subcomp.getOptions('!! least');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(5);
-    expect(result.options[0].label).toBe('active');
-    expect(result.options[1].label).toBe('connected');
-    expect(result.options[2].label).toBe('old');
-    expect(result.options[3].label).toBe('positive');
-    expect(result.options[4].label).toBe('fresh');
+    expect(result.options[0].label).toBe('least active');
+    expect(result.options[1].label).toBe('least connected');
+    expect(result.options[2].label).toBe('least old');
+    expect(result.options[3].label).toBe('least positive');
+    expect(result.options[4].label).toBe('least fresh');
 });
 
 it('should return positive if "!! most p" is supplied', () => {
@@ -74,7 +74,7 @@ it('should return positive if "!! most p" is supplied', () => {
     let result = subcomp.getOptions('!! most p');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(1);
-    expect(result.options[0].label).toBe('positive');
+    expect(result.options[0].label).toBe('most positive');
 });
 
 it('should return positive if "!! least pos" is supplied', () => {
@@ -82,7 +82,7 @@ it('should return positive if "!! least pos" is supplied', () => {
     let result = subcomp.getOptions('!! least pos');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(1);
-    expect(result.options[0].label).toBe('positive');
+    expect(result.options[0].label).toBe('least positive');
 });
 
 it('should return INVALID QUERY if "!! least v" is supplied', () => {
@@ -97,8 +97,8 @@ it('should return most/least if "!! most old;" is supplied', () => {
     let result = subcomp.getOptions('!! most old;');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(2);
-    expect(result.options[0].label).toBe('most');
-    expect(result.options[1].label).toBe('least');
+    expect(result.options[0].label).toBe('most old; most');
+    expect(result.options[1].label).toBe('most old; least');
 });
 
 it('should return positive if "!! most old; least pos" is supplied', () => {
@@ -106,7 +106,7 @@ it('should return positive if "!! most old; least pos" is supplied', () => {
     let result = subcomp.getOptions('!! most old; least pos');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(1);
-    expect(result.options[0].label).toBe('positive');
+    expect(result.options[0].label).toBe('most old; least positive');
 });
 
 it('should return positive if "!! most old;   mo" is supplied', () => {
@@ -114,7 +114,7 @@ it('should return positive if "!! most old;   mo" is supplied', () => {
     let result = subcomp.getOptions('!! most old;   mo');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(1);
-    expect(result.options[0].label).toBe('most');
+    expect(result.options[0].label).toBe('most old; most');
 });
 
 it('should return positive/active/connected/fresh if "!! most old; least" is supplied', () => {
@@ -122,10 +122,10 @@ it('should return positive/active/connected/fresh if "!! most old; least" is sup
     let result = subcomp.getOptions('!! most old; least');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(4);
-    expect(result.options[0].label).toBe('active');
-    expect(result.options[1].label).toBe('connected');
-    expect(result.options[2].label).toBe('positive');
-    expect(result.options[3].label).toBe('fresh');
+    expect(result.options[0].label).toBe('most old; least active');
+    expect(result.options[1].label).toBe('most old; least connected');
+    expect(result.options[2].label).toBe('most old; least positive');
+    expect(result.options[3].label).toBe('most old; least fresh');
 });
 
 it('should return INVALID QUERY if "!! most old; least v" is supplied', () => {
@@ -140,9 +140,9 @@ it('should return positive/active/fresh responded if "!! most old; least connect
     let result = subcomp.getOptions('!! most old; least connected; least');
     expect(result.queryValid).toBeTruthy();
     expect(result.options.length).toBe(3);
-    expect(result.options[0].label).toBe('active');
-    expect(result.options[1].label).toBe('positive');
-    expect(result.options[2].label).toBe('fresh');
+    expect(result.options[0].label).toBe('most old; least connected ; least active');
+    expect(result.options[1].label).toBe('most old; least connected ; least positive');
+    expect(result.options[2].label).toBe('most old; least connected ; least fresh');
 });
 
 it('should return INVALID QUERY if "!!most connected; least connected" is supplied', () => {
@@ -166,11 +166,12 @@ it('should return INVALID QUERY if "!!most connected; least con" is supplied', (
     expect(result.options.length).toBe(0);
 });
 
-it('should return INVALID QUERY if "!! most old; least connected" is supplied', () => {
+it('should return most old; least connected if "!! most old; least connected" is supplied', () => {
     let subcomp = new QuantSearchSubcomp();
     let result = subcomp.getOptions('!! most old; least connected');
     expect(result.queryValid).toBeTruthy();
-    expect(result.options.length).toBe(0);
+    expect(result.options.length).toBe(1);
+    expect(result.options[0].label).toBe('most old; least connected');
 });
 
 export {}

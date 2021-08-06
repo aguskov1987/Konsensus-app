@@ -76,7 +76,7 @@ export class QuantSearchSubcomp {
                         for(let s of this.specifiers) {
                             if (!this.usedSpecifiers.some(used => used === s)) {
                                 let point = new FoundPoint();
-                                point.label = s;
+                                point.label = point.label = (words.join(' ') + ' ' + s).replace(' ;', ';');
                                 result.options.push(point);
                             }
                         }
@@ -84,7 +84,8 @@ export class QuantSearchSubcomp {
                         break;
                     } else if (q.startsWith(word) && q !== word) {
                         let point = new FoundPoint();
-                        point.label = q;
+                        words.pop();
+                        point.label = point.label = (words.join(' ') + ' ' + q).replace(' ;', ';').trim();
                         result.options.push(point);
                         result.queryValid = true;
                         break;
@@ -100,11 +101,15 @@ export class QuantSearchSubcomp {
                 for(let s of this.specifiers) {
                     if (s === word) {
                         this.usedSpecifiers.push(s);
+                        let point = new FoundPoint();
+                        point.label = words.join(' ').replace(' ;', ';').trim();
+                        result.options.push(point);
                         result.queryValid = true;
                         break;
                     } else if (s.startsWith(word) && s !== word && !this.usedSpecifiers.some(used => used === s)) {
                         let point = new FoundPoint();
-                        point.label = s;
+                        words.pop();
+                        point.label = point.label = (words.join(' ') + ' ' + s).replace(' ;', ';').trim();
                         result.options.push(point);
                         result.queryValid = true;
                         break;
@@ -116,7 +121,7 @@ export class QuantSearchSubcomp {
                 if (word === ';') {
                     for (let q of this.qualifiers) {
                         let point = new FoundPoint();
-                        point.label = q;
+                        point.label = (words.join(' ') + ' ' + q).replace(' ;', ';');
                         result.options.push(point);
                         result.queryValid = true;
                     }
