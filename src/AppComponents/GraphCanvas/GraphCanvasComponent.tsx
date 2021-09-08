@@ -10,7 +10,7 @@ import './GraphCanvasStyle.scss';
 import Layers from 'cytoscape-layers'
 import {IntegrationSubcomp} from "./IntegrationSubcomp";
 import {VisualizationSubcomp} from "./VisualizationSubcomp";
-import {OperationsSubcomp} from "./OperationsSubcomp";
+import {NewPointEventData, OperationsSubcomp} from "./OperationsSubcomp";
 import {Subscription} from "rxjs";
 import CreatePointComponent from "../CreatePoint/CreatePointComponent";
 
@@ -36,7 +36,8 @@ class GraphCanvasComponent extends React.Component<any, any> {
             newPointLabelTest: '',
             newPointFromId: '',
             newPointToId: '',
-            fromOrToLabel: ''
+            fromOrToLabel: '',
+            question: false
         };
 
         this.handleClose = this.handleClose.bind(this);
@@ -44,7 +45,7 @@ class GraphCanvasComponent extends React.Component<any, any> {
         this.history = this.props.history;
     }
 
-    componentDidMount() {
+    public componentDidMount() {
         cytoscape.use(cola);
         if ((cyRef as any).cxtmenu == null) {
             cytoscape.use(cx);
@@ -73,7 +74,7 @@ class GraphCanvasComponent extends React.Component<any, any> {
             })
         });
 
-        this.s4 = this.operations.newPointEvent.subscribe((data: {fromId: string, toId: string, label: string}|null) => {
+        this.s4 = this.operations.newPointEvent.subscribe((data: NewPointEventData|null) => {
             if (data == null) {
                 return;
             }
@@ -82,23 +83,26 @@ class GraphCanvasComponent extends React.Component<any, any> {
                 this.setState({
                     showNewPointDialog: true,
                     newPointFromId: data.fromId,
-                    fromOrToLabel: data.label
+                    fromOrToLabel: data.label,
+                    question: data.question
                 });
             } else if (data.toId) {
                 this.setState({
                     showNewPointDialog: true,
                     newPointToId: data.toId,
-                    fromOrToLabel: data.label
+                    fromOrToLabel: data.label,
+                    question: false
                 });
             } else {
                 this.setState({
                     showNewPointDialog: true,
+                    question: false
                 });
             }
         });
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         this.visualization?.clearSubscriptions();
         this.operations?.clearSubscriptions();
         this.integration?.clearSubscriptions();
@@ -109,17 +113,23 @@ class GraphCanvasComponent extends React.Component<any, any> {
         this.s4.unsubscribe();
     }
 
-    render() {
+    public render() {
+        let label;
+        if (this.state.selectedLabel != null && this.state.selectedLabel !== '') {
+            label = <div dangerouslySetInnerHTML={{__html: this.state.selectedLabel}} className='point-label-container'/>;
+        }
         return (
             <div className='graph-container'>
-                <div className='point-label-container'>{this.state.selectedLabel}</div>
+                <div className='divider'/>
+                {label}
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={[]}
-                                    style={{width: '100%', height: 'calc(100% - 91px)'}}/>
+                                    style={{width: '100%', height: 'calc(100% - 57px)'}}/>
                 <GraphControlsComponent/>
                 <CreatePointComponent showDialog={this.state.showNewPointDialog}
                                       fromId={this.state.newPointFromId}
                                       toId={this.state.newPointToId}
                                       fromToLabel={this.state.fromOrToLabel}
+                                      question={this.state.question}
                                       closeCallback={this.handleClose}/>
             </div>
         );
@@ -131,7 +141,8 @@ class GraphCanvasComponent extends React.Component<any, any> {
             newPointLabelTest: '',
             newPointFromId: '',
             newPointToId: '',
-            fromOrToLabel: ''
+            fromOrToLabel: '',
+            question: false
         });
         this.operations?.discardFromTo();
     }

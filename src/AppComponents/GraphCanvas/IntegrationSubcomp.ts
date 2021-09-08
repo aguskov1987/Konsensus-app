@@ -5,10 +5,11 @@ import {VisualizationSubcomp} from "./VisualizationSubcomp";
 import {Subcomp} from "./Subcomp";
 import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import {PointType} from "../../AppState/PointType";
 
 export class IntegrationSubcomp implements Subcomp {
     public lastRespondedId: string = '';
-    public lastClickPosition: Position = {x: 0, y: 0};
+    public lastClickPosition: Position = {x: 100, y: 100};
     public maxNumberOfPoints: number = 300;
 
     private cyRef: Core;
@@ -106,6 +107,7 @@ export class IntegrationSubcomp implements Subcomp {
                     timestamp: Date.now()
                 },
                 position: stash ? (s as StashedPoint).position : {x: 0, y: 0},
+                classes: s.type === PointType.Statement? 'statement' : 'question'
             });
         }
 
@@ -153,7 +155,8 @@ export class IntegrationSubcomp implements Subcomp {
                     penetration: st.penetration,
                     timestamp: Date.now()
                 },
-                position: this.lastClickPosition
+                renderedPosition: this.lastClickPosition,
+                classes: st.type === PointType.Statement? 'statement' : 'question'
             });
         }
 
@@ -183,6 +186,7 @@ export class IntegrationSubcomp implements Subcomp {
                         penetration: st.penetration,
                         timestamp: Date.now()
                     },
+                    classes: st.type === PointType.Statement? 'statement' : 'question'
                 });
             }
         }

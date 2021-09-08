@@ -8,14 +8,20 @@ import {ResponseView} from "../../AppState/ResponseView";
 import {HiveLayout} from "../../AppState/HiveLayout";
 import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
-import {Image} from "react-bootstrap";
+
+export class NewPointEventData {
+    fromId: string = '';
+    toId: string = '';
+    label: string = '';
+    question: boolean = false;
+}
 
 export class OperationsSubcomp implements Subcomp {
     public userRespondedEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    public userClickedEvent: BehaviorSubject<Position|null> = new BehaviorSubject<Position|null>(null);
+    public userClickedEvent: BehaviorSubject<Position | null> = new BehaviorSubject<Position | null>(null);
     public userSelectedPointEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    public newPointEvent: BehaviorSubject<{fromId: string, toId: string, label: string}|null>
-        = new BehaviorSubject<{fromId: string, toId: string, label: string}|null>(null);
+    public newPointEvent: BehaviorSubject<NewPointEventData | null>
+        = new BehaviorSubject<NewPointEventData | null>(null);
 
     private readonly cyRef: Core;
     private readonly viz: VisualizationSubcomp;
@@ -32,8 +38,8 @@ export class OperationsSubcomp implements Subcomp {
 
     private fromId: string = '';
     private toId: string = '';
-    private visiblePointIds: {id: string, position: Position}[] = [];
-    private visibleSynapseIds: {id: string, position: Position}[] = [];
+    private visiblePointIds: { id: string, position: Position }[] = [];
+    private visibleSynapseIds: { id: string, position: Position }[] = [];
 
     constructor(cy: Core, viz: VisualizationSubcomp) {
         this.cyRef = cy;
@@ -43,7 +49,7 @@ export class OperationsSubcomp implements Subcomp {
             if (hive == null) {
                 return;
             }
-            this.setupNewPointMenu(hive.allowDanglingPoints , false, false);
+            this.setupNewPointMenu(hive.allowDanglingPoints, false, false);
         });
 
         this.layoutSub = HiveOperationsState.layout.optionUpdatedEvent.subscribe((option: HiveLayout) => {
@@ -54,7 +60,7 @@ export class OperationsSubcomp implements Subcomp {
 
         this.registerCanvasEvents();
         this.registerCommands();
-        this.setupMenu();
+        this.setupPointMenu();
     }
 
     public clearSubscriptions(): void {
@@ -168,12 +174,17 @@ export class OperationsSubcomp implements Subcomp {
 
                 let s = event.target.source();
                 let t = event.target.target();
-                this.userSelectedPointEvent.next(s.data().label + ' -> ' + t.data().label);
+                this.userSelectedPointEvent.next(
+                    s.data().label
+                    + '<span style="margin-left: 10px; margin-right: 10px;">'
+                    + '<img src="Images/Operations/FromPointIcon.svg" width="20em" alt="Therefore"/></span>'
+                    + t.data().label
+                );
             }
         });
 
         this.cyRef.on('cxttapstart taphold', (event) => {
-            this.userClickedEvent.next(event.position);
+            this.userClickedEvent.next(event.renderedPosition);
         })
 
         this.cyRef.on("viewport", () => {
@@ -181,40 +192,67 @@ export class OperationsSubcomp implements Subcomp {
         });
     }
 
-    private setupMenu() {
+    private setupPointMenu() {
+        let markFromCommand = {
+            content: "<span><Image width='40' src=\"Images/Operations/FromPointIcon.svg\"></Image></span>",
+            select: (el) => {
+                this.markFrom(el.data().id);
+            }
+        };
+        let positiveResponseCommand = {
+            content: "<span><Image width='40' src=\"Images/Operations/PlusIcon.svg\"></Image></span>",
+            select: (el) => {
+                this.respond(el.data().id, true);
+            }
+        };
+        let negativeResponseCommand = {
+            content: "<span><Image width='40' src=\"Images/Operations/MinusIcon.svg\"></Image></span>",
+            select: (el) => {
+                this.respond(el.data().id, false);
+            }
+        };
+        let markToCommand = {
+            content: "<span><Image width='40' src=\"Images/Operations/ToPointIcon.svg\"></Image></span>",
+            select: (el) => {
+                this.markTo(el.data().id);
+            }
+        };
+        let askQuestionCommand = {
+            content: "<span><Image width='40' src=\"Images/Operations/QuestionIcon.svg\"></Image></span>",
+            select: (el) => {
+                this.markFrom(el.data().id);
+                this.goToNewPoint(this.fromId, '', true);
+            }
+        };
+        let answerQuestionCommand = {
+            content: "A",
+            select: (el) => {
+                this.markFrom(el.data().id);
+                this.goToNewPoint(this.fromId, '');
+            }
+        };
+
         (this.cyRef as any).cxtmenu({
-            selector: "node",
-            menuRadius: () => {return 80},
+            selector: ".statement",
+            menuRadius: () => {
+                return 60
+            },
             activeFillColor: 'rgba(184,111,25,0.75)',
-            commands: [
-                {
-                    content: "<span><Image src=\"Images/Operations/PlusIcon.svg\"></Image></span>",
-                    select: (el) => {
-                        this.respond(el.data().id, true);
-                    }
-                },
-                {
-                    content: "<span><Image src=\"Images/Operations/MinusIcon.svg\"></Image></span>",
-                    select: (el) => {
-                        this.respond(el.data().id, false);
-                    }
-                },
-                {
-                    content: "<span><Image src=\"Images/Operations/FromPointIcon.svg\"></Image></span>",
-                    select: (el) => {
-                        this.markFrom(el.data().id);
-                    }
-                },
-                {
-                    content: "<span><Image src=\"Images/Operations/ToPointIcon.svg\"></Image></span>",
-                    select: (el) => {
-                        this.markTo(el.data().id);
-                    }
-                },]
+            commands: [markFromCommand, positiveResponseCommand, negativeResponseCommand, askQuestionCommand, markToCommand]
+        });
+        (this.cyRef as any).cxtmenu({
+            selector: ".question",
+            menuRadius: () => {
+                return 60
+            },
+            activeFillColor: 'rgba(184,111,25,0.75)',
+            commands: [answerQuestionCommand]
         });
         (this.cyRef as any).cxtmenu({
             selector: "edge",
-            menuRadius: () => {return 80},
+            menuRadius: () => {
+                return 80
+            },
             activeFillColor: 'rgba(184,111,25,0.75)',
             commands: [
                 {
@@ -267,7 +305,7 @@ export class OperationsSubcomp implements Subcomp {
         }
         let commands: any[] = [];
         commands.push(discardCommand);
-        if (allowDangling) {
+        if (allowDangling && !allowFrom && !allowTo) {
             commands.push(danglingPointCommand);
         }
         if (allowTo) {
@@ -293,7 +331,7 @@ export class OperationsSubcomp implements Subcomp {
     }
 
     private markFrom(id: string) {
-        if (this.toId !== '') {
+        if (this.toId !== '' && this.toId !== id) {
             ActiveHiveState.createNewSynapse(id, this.toId);
             this.discardFromTo();
         } else {
@@ -306,7 +344,7 @@ export class OperationsSubcomp implements Subcomp {
     }
 
     private markTo(id: string) {
-        if (this.fromId !== '') {
+        if (this.fromId !== '' && this.fromId !== id) {
             ActiveHiveState.createNewSynapse(this.fromId, id);
             this.discardFromTo();
         } else {
@@ -323,11 +361,12 @@ export class OperationsSubcomp implements Subcomp {
         // They are required in case the user steps through nodes using the keyboard
     }
 
-    private goToNewPoint(fromId: string = '', toId: string = '') {
+    private goToNewPoint(fromId: string = '', toId: string = '', question: boolean = false) {
         let element = this.cyRef.getElementById(fromId !== '' ? fromId : toId)[0];
         setTimeout(() => {
-            this.newPointEvent.next({fromId, toId, label: element?.data('label')});
-        }, 300)}
+            this.newPointEvent.next({fromId, toId, label: element?.data('label'), question});
+        }, 300)
+    }
 
     private applyLayout(layout: HiveLayout) {
 

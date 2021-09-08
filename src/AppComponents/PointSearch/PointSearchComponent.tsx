@@ -28,7 +28,8 @@ class PointSearchComponent extends React.Component<any, InternalState> {
     private textSub: Subscription = new Subscription();
     private graphSub: Subscription = new Subscription();
 
-    private quant: QuantSearchSubcomp = new QuantSearchSubcomp();
+    private quant: QuantSearchSubcomp = new QuantSearchSubcomp(); // quantitative queries subcomp
+    private quantQuery: boolean = false;
 
     constructor(props: any) {
         super(props);
@@ -66,7 +67,17 @@ class PointSearchComponent extends React.Component<any, InternalState> {
     }
 
     private handleLoadSearchResults() {
-        ActiveHiveState.searchPoints(this.state.query);
+        if (this.quant.isQuantQuery(this.state.query)) {
+            let result = this.quant.getOptions(this.state.query);
+            this.setState({
+                found: result.options,
+                queryValid: result.queryValid
+            });
+            this.quantQuery = true;
+        } else {
+            this.quantQuery = false;
+            ActiveHiveState.searchPoints(this.state.query, false);
+        }
     }
 
     public componentWillUnmount() {
@@ -104,12 +115,25 @@ class PointSearchComponent extends React.Component<any, InternalState> {
         this.timer = setTimeout(() => {
             this.handleLoadSearchResults();
             this.timer = null;
-        }, 1000)
+        }, 500)
     }
 
     private loadPoint(event: FoundPoint[]) {
-        if (event && event.length && event.length === 1) {
-            ActiveHiveState.loadSubgraph(event[0].id);
+        console.log(this.quantQuery, this.state.queryValid);
+        if (this.quantQuery && this.state.queryValid) {
+            if (this.quant.isQueryComplete(this.state.query)) {
+                // send off the quantitative query
+                ActiveHiveState.searchPoints(this.state.query, true);
+            } else if (event.length > 0) {
+                this.setState({
+                    query: event[0].label
+                });
+                this.handleLoadSearchResults();
+            }
+        } else {
+            if (event && event.length && event.length === 1) {
+                ActiveHiveState.loadSubgraph(event[0].id);
+            }
         }
     }
 }

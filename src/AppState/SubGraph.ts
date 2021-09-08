@@ -2,6 +2,7 @@ import {Model} from "./Model";
 import {Point} from "./Point";
 import {Synapse} from "./Synapse";
 import {Position} from "cytoscape";
+import {PointType} from "./PointType";
 
 export class SubGraph extends Model {
     public points: Point[] = [];
@@ -16,6 +17,7 @@ export class StashedPoint {
     public userResponse: number = 0;
     public commonResponse: number = 0;
     public penetration: number = 0;
+    public type: PointType = PointType.Statement;
 }
 
 export class StashedSynapse {

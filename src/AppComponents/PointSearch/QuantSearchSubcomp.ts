@@ -8,37 +8,24 @@ export class QuantOptionsResult {
 export class QuantSearchSubcomp {
     public signalToken: string = '!!';
     private qualifiers: string[] = ['most', 'least'];
-    private specifiers: string[] = ['active', 'connected', 'old', 'positive', 'fresh'];
+    private specifiers: string[] = ['active', 'connected', 'old', 'positive', 'recently-responded'];
     private usedSpecifiers: string[] = [];
 
-    getOptions(query: string): QuantOptionsResult {
+    public isQuantQuery(query: string): boolean {
+        query = query.trimStart();
+        let firstChar = query.charAt(0);
+        let secondChar = query.charAt(1);
+        return firstChar + secondChar === this.signalToken;
+    }
+
+    public getOptions(query: string): QuantOptionsResult {
         let result = new QuantOptionsResult();
 
         query = query.replace('!!', '');
         let words: string[] = [];
         let word: string = '';
-        for(let char of query) {
-            if (char !== ' ' && char !== ';') {
-                word+= char;
-            } else if (char === ';') {
-                if (word !== '') {
-                    words.push(word.slice());
-                    word = '';
-                }
-                words.push(';')
-            } else {
-                if (word !== '') {
-                    words.push(word.slice());
-                    word = '';
-                }
-            }
-        }
-        if (word !== '') {
-            words.push(word.slice());
-            word = '';
-        }
+        words = this.splitQuery(query, word, words);
 
-        words = words.filter(w => w !== '');
         // trivial: nothing in the query
         if (words.length < 1) {
             result.options = this.qualifiers.map(q => {
@@ -46,6 +33,9 @@ export class QuantSearchSubcomp {
                 p.label = q;
                 return p;
             });
+            for(let opt of result.options) {
+                opt.label = '!! ' + opt.label;
+            }
             return result;
         }
 
@@ -137,6 +127,48 @@ export class QuantSearchSubcomp {
             result.options = [];
         }
 
+        this.usedSpecifiers = [];
+
+        if (result.options.length > 0) {
+            for(let opt of result.options) {
+                opt.label = '!! ' + opt.label;
+            }
+        }
         return result;
+    }
+
+    public isQueryComplete(query: string):boolean {
+        query = query.replace('!!', '');
+        let words: string[] = [];
+        let word: string = '';
+        words = this.splitQuery(query, word, words);
+
+        let last = words.pop();
+        return this.specifiers.some(s => s === last);
+    }
+
+    private splitQuery(query: string, word: string, words: string[]) {
+        for (let char of query) {
+            if (char !== ' ' && char !== ';') {
+                word += char;
+            } else if (char === ';') {
+                if (word !== '') {
+                    words.push(word.slice());
+                    word = '';
+                }
+                words.push(';')
+            } else {
+                if (word !== '') {
+                    words.push(word.slice());
+                    word = '';
+                }
+            }
+        }
+        if (word !== '') {
+            words.push(word.slice());
+            word = '';
+        }
+
+        return words.filter(w => w !== '');
     }
 }

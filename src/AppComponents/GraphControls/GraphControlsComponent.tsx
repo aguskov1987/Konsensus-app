@@ -64,7 +64,7 @@ class GraphControlsComponent extends React.Component<any, any> {
 
     render() {
         return (
-            <div style={{padding: 10, backgroundColor: '#414141', position: "relative"}}>
+            <div style={{padding: 10, backgroundColor: '#414141', position: "relative", borderTop: '1px solid white'}}>
                 <Hint type={this.state.hint}/>
                 <span style={{marginRight: 10}}/>
                 <DropdownButton id="layout-selection"

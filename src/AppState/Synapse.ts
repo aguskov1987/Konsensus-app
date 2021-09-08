@@ -6,4 +6,5 @@ export class Synapse extends Model{
     public userResponse: number = 0;
     public commonResponse: number = 0;
     public penetration: number = 0;
+    public lastItemStamp: string = '';
 }

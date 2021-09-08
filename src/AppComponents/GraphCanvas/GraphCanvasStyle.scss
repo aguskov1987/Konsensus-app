@@ -1,27 +1,29 @@
 @use "src/App";
 @use "src/AppComponents/HiveGraph/HiveGraphStyle";
 
-$graph-accent-color: darken(App.$main-color, 10%);
+$graph-accent-color: darken(App.$main-color, 15%);
 
 .point-label-container {
   background-color: $graph-accent-color;
   color: white;
   padding: 7px;
-  height: 40px;
+  position: absolute;
+  bottom: 60px;
+  right: 10px;
+  width: 50%;
+  border-radius: 5px;
+  border: 1px solid;
 }
 
 .graph-container {
   width: 100%;
   height: calc(100% - #{HiveGraphStyle.$details-panel-height});
+  position: relative;
 }
 
-/* style for the new point window
-.window {
-  background-color: #a3a097;
-  height: 100px;
-  width: 200px;
-  position: absolute;
-  top: 200px;
-  right: 200px;
-  tab-index: 0;
-} */
+.divider {
+  width: 100%;
+  height: 5px;
+  border-bottom: 1px solid white;
+  background-color: $graph-accent-color;
+}

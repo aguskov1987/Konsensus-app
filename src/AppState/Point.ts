@@ -1,4 +1,5 @@
 import {Model} from "./Model";
+import {PointType} from "./PointType";
 
 /*
 Hive participant:
@@ -14,4 +15,6 @@ export class Point extends Model{
     public userResponse: number = 0; // either positive or negative
     public commonResponse: number = 0; // (Positive + Negative) / Total
     public penetration: number = 0; // ratio of all responses to the total number of hive participants
+    public type: PointType = PointType.Statement;
+    public lastItemStamp: string = '';
 }

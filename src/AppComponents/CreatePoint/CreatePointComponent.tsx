@@ -1,7 +1,7 @@
 import React from "react";
 import {History} from "history";
 import {withRouter, RouteComponentProps} from "react-router-dom";
-import {Button, Form, Modal} from "react-bootstrap";
+import {Button, Form, Image, Modal} from "react-bootstrap";
 import {Subscription} from "rxjs";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 
@@ -11,6 +11,7 @@ interface CretePointProps {
     toId: string;
     fromToLabel: string;
     closeCallback: () => void;
+    question: boolean;
 }
 
 class CreatePointComponent extends React.Component<CretePointProps & RouteComponentProps, any> {
@@ -40,7 +41,7 @@ class CreatePointComponent extends React.Component<CretePointProps & RouteCompon
     }
 
     submit(event: any) {
-        ActiveHiveState.createNewPoint(this.state.point, [], this.props.fromId, this.props.toId);
+        ActiveHiveState.createNewPoint(this.state.point, [], this.props.fromId, this.props.toId, this.props.question);
         this.props.closeCallback();
         event.preventDefault();
     }
@@ -69,9 +70,23 @@ class CreatePointComponent extends React.Component<CretePointProps & RouteCompon
             pointLabel = `To: ${this.props.fromToLabel}`;
         }
 
+        let icon;
+        if (this.props.fromId !== '' && this.props.toId === '') {
+            icon = <Image src="Images/Operations/FromPointIcon.svg" width='40'/>;
+        } else if (this.props.fromId === '' && this.props.toId !== ''){
+            icon = <Image src="Images/Operations/ToPointIcon.svg" width='40'/>;
+        } else {
+            icon = <Image src="Images/Operations/NewPointIcon.svg" width='40'/>;
+        }
+        if (this.props.question) {
+            pointLabel = 'Question ' + pointLabel;
+            icon = <Image src="Images/Operations/QuestionIcon.svg" width='30'/>;
+        }
+
         return (
             <Modal show={this.props.showDialog} onHide={this.props.closeCallback} backdrop="static" size='lg'>
                 <Modal.Header closeButton>
+                    {icon}
                     <Modal.Title>{pointLabel}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
