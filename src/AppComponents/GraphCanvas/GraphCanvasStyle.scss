@@ -13,6 +13,7 @@ $graph-accent-color: darken(App.$main-color, 15%);
   width: 50%;
   border-radius: 5px;
   border: 1px solid;
+  z-index: 1000;
 }
 
 .graph-container {
