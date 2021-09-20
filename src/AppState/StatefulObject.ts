@@ -1,14 +1,13 @@
-import {Model} from "./Model";
+import cloneDeep from "lodash.clonedeep";
 import {BehaviorSubject} from "rxjs";
 import {LoadingStatus} from "./LoadingStatus";
-import cloneDeep from "lodash.clonedeep";
 
 
 export class StatefulObject<T> {
     private value: T = null as any;
 
     public valueUpdatedEvent: BehaviorSubject<T> = new BehaviorSubject<T>(null as any);
-    public statusUpdatedEvent: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>(null as any);
+    public statusUpdatedEvent: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>(LoadingStatus.Ready);
 
     public error: string = '';
     public history: T[] = [];
@@ -44,18 +43,13 @@ export class StatefulObject<T> {
         this.error = error;
     }
 
-    // TODO: merge reset methods?
-    public resetStatus() {
-        this.statusUpdatedEvent.next(LoadingStatus.Ready);
-        this.error = '';
-    }
-
     public restartListener() {
         this.statusUpdatedEvent.complete();
-        this.statusUpdatedEvent = new BehaviorSubject<LoadingStatus>(null as any);
+        this.statusUpdatedEvent = new BehaviorSubject<LoadingStatus>(LoadingStatus.Ready);
 
         this.valueUpdatedEvent.complete();
         this.valueUpdatedEvent = new BehaviorSubject<T>(null as any);
+
+        this.error = '';
     }
 }
-

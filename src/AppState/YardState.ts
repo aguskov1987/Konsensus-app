@@ -10,12 +10,11 @@ import {HivesPagedSet} from "./HivesPagedSet";
 import {UserState} from "./UserState";
 
 export class YardState {
-    public static hives: StatefulObject<HivesPagedSet> = new StatefulObject<HivesPagedSet>();
-
-    public static hivesSearchQuery: StatefulOption<string> = new StatefulOption<string>();
-    public static hiveSorting: StatefulOption<HiveSorting> = new StatefulOption<HiveSorting>(HiveSorting.ByActivity);
-    public static hiveOrder: StatefulOption<HiveOrder> = new StatefulOption<HiveOrder>(HiveOrder.Desc);
     public static currentPage: StatefulOption<number> = new StatefulOption<number>(1);
+    public static hiveOrder: StatefulOption<HiveOrder> = new StatefulOption<HiveOrder>(HiveOrder.Desc);
+    public static hiveSorting: StatefulOption<HiveSorting> = new StatefulOption<HiveSorting>(HiveSorting.ByActivity);
+    public static hives: StatefulObject<HivesPagedSet> = new StatefulObject<HivesPagedSet>();
+    public static hivesSearchQuery: StatefulOption<string> = new StatefulOption<string>();
 
     public static loadYard(params: YardRequestParams) {
         YardState.hives.setStatusPending();

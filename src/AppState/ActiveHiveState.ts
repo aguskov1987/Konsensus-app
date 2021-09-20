@@ -18,12 +18,10 @@ export class LastAddedItem {
 export class ActiveHiveState {
     public static activeHiveManifest: StatefulObject<HiveManifest> = new StatefulObject<HiveManifest>();
     public static foundPoints: StatefulObject<FoundPoint[]> = new StatefulObject<FoundPoint[]>();
-    public static newPoint: StatefulObject<Point> = new StatefulObject<Point>();
-    public static savedPoints: StatefulObject<Point[]> = new StatefulObject<Point[]>();
-    public static subgraph: StatefulObject<SubGraph> = new StatefulObject<SubGraph>();
-    public static lastAddedItem: StatefulObject<LastAddedItem> = new StatefulObject<LastAddedItem>();
-
     public static graphStash: Stash<StashedSubGraph> = new Stash<StashedSubGraph>();
+    public static lastAddedItem: StatefulObject<LastAddedItem> = new StatefulObject<LastAddedItem>();
+    public static newPoint: StatefulObject<Point> = new StatefulObject<Point>();
+    public static subgraph: StatefulObject<SubGraph> = new StatefulObject<SubGraph>();
 
     public static loadDefaultHive(id: string) {
         ActiveHiveState.activeHiveManifest.setStatusPending();

@@ -5,7 +5,7 @@ import {Subject} from "rxjs";
 import {ButtonCommand} from "./ButtonCommand";
 
 export class HiveOperationsState {
+    public static lastButtonCommand: Subject<ButtonCommand> = new Subject<ButtonCommand>();
     public static layout: StatefulOption<HiveLayout> = new StatefulOption<HiveLayout>();
     public static responseView: StatefulOption<ResponseView> = new StatefulOption<ResponseView>();
-    public static lastButtonCommand: Subject<ButtonCommand> = new Subject<ButtonCommand>();
 }
