@@ -1,24 +1,45 @@
 import React from "react";
 import {Button, ButtonGroup, Dropdown, DropdownButton, Image, ToggleButton} from "react-bootstrap";
-import Hint, {HintType} from "./Hint";
+import {Subscription} from "rxjs";
+import {ActiveHiveState} from "../../AppState/ActiveHiveState";
 import {ButtonCommand} from "../../AppState/ButtonCommand";
-import {ResponseView} from "../../AppState/ResponseView";
 import {HiveLayout} from "../../AppState/HiveLayout";
 import {HiveOperationsState} from "../../AppState/HiveOperationsState";
+import {ResponseView} from "../../AppState/ResponseView";
+import Hint, {HintType} from "./Hint";
 
 class GraphControlsComponent extends React.Component<any, any> {
     private graphView: any = [
         {name: 'Mine', value: '1'},
         {name: 'All', value: '2'},
     ];
+    private lastItemSub: Subscription = new Subscription();
 
     constructor(props: any) {
         super(props);
         this.state = {
             view: '1',
-            layout: '#Cola',
-            hint: HintType
+            layout: HiveLayout.Cola,
+            hint: HintType,
+            canUndo: false
         }
+    }
+
+    componentDidMount() {
+        ActiveHiveState.lastAddedItem.valueUpdatedEvent.subscribe((item) => {
+            if (item == null) {
+                return;
+            }
+
+            this.setState({
+                canUndo: item.itemStamp !== ''
+            });
+        })
+    }
+
+    componentWillUnmount() {
+        ActiveHiveState.lastAddedItem.restartListener();
+        this.lastItemSub.unsubscribe();
     }
 
     setResponseView(value: string) {
@@ -29,31 +50,13 @@ class GraphControlsComponent extends React.Component<any, any> {
     }
 
     setLayout(value: string | null) {
-        let layout: HiveLayout;
-        switch (value) {
-            case '#Cola':
-                layout = HiveLayout.Cola;
-                break;
-            case '#COSE':
-                layout = HiveLayout.Cose;
-                break;
-            case '#Grid':
-                layout = HiveLayout.Grid;
-                break;
-            case '#Concentric':
-                layout = HiveLayout.Concentric;
-                break;
-            case '#CircleSpring':
-                layout = HiveLayout.CircularSpring;
-                break;
-            default:
-                layout = HiveLayout.Cola;
-                break;
+        if (value != null) {
+            let layout: HiveLayout = (HiveLayout as any)[value.slice(1)];
+            HiveOperationsState.layout.updateOption(layout);
+            this.setState({
+                layout: value
+            });
         }
-        HiveOperationsState.layout.updateOption(layout);
-        this.setState({
-            layout: value
-        });
     }
 
     setHint(hint: HintType) {
@@ -67,18 +70,14 @@ class GraphControlsComponent extends React.Component<any, any> {
             <div style={{padding: 10, backgroundColor: '#414141', position: "relative", borderTop: '1px solid white'}}>
                 <Hint type={this.state.hint}/>
                 <span style={{marginRight: 10}}/>
-                <DropdownButton id="layout-selection"
-                                title={(this.state.layout as string).slice(1)}
-                                size="sm"
-                                style={{float: 'left'}}
-                                onSelect={(s) => {
-                                    this.setLayout(s)
-                                }}>
+                <DropdownButton id="layout-selection" size="sm" style={{float: 'left'}}
+                                title={(this.state.layout as string).includes('#') ? (this.state.layout as string).slice(1) : this.state.layout as string}
+                                onSelect={(s) => {this.setLayout(s)}}>
                     <Dropdown.Item href="#Cola">Cola</Dropdown.Item>
-                    <Dropdown.Item href="#COSE">Cose</Dropdown.Item>
+                    <Dropdown.Item href="#Cose">Cose</Dropdown.Item>
                     <Dropdown.Item href="#Grid">Grid</Dropdown.Item>
                     <Dropdown.Item href="#Concentric">Concentric</Dropdown.Item>
-                    <Dropdown.Item href="#CircleSpring">Circle Spring</Dropdown.Item>
+                    <Dropdown.Item href="#Klay">Klay</Dropdown.Item>
                 </DropdownButton>
                 <ButtonGroup toggle>
                     {this.graphView.map((radio: any, idx: any) => (
@@ -93,18 +92,28 @@ class GraphControlsComponent extends React.Component<any, any> {
                 <span style={{marginRight: 10}}/>
                 <ButtonGroup aria-label="Zoom, pan, select and connect points and synapses">
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Zoom)}
-                            onKeyDown={(event) => {this.processZoom(event)}} onBlur={() => this.setHint(HintType.None)}>
+                            onKeyDown={(event) => {
+                                this.processZoom(event)
+                            }} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/Operations/zoom_icon.svg"/>
                     </Button>
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Pan)}
-                            onKeyDown={(event) => {this.processPan(event)}} onBlur={() => this.setHint(HintType.None)}>
+                            onKeyDown={(event) => {
+                                this.processPan(event)
+                            }} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/Operations/pan_icon.svg"/>
                     </Button>
                     <Button size="sm" variant="secondary" onFocus={() => this.setHint(HintType.Selection)}
-                            onKeyDown={(event) => {this.processSelection(event)}} onBlur={() => this.setHint(HintType.None)}>
+                            onKeyDown={(event) => {
+                                this.processSelection(event)
+                            }} onBlur={() => this.setHint(HintType.None)}>
                         <Image width={15} src="Images/Operations/select_icon.svg"/>
                     </Button>
                 </ButtonGroup>
+                <span style={{marginRight: 10}}/>
+                <Button size="sm" variant="secondary" disabled={!this.state.canUndo} onClick={() => ActiveHiveState.tryDeleteLastItem()}>
+                    <Image width={15} src="Images/Operations/undoIcon.svg"/>
+                </Button>
             </div>
         )
     }
@@ -138,7 +147,7 @@ class GraphControlsComponent extends React.Component<any, any> {
             HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsTo);
         } else if (event.key === 'c') {
             HiveOperationsState.lastButtonCommand.next(ButtonCommand.MarkAsFrom);
-        }else if (event.key === 'q') {
+        } else if (event.key === 'q') {
             HiveOperationsState.lastButtonCommand.next(ButtonCommand.Discard);
         } else if (event.key === 'ArrowUp') {
             HiveOperationsState.lastButtonCommand.next(ButtonCommand.SelectNextPoint);

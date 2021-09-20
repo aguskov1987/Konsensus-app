@@ -1,11 +1,12 @@
 import {Core, Layouts, Position} from "cytoscape";
-import {StashedPoint, StashedSubGraph, StashedSynapse, SubGraph} from "../../AppState/SubGraph";
 import {Subscription} from "rxjs";
-import {VisualizationSubcomp} from "./VisualizationSubcomp";
-import {Subcomp} from "./Subcomp";
-import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 import {PointType} from "../../AppState/PointType";
+import {StashedPoint, StashedSubGraph, StashedSynapse, SubGraph} from "../../AppState/SubGraph";
+import {ItemDeletionStatus} from "../../Services/ItemDeletion";
+import {Subcomp} from "./Subcomp";
+import {VisualizationSubcomp} from "./VisualizationSubcomp";
 
 export class IntegrationSubcomp implements Subcomp {
     public lastRespondedId: string = '';
@@ -14,8 +15,10 @@ export class IntegrationSubcomp implements Subcomp {
 
     private cyRef: Core;
     private viz: VisualizationSubcomp;
+    private undoItem: string = '';
     private stashSub: Subscription = new Subscription();
     private subgraphSub: Subscription = new Subscription();
+    private undoSub: Subscription = new Subscription();
 
     constructor(cy: Core, viz: VisualizationSubcomp) {
         this.cyRef = cy;
@@ -35,6 +38,19 @@ export class IntegrationSubcomp implements Subcomp {
         this.stashSub = ActiveHiveState.graphStash.onStash.subscribe(() => {
             ActiveHiveState.graphStash.put(this.packAndStashSubGraph());
         });
+
+        this.undoSub = ActiveHiveState.lastAddedItem.valueUpdatedEvent.subscribe((item) => {
+            if (item == null) {
+                return;
+            }
+
+            if (item.itemStamp !== '') {
+                this.undoItem = item.itemStamp;
+            }
+            if (item.itemStatus === ItemDeletionStatus.Success && this.undoItem !== '') {
+                this.clearDeletedItemFromGraph();
+            }
+        })
     }
 
     public integrate(sg: SubGraph) {
@@ -55,6 +71,9 @@ export class IntegrationSubcomp implements Subcomp {
     public clearSubscriptions() {
         this.stashSub.unsubscribe();
         this.subgraphSub.unsubscribe();
+
+        ActiveHiveState.lastAddedItem.restartListener();
+        this.undoSub.unsubscribe();
     }
 
     private packAndStashSubGraph(): StashedSubGraph {
@@ -104,6 +123,7 @@ export class IntegrationSubcomp implements Subcomp {
                     userResponse: s.userResponse,
                     commonResponse: s.commonResponse,
                     penetration: s.penetration,
+                    type: s.type,
                     timestamp: Date.now()
                 },
                 position: stash ? (s as StashedPoint).position : {x: 0, y: 0},
@@ -153,6 +173,7 @@ export class IntegrationSubcomp implements Subcomp {
                     userResponse: st.userResponse,
                     commonResponse: st.commonResponse,
                     penetration: st.penetration,
+                    type: st.type,
                     timestamp: Date.now()
                 },
                 renderedPosition: this.lastClickPosition,
@@ -184,6 +205,7 @@ export class IntegrationSubcomp implements Subcomp {
                         userResponse: st.userResponse,
                         commonResponse: st.commonResponse,
                         penetration: st.penetration,
+                        type: st.type,
                         timestamp: Date.now()
                     },
                     classes: st.type === PointType.Statement? 'statement' : 'question'
@@ -262,5 +284,15 @@ export class IntegrationSubcomp implements Subcomp {
                 this.cyRef.remove(node);
             }
         }
+    }
+
+    private clearDeletedItemFromGraph() {
+        let parts: string[] = this.undoItem.split('+');
+        for (let part of parts) {
+            let id: string = part.split(':')[1];
+            let node = this.cyRef.getElementById(id);
+            this.cyRef.remove(node);
+        }
+        this.undoItem = '';
     }
 }

@@ -1,18 +1,19 @@
+import cytoscape, {Core} from "cytoscape";
+import cola from 'cytoscape-cola';
+import * as cx from "cytoscape-cxtmenu";
+import klay from 'cytoscape-klay';
+import Layers from 'cytoscape-layers'
+import {History} from "history";
 import React from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
-import cytoscape, {Core} from "cytoscape";
-import * as cx from "cytoscape-cxtmenu";
-import cola from 'cytoscape-cola';
-import GraphControlsComponent from "../GraphControls/GraphControlsComponent";
-import {History} from "history";
 import {withRouter} from "react-router-dom";
-import './GraphCanvasStyle.scss';
-import Layers from 'cytoscape-layers'
-import {IntegrationSubcomp} from "./IntegrationSubcomp";
-import {VisualizationSubcomp} from "./VisualizationSubcomp";
-import {NewPointEventData, OperationsSubcomp} from "./OperationsSubcomp";
 import {Subscription} from "rxjs";
 import CreatePointComponent from "../CreatePoint/CreatePointComponent";
+import GraphControlsComponent from "../GraphControls/GraphControlsComponent";
+import './GraphCanvasStyle.scss';
+import {IntegrationSubcomp} from "./IntegrationSubcomp";
+import {NewPointEventData, OperationsSubcomp} from "./OperationsSubcomp";
+import {VisualizationSubcomp} from "./VisualizationSubcomp";
 
 let cyRef: Core;
 
@@ -47,6 +48,7 @@ class GraphCanvasComponent extends React.Component<any, any> {
 
     public componentDidMount() {
         cytoscape.use(cola);
+        cytoscape.use(klay);
         if ((cyRef as any).cxtmenu == null) {
             cytoscape.use(cx);
         }
