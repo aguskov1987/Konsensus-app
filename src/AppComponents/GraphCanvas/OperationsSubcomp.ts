@@ -1,13 +1,13 @@
 import {Core, Position} from "cytoscape";
-import {VisualizationSubcomp} from "./VisualizationSubcomp";
 import {BehaviorSubject, Subscription} from "rxjs";
-import {HiveManifest} from "../../AppState/HiveManifest";
-import {Subcomp} from "./Subcomp";
-import {ButtonCommand} from "../../AppState/ButtonCommand";
-import {ResponseView} from "../../AppState/ResponseView";
-import {HiveLayout} from "../../AppState/HiveLayout";
-import {HiveOperationsState} from "../../AppState/HiveOperationsState";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import {ButtonCommand} from "../../AppState/ButtonCommand";
+import {HiveLayout} from "../../AppState/HiveLayout";
+import {HiveManifest} from "../../AppState/HiveManifest";
+import {HiveOperationsState} from "../../AppState/HiveOperationsState";
+import {ResponseView} from "../../AppState/ResponseView";
+import {Subcomp} from "./Subcomp";
+import {VisualizationSubcomp} from "./VisualizationSubcomp";
 
 export class NewPointEventData {
     fromId: string = '';
@@ -25,6 +25,7 @@ export class OperationsSubcomp implements Subcomp {
 
     private readonly cyRef: Core;
     private readonly viz: VisualizationSubcomp;
+    private currentHiveId: string = '';
 
     private readonly panInterval: number = 30;
     private readonly zoomInterval: number = 0.5;
@@ -48,6 +49,11 @@ export class OperationsSubcomp implements Subcomp {
         this.hiveSub = ActiveHiveState.activeHiveManifest.valueUpdatedEvent.subscribe((hive: HiveManifest) => {
             if (hive == null) {
                 return;
+            }
+            if (this.currentHiveId !== hive.id) {
+                this.currentHiveId = hive.id;
+                this.cyRef.remove('edge');
+                this.cyRef.remove('node');
             }
             this.setupNewPointMenu(hive.allowDanglingPoints, false, false);
         });
@@ -148,7 +154,7 @@ export class OperationsSubcomp implements Subcomp {
             if (this.viz != null) {
                 this.viz.colorizeAndResize(view, false);
             }
-        })
+        });
     }
 
     private registerCanvasEvents() {
@@ -368,7 +374,54 @@ export class OperationsSubcomp implements Subcomp {
         }, 300)
     }
 
-    private applyLayout(layout: HiveLayout) {
-
+    private applyLayout(option: HiveLayout) {
+        switch (option) {
+            case HiveLayout.Cola:
+                const colaLayout = this.cyRef.makeLayout({
+                    name: 'cola',
+                    handleDisconnected: true,
+                    animate: true,
+                    avoidOverlap: true,
+                    infinite: false,
+                    unconstrIter: 1,
+                    userConstIter: 0,
+                    allConstIter: 1,
+                    fit: false
+                } as any)
+                colaLayout.run();
+                break;
+            case HiveLayout.Cose:
+                const coseLayout = this.cyRef.makeLayout({
+                    name: 'cose',
+                    animate: true,
+                    fit: false
+                } as any)
+                coseLayout.run();
+                break;
+            case HiveLayout.Grid:
+                const gridLayout = this.cyRef.makeLayout({
+                    name: 'grid',
+                    animate: true,
+                    fit: false
+                } as any)
+                gridLayout.run();
+                break;
+            case HiveLayout.Concentric:
+                const concentricLayout = this.cyRef.makeLayout({
+                    name: 'concentric',
+                    animate: true,
+                    fit: false
+                } as any)
+                concentricLayout.run();
+                break;
+            case HiveLayout.Klay:
+                const klayLayout = this.cyRef.makeLayout({
+                    name: 'klay',
+                    animate: true,
+                    fit: false
+                } as any)
+                klayLayout.run();
+                break;
+        }
     }
 }
