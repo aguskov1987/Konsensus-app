@@ -22,26 +22,7 @@ export class VisualizationSubcomp implements Subcomp {
                 'text-wrap': 'wrap',
                 'text-max-width': '50px',
                 'font-size': 4,
-                'shape': 'circle',
-                'shape-polygon-points': [ // hexagon
-                    -0.06, -0.96,
-                    0.06, -0.96,
-
-                    0.82, -0.53,
-                    0.87, -0.44,
-
-                    0.87, 0.44,
-                    0.82, 0.53,
-
-                    0.06, 0.96,
-                    -0.06, 0.96,
-
-                    -0.82, 0.53,
-                    -0.87, 0.44,
-
-                    -0.87, -0.44,
-                    -0.82, -0.53
-                ]
+                'shape': 'circle'
             }
         },
         {
@@ -83,6 +64,7 @@ export class VisualizationSubcomp implements Subcomp {
         '#66bd63',
         '#1a9850'
     ]).domain([-1, 1]);
+    private questionColor = '#47147e';
 
     private fromToLayer: ICanvasLayer|null = null;
     private pointMarked = false;
@@ -115,9 +97,14 @@ export class VisualizationSubcomp implements Subcomp {
             let accent = color.darken(1);
             let border = color.brighten(1);
             if (element.isNode()) {
-                element.style('background-fill', 'radial-gradient');
-                element.style('background-gradient-stop-colors', `${color.hex()} ${accent.hex()} ${border.hex()}`);
-                element.style('background-gradient-stop-positions', '0 45% 55%');
+                if (element.hasClass('statement')) {
+                    element.style('background-fill', 'radial-gradient');
+                    element.style('background-gradient-stop-colors', `${color.hex()} ${accent.hex()} ${border.hex()}`);
+                    element.style('background-gradient-stop-positions', '0 45% 55%');
+                } else if (element.hasClass('question')) {
+                    element.style('background-color', this.questionColor);
+                    element.style('color', 'white');
+                }
             }
             if (element.isEdge()) {
                 element.style('line-color', color.hex());
