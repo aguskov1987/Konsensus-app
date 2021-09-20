@@ -29,6 +29,8 @@ class HiveCardComponent extends React.Component<HiveCardProps & RouteComponentPr
             <div className='hive-card-container'>
                 <div className='hive-card-picture' tabIndex={0} onClick={this.goToHive}>
                     <HiveImageWidget pointCount={this.props.manifest.totalPoints}/>
+                    <div className='point-count'>{this.props.manifest.totalPoints} points</div>
+                    <div className='participation-count'>Participation: {this.props.manifest.totalParticipation}</div>
                 </div>
                 <div className='hive-card-name'>
                     {this.props.manifest.title}
