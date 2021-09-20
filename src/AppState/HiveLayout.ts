@@ -1,7 +1,7 @@
 export enum HiveLayout {
-    Cola,
-    Cose,
-    Grid,
-    Concentric,
-    CircularSpring
+    Cola = 'Cola',
+    Cose = 'Cose',
+    Grid = 'Grid',
+    Concentric = 'Concentric',
+    Klay = 'Klay'
 }
