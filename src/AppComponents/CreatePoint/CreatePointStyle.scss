@@ -1,0 +1,28 @@
+@use "src/App";
+
+$graph-accent-color: darken(App.$main-color, 15%);
+
+.add-point-container {
+  border-radius: 5px;
+  border: 1px solid;
+  z-index: 1000;
+  color: white;
+  padding: 7px;
+  position: absolute;
+  background-color: $graph-accent-color;
+  top: 10px;
+  left: 5px;
+  right: 5px;
+}
+
+.new-point-row {
+  display: flex;
+}
+
+.support-links {
+  display: flex;
+}
+
+.icon {
+  margin-right: 10px;
+}

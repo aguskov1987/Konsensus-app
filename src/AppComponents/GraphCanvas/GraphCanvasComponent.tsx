@@ -8,7 +8,7 @@ import React from 'react';
 import CytoscapeComponent from "react-cytoscapejs";
 import {withRouter} from "react-router-dom";
 import {Subscription} from "rxjs";
-import CreatePointComponent from "../CreatePoint/CreatePointComponent";
+import AddPointComponent from "../CreatePoint/AddPointComponent";
 import GraphControlsComponent from "../GraphControls/GraphControlsComponent";
 import './GraphCanvasStyle.scss';
 import {IntegrationSubcomp} from "./IntegrationSubcomp";
@@ -123,16 +123,13 @@ class GraphCanvasComponent extends React.Component<any, any> {
         return (
             <div className='graph-container'>
                 <div className='divider'/>
+                <AddPointComponent fromId={this.state.newPointFromId} toId={this.state.newPointToId}
+                                   question={this.state.question} show={this.state.showNewPointDialog}
+                                   closeCallback={this.handleClose}/>
                 {label}
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={[]}
                                     style={{width: '100%', height: 'calc(100% - 57px)'}}/>
                 <GraphControlsComponent/>
-                <CreatePointComponent showDialog={this.state.showNewPointDialog}
-                                      fromId={this.state.newPointFromId}
-                                      toId={this.state.newPointToId}
-                                      fromToLabel={this.state.fromOrToLabel}
-                                      question={this.state.question}
-                                      closeCallback={this.handleClose}/>
             </div>
         );
     }

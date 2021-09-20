@@ -83,7 +83,7 @@ class FeedbackBarComponent extends React.Component<any, any> {
                         width: '100%',
                         height: '100%',
                         backgroundColor: props.backgroundColor,
-                        filter: 'drop-shadow(0 0.5mm 0.5mm #006622)'
+
                     }}>.</div>
                 )}
             </Blinker>
