@@ -1,6 +1,5 @@
 import React from "react";
 import chroma from "chroma-js";
-import {retry} from "rxjs/operators";
 
 interface HiveActivityProps {
     dataPoints: (number[])[];
@@ -61,7 +60,11 @@ class HiveActivityWidget extends React.Component<HiveActivityProps, any> {
                         return (
                             <React.Fragment>
                                 <circle r='3' fill={colors[index]} cx={vertical} key={'c' + key} cy={cy}/>
-                                <line x1={x1} y1={y1} x2={vertical} y2={cy} key={'l' + key} stroke={colors[index]} strokeWidth={1}/>
+
+                                <line x1={x1} y1={y1}
+                                      x2={vertical} y2={cy}
+                                      key={'l' + key}
+                                      stroke={colors[index]} stroke-dasharray={index === 0 ? 0 : 5} strokeWidth={2}/>
                             </React.Fragment>
                         )
                     })
