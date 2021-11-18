@@ -47,9 +47,7 @@ export class VisualizationSubcomp implements Subcomp {
             style: {
                 width: 4,
                 'curve-style': 'bezier',
-                'target-arrow-shape': 'circle',
-                'line-color': '#1f1f1f',
-                'target-arrow-color': '#1f1f1f'
+                'target-arrow-shape': 'circle'
             }
         }
     ];
@@ -64,7 +62,7 @@ export class VisualizationSubcomp implements Subcomp {
         '#66bd63',
         '#1a9850'
     ]).domain([-1, 1]);
-    private questionColor = '#47147e';
+    private questionColor = '#24c1fa';
 
     private fromToLayer: ICanvasLayer|null = null;
     private pointMarked = false;
@@ -103,7 +101,6 @@ export class VisualizationSubcomp implements Subcomp {
                     element.style('background-gradient-stop-positions', '0 45% 55%');
                 } else if (element.hasClass('question')) {
                     element.style('background-color', this.questionColor);
-                    element.style('color', 'white');
                 }
             }
             if (element.isEdge()) {

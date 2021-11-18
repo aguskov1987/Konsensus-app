@@ -34,6 +34,7 @@ class HiveSortingWidget extends React.Component<any, any> {
                             return (
                                 <ToggleButton key={idx} type="radio" variant="outline-secondary"
                                               name="radio" value={sort.value}
+                                              disabled={this.props.disabled}
                                               checked={this.state.sortBy === sort.value}
                                               onChange={(e) => this.updateSorting(e.currentTarget.value)}>
                                     {sort.name}

@@ -371,7 +371,7 @@ export class OperationsSubcomp implements Subcomp {
         let element = this.cyRef.getElementById(fromId !== '' ? fromId : toId)[0];
         setTimeout(() => {
             this.newPointEvent.next({fromId, toId, label: element?.data('label'), question});
-        }, 300)
+        }, 100)
     }
 
     private applyLayout(option: HiveLayout) {
@@ -386,7 +386,7 @@ export class OperationsSubcomp implements Subcomp {
                     unconstrIter: 1,
                     userConstIter: 0,
                     allConstIter: 1,
-                    fit: false
+                    fit: true
                 } as any)
                 colaLayout.run();
                 break;
@@ -394,7 +394,7 @@ export class OperationsSubcomp implements Subcomp {
                 const coseLayout = this.cyRef.makeLayout({
                     name: 'cose',
                     animate: true,
-                    fit: false
+                    fit: true
                 } as any)
                 coseLayout.run();
                 break;
@@ -402,7 +402,7 @@ export class OperationsSubcomp implements Subcomp {
                 const gridLayout = this.cyRef.makeLayout({
                     name: 'grid',
                     animate: true,
-                    fit: false
+                    fit: true
                 } as any)
                 gridLayout.run();
                 break;
@@ -410,7 +410,7 @@ export class OperationsSubcomp implements Subcomp {
                 const concentricLayout = this.cyRef.makeLayout({
                     name: 'concentric',
                     animate: true,
-                    fit: false
+                    fit: true
                 } as any)
                 concentricLayout.run();
                 break;
@@ -418,7 +418,7 @@ export class OperationsSubcomp implements Subcomp {
                 const klayLayout = this.cyRef.makeLayout({
                     name: 'klay',
                     animate: true,
-                    fit: false
+                    fit: true
                 } as any)
                 klayLayout.run();
                 break;

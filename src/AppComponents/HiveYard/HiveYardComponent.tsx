@@ -26,7 +26,7 @@ class HiveYardComponent extends React.Component<any, any> {
         super(props);
 
         this.history = this.props.history;
-        this.state = {hives: []};
+        this.state = {hives: [], disableSort: false};
     }
 
     componentDidMount() {
@@ -70,6 +70,7 @@ class HiveYardComponent extends React.Component<any, any> {
             if (query == null || this.initLoad) {
                 return;
             }
+
             YardState.loadYard({
                 query: query,
                 page: YardState.currentPage.getOption(),
@@ -77,6 +78,18 @@ class HiveYardComponent extends React.Component<any, any> {
                 sort: YardState.hiveSorting.getOption(),
                 order: HiveOrder.Desc
             });
+
+            if (query !== '') {
+                this.setState({
+                    disableSort: true
+                });
+            } else {
+                this.setState({
+                    disableSort: false
+                });
+            }
+
+            console.log(this.state);
         });
 
         YardState.loadYard({
@@ -105,7 +118,7 @@ class HiveYardComponent extends React.Component<any, any> {
                 <Card border="primary" bg="light" style={{height: '86%'}}>
                     <div className='hive-yard-header'>
                         <div className='hive-sort-container'>
-                            <HiveSortingWidget/>
+                            <HiveSortingWidget disabled={this.state.disableSort}/>
                         </div>
                         <div className='hive-paging-container'>
                             <PaginationWidget/>
@@ -114,7 +127,7 @@ class HiveYardComponent extends React.Component<any, any> {
                     <Card.Body style={{overflowY: 'auto'}}>
                         {this.state.hives.map((manifest, idx) => {
                             return (
-                                <div style={{width: '100%', height: 250, marginBottom: 20}}>
+                                <div style={{width: '100%', height: 250, marginBottom: 70}}>
                                     <HiveCardComponent key={'hyc' + idx} manifest={manifest}/>
                                 </div>
                             )

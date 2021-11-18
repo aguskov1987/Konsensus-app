@@ -6,6 +6,7 @@ import {Subscription} from "rxjs";
 import {History} from "history";
 import {withRouter} from "react-router-dom";
 import {ActiveHiveState} from "../../AppState/ActiveHiveState";
+import FoundPointComponent from "./FoundPointComponent";
 import {QuantSearchSubcomp} from "./QuantSearchSubcomp";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
@@ -101,7 +102,7 @@ class PointSearchComponent extends React.Component<any, InternalState> {
                 onInputChange={this.updateQuery}
                 onChange={this.loadPoint}
                 renderMenuItemChildren={(option: FoundPoint) => (
-                    <React.Fragment>{option.label}</React.Fragment>
+                    <FoundPointComponent point={option}/>
                 )}>
             </AsyncTypeahead>
         )
